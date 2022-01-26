@@ -1,0 +1,157 @@
+* {
+  box-sizing: border-box;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: Supermercado One;
+}
+
+header,
+body,
+footer,
+nav {
+  font-family: Koho;
+}
+
+p {
+  font-size: 1.7rem;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+h1 {
+  font-size: 50px;
+}
+
+/* Centers text */
+.center {
+  text-align: center;
+}
+
+main section:last-child {
+  padding-bottom: 5rem;
+}
+
+#home {
+  color: #ffffff;
+  display: block;
+  padding-top: 30vh;
+  padding-bottom: 45vh;
+}
+
+#services,
+#services-include,
+#extras,
+#gallery,
+#contact {
+  padding-top: 6rem;
+}
+
+.blur {
+  background-image: url("../images/tacos.jpg");
+  background-attachment: fixed;
+  background-position: center;
+  filter: blur(8px) brightness(60%);
+  z-index: -100;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  bottom: 1rem;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* for multiple cards placed inside of container */
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8rem;
+}
+
+.card-section {
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
+  transition: 0.3s;
+  width: 51rem;
+  padding: 5rem;
+}
+
+table {
+  width: 100%;
+}
+
+.card {
+  border-radius: 10px;
+  padding: 3rem;
+  padding-bottom: 3rem;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
+  transition: 0.3s;
+  width: auto;
+}
+
+.card:hover,
+.card-section:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.4);
+}
+
+table tr:hover {
+  background-color: #a2fbcc;
+}
+
+th:first-child,
+td:first-child,
+th:last-child,
+td:last-child {
+  padding: 1rem 2rem;
+}
+
+th:last-child,
+td:last-child {
+  text-align: right;
+}
+
+footer {
+  padding-top: 5rem;
+  padding-bottom: 2rem;
+  background-color: #ce1126;
+  color: #fff;
+}
+
+footer ul {
+  display: flex;
+  justify-content: space-between;
+  list-style-type: none;
+}
+
+.footer-questions {
+  text-align: left;
+}
+
+.footer-info {
+  text-align: right;
+  max-width: 300px;
+}
+
+img,
+video {
+  width: auto;
+  height: inherit;
+}
+
+@media screen and (max-width: 412px) {
+  #services {
+    margin-top: -15rem;
+  }
+
+  .blur {
+    background-attachment: local;
+  }
+}
