@@ -146,6 +146,40 @@ video {
   height: inherit;
 }
 
+.small a {
+  color: #007acc;
+  text-decoration: underline;
+}
+
+.languages {
+  display: flex;
+  justify-content: left;
+  gap: 1rem;
+}
+
+.languages a {
+  color: #fff;
+}
+.languages a:hover {
+  color: #afafaf;
+}
+
+.icon {
+  filter: brightness(0) invert(1);
+  width: 30px;
+}
+
+.table-center {
+  text-align: center !important;
+  /* align: center; */
+  /* margin: auto; */
+  /* text-align: center; */
+}
+
+.table-center td {
+  text-align: center !important;
+}
+
 @media screen and (max-width: 412px) {
   #services {
     margin-top: -15rem;
