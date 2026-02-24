@@ -1,6 +1,9 @@
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 export default function Contact() {
+  const t = useTranslations("contact");
+
   return (
     <section id="contact" className="relative py-32 lg:py-40">
       <div className="absolute inset-0 bg-navy-light/30" />
@@ -11,22 +14,21 @@ export default function Contact() {
           {/* Left — CTA */}
           <div className="reveal-left">
             <p className="text-amber text-xs uppercase tracking-[0.3em] mb-4 font-medium">
-              Get In Touch
+              {t("label")}
             </p>
             <h2 className="font-heading text-4xl sm:text-5xl lg:text-6xl text-cream mb-6 leading-tight">
-              Ready for the<br />
-              <span className="text-amber">Best Tacos</span><br />
-              in LA?
+              {t("heading")}<br />
+              <span className="text-amber">{t("headingHighlight")}</span><br />
+              {t("headingEnd")}
             </h2>
             <p className="text-cream/50 text-base leading-relaxed mb-10 max-w-md">
-              Whether it&apos;s a birthday, wedding, corporate event, or backyard
-              party — we&apos;ll make it one to remember.
+              {t("description")}
             </p>
             <Link
               href="/booking"
               className="inline-block px-10 py-4 bg-amber text-navy font-semibold text-base tracking-wide rounded-full hover:bg-amber-light transition-all duration-500 hover:shadow-2xl hover:shadow-amber/30 hover:scale-105 active:scale-95"
             >
-              Book Your Event
+              {t("bookEvent")}
             </Link>
           </div>
 
@@ -36,7 +38,7 @@ export default function Contact() {
               {/* Phone numbers */}
               <div>
                 <p className="text-cream/30 text-xs uppercase tracking-[0.2em] mb-4">
-                  Call Us Directly
+                  {t("callLabel")}
                 </p>
                 <div className="space-y-3">
                   <a
@@ -57,34 +59,34 @@ export default function Contact() {
               {/* Service area */}
               <div>
                 <p className="text-cream/30 text-xs uppercase tracking-[0.2em] mb-4">
-                  Service Area
+                  {t("areaLabel")}
                 </p>
                 <p className="text-cream/60 text-base">
-                  Greater Los Angeles Area
+                  {t("area")}
                 </p>
               </div>
 
               {/* Quick facts */}
               <div>
                 <p className="text-cream/30 text-xs uppercase tracking-[0.2em] mb-4">
-                  Quick Facts
+                  {t("factsLabel")}
                 </p>
                 <ul className="space-y-2.5 text-cream/50 text-sm">
                   <li className="flex items-center gap-3">
                     <span className="w-1.5 h-1.5 rounded-full bg-teal shrink-0" />
-                    Events from 25 to 200+ guests
+                    {t("fact1")}
                   </li>
                   <li className="flex items-center gap-3">
                     <span className="w-1.5 h-1.5 rounded-full bg-teal shrink-0" />
-                    Packages starting at $395
+                    {t("fact2")}
                   </li>
                   <li className="flex items-center gap-3">
                     <span className="w-1.5 h-1.5 rounded-full bg-teal shrink-0" />
-                    Full setup and cleanup included
+                    {t("fact3")}
                   </li>
                   <li className="flex items-center gap-3">
                     <span className="w-1.5 h-1.5 rounded-full bg-teal shrink-0" />
-                    Fresh on-site preparation
+                    {t("fact4")}
                   </li>
                 </ul>
               </div>

@@ -1,13 +1,31 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Book Your Event | México Lindo Y Que Rico",
-  description:
-    "Book your taco catering event online. Select your package, meats, and extras.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "metadata.booking" });
+  return {
+    title: t("title"),
+    description: t("description"),
+  };
+}
 
-export default function BookingPage() {
+export default async function BookingPage() {
+  const t = await getTranslations("booking");
+  const tNav = await getTranslations("nav");
+
+  const steps = [
+    { step: "01", label: t("step1") },
+    { step: "02", label: t("step2") },
+    { step: "03", label: t("step3") },
+    { step: "04", label: t("step4") },
+  ];
+
   return (
     <div className="min-h-screen bg-navy">
       {/* Minimal top nav for booking page */}
@@ -36,7 +54,7 @@ export default function BookingPage() {
                 d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
               />
             </svg>
-            Back to Home
+            {t("backHome")}
           </Link>
         </div>
       </nav>
@@ -46,14 +64,13 @@ export default function BookingPage() {
           {/* Header */}
           <div className="text-center mb-16">
             <p className="text-amber text-xs uppercase tracking-[0.3em] mb-4 font-medium">
-              Reserve Your Date
+              {t("reserveLabel")}
             </p>
             <h1 className="font-heading text-5xl sm:text-6xl text-cream mb-6">
-              Book Your Event
+              {t("title")}
             </h1>
             <p className="text-cream/50 text-base max-w-lg mx-auto leading-relaxed">
-              Our online booking system is coming soon. In the meantime, give us
-              a call to reserve your date.
+              {t("subtitle")}
             </p>
           </div>
 
@@ -81,21 +98,15 @@ export default function BookingPage() {
               </div>
 
               <h3 className="font-heading text-3xl text-cream mb-4">
-                Online Booking Coming Soon
+                {t("comingSoonTitle")}
               </h3>
               <p className="text-cream/40 text-base mb-10 max-w-md mx-auto leading-relaxed">
-                We&apos;re building a seamless booking experience. Select your
-                date, package, meats, extras, and pay — all in one place.
+                {t("comingSoonDescription")}
               </p>
 
               {/* Steps preview */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-12">
-                {[
-                  { step: "01", label: "Pick Date" },
-                  { step: "02", label: "Choose Package" },
-                  { step: "03", label: "Select Meats" },
-                  { step: "04", label: "Pay & Confirm" },
-                ].map((s) => (
+                {steps.map((s) => (
                   <div
                     key={s.step}
                     className="p-4 rounded-xl bg-navy/60 border border-cream/5"
@@ -111,7 +122,7 @@ export default function BookingPage() {
               {/* Phone CTA */}
               <div>
                 <p className="text-cream/30 text-xs uppercase tracking-[0.2em] mb-5">
-                  Book by phone today
+                  {t("phoneCta")}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <a
@@ -135,18 +146,20 @@ export default function BookingPage() {
           <div className="grid sm:grid-cols-3 gap-4">
             <div className="p-6 rounded-2xl bg-navy-light/30 border border-cream/5 text-center">
               <p className="font-heading text-3xl text-amber mb-1">$395</p>
-              <p className="text-cream/40 text-sm">Starting from</p>
-              <p className="text-cream/25 text-xs mt-1">25 guests</p>
+              <p className="text-cream/40 text-sm">{t("startingFrom")}</p>
+              <p className="text-cream/25 text-xs mt-1">{t("guests25")}</p>
             </div>
             <div className="p-6 rounded-2xl bg-navy-light/30 border border-cream/5 text-center">
               <p className="font-heading text-3xl text-amber mb-1">200+</p>
-              <p className="text-cream/40 text-sm">Max Guests</p>
-              <p className="text-cream/25 text-xs mt-1">3-hour service</p>
+              <p className="text-cream/40 text-sm">{t("maxGuests")}</p>
+              <p className="text-cream/25 text-xs mt-1">
+                {t("threeHourService")}
+              </p>
             </div>
             <div className="p-6 rounded-2xl bg-navy-light/30 border border-cream/5 text-center">
               <p className="font-heading text-3xl text-amber mb-1">8</p>
-              <p className="text-cream/40 text-sm">Proteins</p>
-              <p className="text-cream/25 text-xs mt-1">Choose 4</p>
+              <p className="text-cream/40 text-sm">{t("proteins")}</p>
+              <p className="text-cream/25 text-xs mt-1">{t("choose4")}</p>
             </div>
           </div>
         </div>
@@ -162,7 +175,7 @@ export default function BookingPage() {
             href="/"
             className="text-cream/30 text-xs hover:text-amber transition-colors"
           >
-            Back to Home
+            {t("backHome")}
           </Link>
         </div>
       </footer>

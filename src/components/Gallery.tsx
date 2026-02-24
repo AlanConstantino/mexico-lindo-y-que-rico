@@ -1,19 +1,22 @@
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 export default function Gallery() {
+  const t = useTranslations("gallery");
+
   return (
     <section id="gallery" className="relative py-32 lg:py-40">
       <div className="max-w-7xl mx-auto px-6">
         {/* Section header */}
         <div className="text-center mb-20 reveal">
           <p className="text-amber text-xs uppercase tracking-[0.3em] mb-4 font-medium">
-            Our Work
+            {t("label")}
           </p>
           <h2 className="font-heading text-4xl sm:text-5xl lg:text-6xl text-cream mb-6">
-            Gallery
+            {t("heading")}
           </h2>
           <p className="text-cream/50 text-base max-w-xl mx-auto leading-relaxed">
-            A glimpse of what we bring to your celebration.
+            {t("description")}
           </p>
         </div>
 
@@ -30,8 +33,8 @@ export default function Gallery() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-navy/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-              <p className="font-heading text-xl text-cream">Fresh Tacos</p>
-              <p className="text-cream/60 text-sm">Made on-site for every event</p>
+              <p className="font-heading text-xl text-cream">{t("freshTacos")}</p>
+              <p className="text-cream/60 text-sm">{t("freshTacosSub")}</p>
             </div>
           </div>
 
@@ -46,8 +49,8 @@ export default function Gallery() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-navy/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-              <p className="font-heading text-xl text-cream">The Full Spread</p>
-              <p className="text-cream/60 text-sm">Everything your guests need</p>
+              <p className="font-heading text-xl text-cream">{t("fullSpread")}</p>
+              <p className="text-cream/60 text-sm">{t("fullSpreadSub")}</p>
             </div>
           </div>
 
@@ -55,8 +58,8 @@ export default function Gallery() {
           <div className="reveal-scale relative aspect-[4/3] rounded-2xl overflow-hidden bg-gradient-to-br from-amber/10 to-terracotta/10 border border-amber/10 flex items-center justify-center">
             <div className="text-center px-8">
               <p className="font-heading text-5xl text-amber mb-3">1000+</p>
-              <p className="text-cream/70 text-base mb-1">Events Catered</p>
-              <p className="text-cream/40 text-sm">Across the Greater LA Area</p>
+              <p className="text-cream/70 text-base mb-1">{t("eventsCatered")}</p>
+              <p className="text-cream/40 text-sm">{t("eventsCateredSub")}</p>
             </div>
           </div>
         </div>

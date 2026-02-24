@@ -1,0 +1,192 @@
+{
+  "nav": {
+    "about": "Inicio",
+    "menu": "Servicios",
+    "packages": "Servicios Incluyen",
+    "gallery": "Galería de Fotos",
+    "contact": "Contacto",
+    "bookNow": "Reservar"
+  },
+  "hero": {
+    "subtitle": "Taquizas Auténticas · Los Ángeles · 20+ Años",
+    "heading1": "México Lindo",
+    "heading2": "Y Que Rico",
+    "tagline": "Aquí la panza es primero.",
+    "bookEvent": "Reservar Su Evento",
+    "viewPackages": "Ver Servicios",
+    "scroll": "Scroll"
+  },
+  "about": {
+    "label": "Nuestra Historia",
+    "heading": "El Sabor de",
+    "headingHighlight": "México",
+    "headingEnd": "a Su Puerta",
+    "p1": "Por más de dos décadas, México Lindo Y Que Rico ha llevado los sabores auténticos de México a celebraciones en toda el área de Los Ángeles.",
+    "p2": "Todo se prepara fresco en el lugar con recetas pasadas de generación en generación — desde el pastor perfectamente marinado hasta nuestras tortillas hechas a mano. No solo servimos comida, creamos una experiencia.",
+    "p3": "Desde reuniones íntimas en el patio hasta grandes celebraciones de más de 200 invitados, nos encargamos de todo — montaje, servicio y limpieza — para que usted disfrute cada momento.",
+    "floatingCard": "Años de Sabor",
+    "statYears": "Años",
+    "statProteins": "Proteínas",
+    "statGuests": "Máx. Invitados"
+  },
+  "menu": {
+    "label": "Su Selección",
+    "heading": "Elija Cuatro",
+    "description": "Cada proteína se prepara fresca en el lugar con recetas auténticas. Elija cuatro para hacer su evento inolvidable.",
+    "meats": {
+      "asada": {
+        "name": "Asada",
+        "description": "Carne de res marinada a la parrilla, con un sabor ahumado y profundo",
+        "tag": "Favorita"
+      },
+      "pastor": {
+        "name": "Pastor",
+        "description": "Cerdo asado lentamente con piña, achiote y chiles secos",
+        "tag": "Clásico"
+      },
+      "chicken": {
+        "name": "Pollo",
+        "description": "Pollo tierno y sazonado, asado a la parrilla y deshebrado para el taco perfecto",
+        "tag": "Popular"
+      },
+      "chorizo": {
+        "name": "Chorizo",
+        "description": "Chorizo mexicano especiado, desmenuzado y crujiente con sabor audaz y ahumado",
+        "tag": "Audaz"
+      },
+      "fish": {
+        "name": "Filete de Pescado",
+        "description": "Pescado blanco ligeramente sazonado, asado hasta quedar dorado y tierno",
+        "tag": "Ligero y Fresco"
+      },
+      "shrimp": {
+        "name": "Fajitas de Camarones",
+        "description": "Camarones salteados con pimientos y cebollas en una marinada cítrica",
+        "tag": "Premium"
+      },
+      "veggies": {
+        "name": "Verduras",
+        "description": "Verduras de temporada a la parrilla con hierbas mexicanas y un toque de limón",
+        "tag": "Vegetariano"
+      },
+      "alambres": {
+        "name": "Alambres",
+        "description": "Carne picada con tocino, pimientos, cebollas y queso derretido",
+        "tag": "Cargado"
+      }
+    }
+  },
+  "packages": {
+    "label": "Precios Transparentes",
+    "heading": "Servicios",
+    "description": "Precios sencillos para cada celebración. Cada servicio incluye cuatro carnes de su elección y todos los esenciales.",
+    "twoHour": "2-Horas de Servicio",
+    "twoHourSub": "Perfecto para reuniones íntimas",
+    "threeHour": "3-Horas de Servicio",
+    "threeHourSub": "Ideal para celebraciones grandes",
+    "upTo": "Hasta",
+    "guests": "Personas",
+    "popular": "Popular",
+    "bookPackage": "Reservar Este Servicio",
+    "moreTimeLabel": "¿Necesita Más Tiempo?",
+    "moreTimeText": "$40 por una hora extra.",
+    "moreTimePrice": "$40",
+    "moreTimeNote": "Llegamos una hora antes del servicio para cocinar, todo va fresco.",
+    "includesLabel": "Nuestros Servicios Incluyen",
+    "included": {
+      "tortillas": "Tortillas (Maíz)",
+      "sauces": "Salsa Roja y Salsa Verde",
+      "garnish": "Rábanos, Cebolla y Cilantro, Limones",
+      "plates": "Platos y Servilletas",
+      "forks": "Tenedores incluido con Arroz y Frijoles",
+      "drinks": "Aguas Frescas Incluyen Hielo y Vasos"
+    }
+  },
+  "extras": {
+    "label": "Extras",
+    "heading": "Extras",
+    "description": "Aproximadamente es para 40 a 50 personas.",
+    "serves": "Sirve {count}",
+    "perUnit": "Por unidad",
+    "items": {
+      "rice": "Arroz",
+      "beans": "Frijoles",
+      "quesadillas": "Quesadillas (Flour Tortilla)",
+      "jalapenos": "Jalapeños y Cebollas Asadas",
+      "guacamole": "Guacamole Fresco y Chips",
+      "salsa": "Salsa Fresca y Chips",
+      "agua": "Agua Fresca",
+      "aguaNote": "Sabores de aguas frescas: horchata, jamaica, limón, piña, tamarindo, y melón.",
+      "salad": "Ensalada Verde",
+      "burgers": "Hamburguesas Con Queso",
+      "hotdogs": "Hot Dogs"
+    },
+    "prices": {
+      "each4": "$4 cada uno",
+      "each2": "$2 cada uno"
+    }
+  },
+  "gallery": {
+    "label": "Nuestro Trabajo",
+    "heading": "Galería de Fotos",
+    "description": "Un vistazo a lo que llevamos a su celebración.",
+    "freshTacos": "Tacos Frescos",
+    "freshTacosSub": "Preparados en el lugar para cada evento",
+    "fullSpread": "El Servicio Completo",
+    "fullSpreadSub": "Todo lo que sus invitados necesitan",
+    "eventsCatered": "Eventos Servidos",
+    "eventsCateredSub": "En toda el área de Los Ángeles"
+  },
+  "contact": {
+    "label": "Contacto",
+    "heading": "¿Interesado en",
+    "headingHighlight": "Nuestros Servicios",
+    "headingEnd": "a Domicilio?",
+    "description": "¿Interesado en contratar nuestros servicios a domicilio para su evento? Ya sea cumpleaños, boda, evento corporativo o fiesta — lo haremos inolvidable.",
+    "bookEvent": "Reservar Su Evento",
+    "callLabel": "Llámenos al",
+    "areaLabel": "Área de Servicio",
+    "area": "Área de Los Ángeles",
+    "factsLabel": "Datos Rápidos",
+    "fact1": "Eventos de 25 a 200+ invitados",
+    "fact2": "Servicios desde $395",
+    "fact3": "Montaje y limpieza incluidos",
+    "fact4": "Preparación fresca en el lugar"
+  },
+  "footer": {
+    "description": "Taquizas auténticas para el área de Los Ángeles. Más de 20 años llevando los sabores de México a sus celebraciones.",
+    "navigate": "Navegar",
+    "contact": "Contacto",
+    "copyright": "© {year} México Lindo Y Que Rico. Todos los derechos reservados.",
+    "tagline": "Aquí la panza es primero."
+  },
+  "booking": {
+    "title": "Reserve Su Evento",
+    "backHome": "Volver al Inicio",
+    "reserveLabel": "Reserve Su Fecha",
+    "subtitle": "Nuestro sistema de reservas en línea estará disponible pronto. Mientras tanto, llámenos para reservar su fecha.",
+    "comingSoonTitle": "Reservas en Línea Próximamente",
+    "comingSoonDescription": "Estamos construyendo una experiencia de reserva fácil. Seleccione su fecha, servicio, carnes, extras y pague — todo en un solo lugar.",
+    "step1": "Elegir Fecha",
+    "step2": "Elegir Servicio",
+    "step3": "Seleccionar Carnes",
+    "step4": "Pagar y Confirmar",
+    "phoneCta": "Reserve por teléfono hoy",
+    "startingFrom": "Desde",
+    "maxGuests": "Máx. Invitados",
+    "proteins": "Proteínas",
+    "guests25": "25 invitados",
+    "threeHourService": "3 horas de servicio",
+    "choose4": "Elija 4"
+  },
+  "metadata": {
+    "home": {
+      "title": "México Lindo Y Que Rico | Taquizas en Los Ángeles",
+      "description": "Taquizas auténticas para su próximo evento. Sirviendo el área de Los Ángeles por más de 20 años. Aquí la panza es primero."
+    },
+    "booking": {
+      "title": "Reserve Su Evento | México Lindo Y Que Rico",
+      "description": "Reserve su evento de taquiza en línea. Seleccione su servicio, carnes y extras."
+    }
+  }
+}

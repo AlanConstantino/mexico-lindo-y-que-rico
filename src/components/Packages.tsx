@@ -1,4 +1,5 @@
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 const twoHour = [
   { guests: 25, price: "$395" },
@@ -14,23 +15,31 @@ const threeHour = [
   { guests: 200, price: "$1,095" },
 ];
 
-const included = [
-  "Corn Tortillas",
-  "Red & Green Hot Sauce",
-  "Radishes, Onion & Cilantro, Lemons",
-  "Plates & Napkins",
-  "Forks with Rice and Beans",
-  "Cups, Ice & Aguas Frescas",
-];
+const includedKeys = [
+  "tortillas",
+  "sauces",
+  "garnish",
+  "plates",
+  "forks",
+  "drinks",
+] as const;
 
 function PricingCard({
   guests,
   price,
   featured,
+  upToLabel,
+  guestsLabel,
+  popularLabel,
+  bookLabel,
 }: {
   guests: number;
   price: string;
   featured?: boolean;
+  upToLabel: string;
+  guestsLabel: string;
+  popularLabel: string;
+  bookLabel: string;
 }) {
   return (
     <div
@@ -43,18 +52,18 @@ function PricingCard({
       {featured && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
           <span className="px-4 py-1 bg-amber text-navy text-xs font-bold uppercase tracking-wider rounded-full">
-            Popular
+            {popularLabel}
           </span>
         </div>
       )}
 
       <div className="text-center">
         <p className="text-cream/40 text-xs uppercase tracking-wider mb-3">
-          Up to
+          {upToLabel}
         </p>
         <p className="font-heading text-5xl text-amber mb-1">{guests}</p>
         <p className="text-cream/40 text-xs uppercase tracking-wider mb-6">
-          Guests
+          {guestsLabel}
         </p>
 
         {/* Divider */}
@@ -70,7 +79,7 @@ function PricingCard({
               : "border border-amber/30 text-amber hover:border-amber hover:bg-amber/5"
           }`}
         >
-          Book This Package
+          {bookLabel}
         </Link>
       </div>
     </div>
@@ -78,6 +87,8 @@ function PricingCard({
 }
 
 export default function Packages() {
+  const t = useTranslations("packages");
+
   return (
     <section id="packages" className="relative py-32 lg:py-40">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(212,162,78,0.04),transparent_70%)]" />
@@ -86,14 +97,13 @@ export default function Packages() {
         {/* Section header */}
         <div className="text-center mb-20 reveal">
           <p className="text-amber text-xs uppercase tracking-[0.3em] mb-4 font-medium">
-            Transparent Pricing
+            {t("label")}
           </p>
           <h2 className="font-heading text-4xl sm:text-5xl lg:text-6xl text-cream mb-6">
-            Catering Packages
+            {t("heading")}
           </h2>
           <p className="text-cream/50 text-base max-w-xl mx-auto leading-relaxed">
-            Simple pricing for every celebration. Every package includes
-            four meats of your choice and all the essentials.
+            {t("description")}
           </p>
         </div>
 
@@ -101,10 +111,10 @@ export default function Packages() {
         <div className="mb-24">
           <div className="text-center mb-12 reveal">
             <h3 className="font-heading text-3xl text-cream mb-2">
-              2-Hour Service
+              {t("twoHour")}
             </h3>
             <p className="text-cream/40 text-sm">
-              Perfect for intimate gatherings
+              {t("twoHourSub")}
             </p>
           </div>
           <div className="grid sm:grid-cols-3 gap-6 max-w-3xl mx-auto stagger-children">
@@ -114,6 +124,10 @@ export default function Packages() {
                 guests={pkg.guests}
                 price={pkg.price}
                 featured={i === 1}
+                upToLabel={t("upTo")}
+                guestsLabel={t("guests")}
+                popularLabel={t("popular")}
+                bookLabel={t("bookPackage")}
               />
             ))}
           </div>
@@ -123,10 +137,10 @@ export default function Packages() {
         <div className="mb-20">
           <div className="text-center mb-12 reveal">
             <h3 className="font-heading text-3xl text-cream mb-2">
-              3-Hour Service
+              {t("threeHour")}
             </h3>
             <p className="text-cream/40 text-sm">
-              Ideal for larger celebrations
+              {t("threeHourSub")}
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto stagger-children">
@@ -136,6 +150,10 @@ export default function Packages() {
                 guests={pkg.guests}
                 price={pkg.price}
                 featured={i === 2}
+                upToLabel={t("upTo")}
+                guestsLabel={t("guests")}
+                popularLabel={t("popular")}
+                bookLabel={t("bookPackage")}
               />
             ))}
           </div>
@@ -146,28 +164,27 @@ export default function Packages() {
           {/* Extra hour */}
           <div className="reveal p-8 rounded-2xl bg-teal/10 border border-teal/20">
             <p className="text-teal-light text-xs uppercase tracking-[0.2em] mb-3 font-medium">
-              Need More Time?
+              {t("moreTimeLabel")}
             </p>
             <p className="text-cream text-lg mb-2">
-              Add an extra hour for just{" "}
-              <span className="text-amber font-bold">$40</span>
+              {t("moreTimeText")}{" "}
+              <span className="text-amber font-bold">{t("moreTimePrice")}</span>
             </p>
             <p className="text-cream/40 text-sm">
-              We arrive 1 hour early for setup — this does not count toward
-              your service time.
+              {t("moreTimeNote")}
             </p>
           </div>
 
           {/* What's included */}
           <div className="reveal p-8 rounded-2xl bg-navy-light/40 border border-cream/5">
             <p className="text-amber text-xs uppercase tracking-[0.2em] mb-4 font-medium">
-              Every Package Includes
+              {t("includesLabel")}
             </p>
             <ul className="space-y-2.5">
-              {included.map((item) => (
-                <li key={item} className="flex items-center gap-3 text-cream/60 text-sm">
+              {includedKeys.map((key) => (
+                <li key={key} className="flex items-center gap-3 text-cream/60 text-sm">
                   <span className="w-1.5 h-1.5 rounded-full bg-amber/60 shrink-0" />
-                  {item}
+                  {t(`included.${key}`)}
                 </li>
               ))}
             </ul>

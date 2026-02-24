@@ -1,6 +1,19 @@
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 export default function Footer() {
+  const t = useTranslations("footer");
+  const tNav = useTranslations("nav");
+
+  const navLinks = [
+    { label: tNav("about"), href: "#about" },
+    { label: tNav("menu"), href: "#menu" },
+    { label: tNav("packages"), href: "#packages" },
+    { label: tNav("gallery"), href: "#gallery" },
+    { label: tNav("contact"), href: "#contact" },
+    { label: tNav("bookNow"), href: "/booking" },
+  ];
+
   return (
     <footer className="relative bg-navy-dark py-16 border-t border-cream/5">
       <div className="max-w-7xl mx-auto px-6">
@@ -12,25 +25,17 @@ export default function Footer() {
               <span className="text-amber">Y Que Rico</span>
             </p>
             <p className="text-cream/30 text-sm leading-relaxed mt-4">
-              Authentic taco catering for the greater Los Angeles area.
-              Over 20 years of bringing the flavors of México to your celebrations.
+              {t("description")}
             </p>
           </div>
 
           {/* Quick links */}
           <div>
             <p className="text-cream/30 text-xs uppercase tracking-[0.2em] mb-5">
-              Navigate
+              {t("navigate")}
             </p>
             <ul className="space-y-3">
-              {[
-                { label: "About", href: "#about" },
-                { label: "Menu", href: "#menu" },
-                { label: "Packages", href: "#packages" },
-                { label: "Gallery", href: "#gallery" },
-                { label: "Contact", href: "#contact" },
-                { label: "Book Now", href: "/booking" },
-              ].map((link) => (
+              {navLinks.map((link) => (
                 <li key={link.label}>
                   {link.href.startsWith("#") ? (
                     <a
@@ -55,7 +60,7 @@ export default function Footer() {
           {/* Contact */}
           <div>
             <p className="text-cream/30 text-xs uppercase tracking-[0.2em] mb-5">
-              Contact
+              {t("contact")}
             </p>
             <div className="space-y-3">
               <a
@@ -80,10 +85,10 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="pt-8 border-t border-cream/5 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-cream/20 text-xs">
-            &copy; {new Date().getFullYear()} México Lindo Y Que Rico. All rights reserved.
+            {t("copyright", { year: new Date().getFullYear() })}
           </p>
           <p className="text-cream/20 text-xs italic font-heading text-base">
-            &ldquo;Aquí la panza es primero.&rdquo;
+            &ldquo;{t("tagline")}&rdquo;
           </p>
         </div>
       </div>

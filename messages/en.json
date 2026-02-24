@@ -1,0 +1,192 @@
+{
+  "nav": {
+    "about": "About",
+    "menu": "Menu",
+    "packages": "Packages",
+    "gallery": "Gallery",
+    "contact": "Contact",
+    "bookNow": "Book Now"
+  },
+  "hero": {
+    "subtitle": "Authentic Taco Catering · Los Angeles · 20+ Years",
+    "heading1": "México Lindo",
+    "heading2": "Y Que Rico",
+    "tagline": "Aquí la panza es primero.",
+    "bookEvent": "Book Your Event",
+    "viewPackages": "View Packages",
+    "scroll": "Scroll"
+  },
+  "about": {
+    "label": "Our Story",
+    "heading": "The Taste of",
+    "headingHighlight": "México",
+    "headingEnd": "at Your Door",
+    "p1": "For over two decades, México Lindo Y Que Rico has been bringing the authentic flavors of Mexico to celebrations across the greater Los Angeles area.",
+    "p2": "Everything is prepared fresh on-site with recipes passed down through generations — from perfectly marinated al pastor to our handmade tortillas. We don't just cater, we create an experience.",
+    "p3": "From intimate backyard gatherings to grand celebrations of 200+ guests, we handle everything — setup, service, and cleanup — so you can enjoy every moment.",
+    "floatingCard": "Years of Flavor",
+    "statYears": "Years",
+    "statProteins": "Proteins",
+    "statGuests": "Max Guests"
+  },
+  "menu": {
+    "label": "Your Selection",
+    "heading": "Choose Four",
+    "description": "Each protein is prepared fresh on-site with authentic recipes. Pick four to make your event unforgettable.",
+    "meats": {
+      "asada": {
+        "name": "Asada",
+        "description": "Grilled marinated beef, charred to perfection with a smoky, savory depth",
+        "tag": "Fan Favorite"
+      },
+      "pastor": {
+        "name": "Pastor",
+        "description": "Slow-roasted pork with pineapple, achiote, and dried chilies",
+        "tag": "Classic"
+      },
+      "chicken": {
+        "name": "Chicken",
+        "description": "Tender, seasoned chicken grilled and hand-pulled for the perfect taco",
+        "tag": "Crowd Pleaser"
+      },
+      "chorizo": {
+        "name": "Chorizo",
+        "description": "Spiced Mexican sausage, crumbled and crisped with bold, smoky flavor",
+        "tag": "Bold"
+      },
+      "fish": {
+        "name": "Fish Fillet",
+        "description": "Lightly seasoned white fish, grilled until golden and flaky",
+        "tag": "Light & Fresh"
+      },
+      "shrimp": {
+        "name": "Shrimp Fajitas",
+        "description": "Sautéed shrimp with peppers and onions in a zesty citrus marinade",
+        "tag": "Premium"
+      },
+      "veggies": {
+        "name": "Veggies",
+        "description": "Grilled seasonal vegetables with Mexican herbs and a touch of lime",
+        "tag": "Vegetarian"
+      },
+      "alambres": {
+        "name": "Alambres",
+        "description": "Chopped beef with bacon, peppers, onions, and melted cheese",
+        "tag": "Loaded"
+      }
+    }
+  },
+  "packages": {
+    "label": "Transparent Pricing",
+    "heading": "Catering Packages",
+    "description": "Simple pricing for every celebration. Every package includes four meats of your choice and all the essentials.",
+    "twoHour": "2-Hour Service",
+    "twoHourSub": "Perfect for intimate gatherings",
+    "threeHour": "3-Hour Service",
+    "threeHourSub": "Ideal for larger celebrations",
+    "upTo": "Up to",
+    "guests": "Guests",
+    "popular": "Popular",
+    "bookPackage": "Book This Package",
+    "moreTimeLabel": "Need More Time?",
+    "moreTimeText": "Add an extra hour for just",
+    "moreTimePrice": "$40",
+    "moreTimeNote": "We arrive 1 hour early for setup — this does not count toward your service time.",
+    "includesLabel": "Every Package Includes",
+    "included": {
+      "tortillas": "Corn Tortillas",
+      "sauces": "Red & Green Hot Sauce",
+      "garnish": "Radishes, Onion & Cilantro, Lemons",
+      "plates": "Plates & Napkins",
+      "forks": "Forks with Rice and Beans",
+      "drinks": "Cups, Ice & Aguas Frescas"
+    }
+  },
+  "extras": {
+    "label": "Add-Ons",
+    "heading": "Extras",
+    "description": "Complement your taco spread. Each item serves 40–50 people unless noted otherwise.",
+    "serves": "Serves {count}",
+    "perUnit": "Per unit",
+    "items": {
+      "rice": "Rice",
+      "beans": "Beans",
+      "quesadillas": "Quesadillas (Flour Tortilla)",
+      "jalapenos": "Jalapeños & Grilled Onions",
+      "guacamole": "Fresh Guacamole & Chips",
+      "salsa": "Fresh Salsa & Chips",
+      "agua": "Agua Fresca",
+      "aguaNote": "Horchata, Jamaica, Lemon, Pineapple, Tamarindo, Melon",
+      "salad": "Salad",
+      "burgers": "Cheeseburgers",
+      "hotdogs": "Hot Dogs"
+    },
+    "prices": {
+      "each4": "$4 each",
+      "each2": "$2 each"
+    }
+  },
+  "gallery": {
+    "label": "Our Work",
+    "heading": "Gallery",
+    "description": "A glimpse of what we bring to your celebration.",
+    "freshTacos": "Fresh Tacos",
+    "freshTacosSub": "Made on-site for every event",
+    "fullSpread": "The Full Spread",
+    "fullSpreadSub": "Everything your guests need",
+    "eventsCatered": "Events Catered",
+    "eventsCateredSub": "Across the Greater LA Area"
+  },
+  "contact": {
+    "label": "Get In Touch",
+    "heading": "Ready for the",
+    "headingHighlight": "Best Tacos",
+    "headingEnd": "in LA?",
+    "description": "Whether it's a birthday, wedding, corporate event, or backyard party — we'll make it one to remember.",
+    "bookEvent": "Book Your Event",
+    "callLabel": "Call Us Directly",
+    "areaLabel": "Service Area",
+    "area": "Greater Los Angeles Area",
+    "factsLabel": "Quick Facts",
+    "fact1": "Events from 25 to 200+ guests",
+    "fact2": "Packages starting at $395",
+    "fact3": "Full setup and cleanup included",
+    "fact4": "Fresh on-site preparation"
+  },
+  "footer": {
+    "description": "Authentic taco catering for the greater Los Angeles area. Over 20 years of bringing the flavors of México to your celebrations.",
+    "navigate": "Navigate",
+    "contact": "Contact",
+    "copyright": "© {year} México Lindo Y Que Rico. All rights reserved.",
+    "tagline": "Aquí la panza es primero."
+  },
+  "booking": {
+    "title": "Book Your Event",
+    "backHome": "Back to Home",
+    "reserveLabel": "Reserve Your Date",
+    "subtitle": "Our online booking system is coming soon. In the meantime, give us a call to reserve your date.",
+    "comingSoonTitle": "Online Booking Coming Soon",
+    "comingSoonDescription": "We're building a seamless booking experience. Select your date, package, meats, extras, and pay — all in one place.",
+    "step1": "Pick Date",
+    "step2": "Choose Package",
+    "step3": "Select Meats",
+    "step4": "Pay & Confirm",
+    "phoneCta": "Book by phone today",
+    "startingFrom": "Starting from",
+    "maxGuests": "Max Guests",
+    "proteins": "Proteins",
+    "guests25": "25 guests",
+    "threeHourService": "3-hour service",
+    "choose4": "Choose 4"
+  },
+  "metadata": {
+    "home": {
+      "title": "México Lindo Y Que Rico | Taco Catering in Los Angeles",
+      "description": "Authentic taco catering for your next event. Serving the greater Los Angeles area for over 20 years. Aquí la panza es primero."
+    },
+    "booking": {
+      "title": "Book Your Event | México Lindo Y Que Rico",
+      "description": "Book your taco catering event online. Select your package, meats, and extras."
+    }
+  }
+}
