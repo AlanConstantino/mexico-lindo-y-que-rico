@@ -59,10 +59,9 @@ export default function Hero() {
       {/* Scroll indicator */}
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-fade-in opacity-0 animate-delay-700">
         <a href="#about" className="flex flex-col items-center gap-3 group">
-          <span className="text-cream/30 text-xs uppercase tracking-[0.3em] group-hover:text-amber/60 transition-colors">
-            {t("scroll")}
-          </span>
-          <div className="w-px h-12 bg-gradient-to-b from-amber/60 to-transparent" />
+          <svg className="w-6 h-6 text-cream/30 group-hover:text-amber/60 transition-colors animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
         </a>
       </div>
     </section>

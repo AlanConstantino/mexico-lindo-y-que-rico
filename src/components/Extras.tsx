@@ -41,7 +41,7 @@ export default function Extras() {
         </div>
 
         {/* Extras list */}
-        <div className="space-y-0 stagger-children">
+        <div className="space-y-0">
           {extras.map((extra) => (
             <div
               key={extra.key}

@@ -160,7 +160,7 @@ export default function Packages() {
         </div>
 
         {/* Extra hour + Included */}
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {/* Extra hour */}
           <div className="reveal p-8 rounded-2xl bg-teal/10 border border-teal/20">
             <p className="text-teal-light text-xs uppercase tracking-[0.2em] mb-3 font-medium">
