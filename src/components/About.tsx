@@ -19,7 +19,7 @@ export default function About() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           {/* Image side */}
-          <div className="reveal-left relative">
+          <div className="reveal-left relative overflow-hidden">
             <div className="relative aspect-[4/5] rounded-2xl overflow-hidden">
               <Image
                 src="/images/spread.jpg"
