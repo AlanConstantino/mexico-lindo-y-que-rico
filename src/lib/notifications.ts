@@ -106,3 +106,145 @@ export async function sendBookingNotification(
     console.error("❌ Failed to send booking notification email:", error);
   }
 }
+
+export async function sendCustomerConfirmation(
+  booking: BookingNotification
+): Promise<void> {
+  const formattedPrice = `$${(booking.totalPrice / 100).toFixed(2)}`;
+  const formattedDate = new Date(booking.eventDate).toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  const extrasSection = booking.extras?.length
+    ? booking.extras
+        .map((e) => `<li style="padding: 4px 0;">${e.name} x${e.quantity} — ${e.price}</li>`)
+        .join("")
+    : "";
+
+  const textMessage = [
+    `Thank you for your booking with México Lindo Y Que Rico! 🌮`,
+    ``,
+    `Here's your booking summary:`,
+    ``,
+    `Event Date: ${formattedDate}`,
+    `Package: ${booking.serviceType === "2hr" ? "2-Hour" : "3-Hour"} Service`,
+    `Guests: ${booking.guestCount}`,
+    ``,
+    `Meats:`,
+    ...booking.meats.map((m) => `  • ${m}`),
+    ``,
+    ...(booking.extras?.length
+      ? [`Extras:`, ...booking.extras.map((e) => `  • ${e.name} x${e.quantity} — ${e.price}`)]
+      : []),
+    ``,
+    `Total Paid: ${formattedPrice}`,
+    ``,
+    `We'll arrive 1 hour before your event to set up.`,
+    ``,
+    `Questions? Call us at (562) 235-9361 or (562) 746-3998.`,
+    ``,
+    `¡Gracias! — México Lindo Y Que Rico`,
+  ].join("\n");
+
+  const htmlMessage = `
+    <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
+      <!-- Header -->
+      <div style="background: #2D2926; padding: 40px 30px; text-align: center;">
+        <h1 style="color: #E8A935; margin: 0; font-size: 28px;">México Lindo Y Que Rico</h1>
+        <p style="color: #FAF5EF99; margin: 8px 0 0; font-size: 14px;">Aquí la panza es primero.</p>
+      </div>
+
+      <!-- Body -->
+      <div style="padding: 30px;">
+        <h2 style="color: #2D2926; margin: 0 0 8px;">¡Gracias, ${booking.customerName}! 🎉</h2>
+        <p style="color: #555; margin: 0 0 24px; font-size: 16px;">
+          Your booking is confirmed. Here's everything you need to know:
+        </p>
+
+        <!-- Event Details Card -->
+        <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #E8A935;">
+          <h3 style="color: #2D2926; margin: 0 0 16px; font-size: 18px;">📅 Event Details</h3>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 6px 0; color: #888; font-size: 14px;">Date</td>
+              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${formattedDate}</td>
+            </tr>
+            <tr>
+              <td style="padding: 6px 0; color: #888; font-size: 14px;">Package</td>
+              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${booking.serviceType === "2hr" ? "2-Hour" : "3-Hour"} Service</td>
+            </tr>
+            <tr>
+              <td style="padding: 6px 0; color: #888; font-size: 14px;">Guests</td>
+              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${booking.guestCount}</td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Meats Card -->
+        <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #C45A3C;">
+          <h3 style="color: #2D2926; margin: 0 0 12px; font-size: 18px;">🥩 Your Meats</h3>
+          <ul style="margin: 0; padding-left: 20px; color: #2D2926;">
+            ${booking.meats.map((m) => `<li style="padding: 4px 0;">${m}</li>`).join("")}
+          </ul>
+        </div>
+
+        ${
+          booking.extras?.length
+            ? `
+        <!-- Extras Card -->
+        <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #7A8B6F;">
+          <h3 style="color: #2D2926; margin: 0 0 12px; font-size: 18px;">✨ Extras</h3>
+          <ul style="margin: 0; padding-left: 20px; color: #2D2926;">
+            ${extrasSection}
+          </ul>
+        </div>`
+            : ""
+        }
+
+        <!-- Total -->
+        <div style="background: #2D2926; color: #FAF5EF; padding: 24px; border-radius: 12px; text-align: center; margin-bottom: 24px;">
+          <p style="margin: 0 0 4px; color: #FAF5EF99; font-size: 14px;">Total Paid</p>
+          <p style="margin: 0; font-size: 32px; font-weight: bold; color: #E8A935;">${formattedPrice}</p>
+        </div>
+
+        <!-- Setup Note -->
+        <div style="background: #E8A93520; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
+          <p style="margin: 0; color: #2D2926; font-size: 14px;">
+            ⏰ <strong>Setup:</strong> Our team will arrive 1 hour before your event to get everything ready. No action needed on your end!
+          </p>
+        </div>
+
+        <!-- Contact -->
+        <p style="color: #555; font-size: 14px; text-align: center; margin: 0;">
+          Questions? Call us at <a href="tel:5622359361" style="color: #C45A3C; text-decoration: none; font-weight: 600;">(562) 235-9361</a>
+          or <a href="tel:5627463998" style="color: #C45A3C; text-decoration: none; font-weight: 600;">(562) 746-3998</a>
+        </p>
+      </div>
+
+      <!-- Footer -->
+      <div style="background: #2D2926; padding: 20px 30px; text-align: center;">
+        <p style="margin: 0; color: #FAF5EF66; font-size: 12px;">
+          México Lindo Y Que Rico · Greater Los Angeles · 20+ Years of Flavor
+        </p>
+        <p style="margin: 4px 0 0; color: #FAF5EF44; font-size: 11px;">Booking ID: ${booking.bookingId}</p>
+      </div>
+    </div>
+  `;
+
+  try {
+    await resend.emails.send({
+      from: "México Lindo Y Que Rico <onboarding@resend.dev>",
+      to: booking.customerEmail,
+      subject: `Booking Confirmed — ${formattedDate} 🌮`,
+      text: textMessage,
+      html: htmlMessage,
+    });
+
+    console.log(`✅ Customer confirmation email sent to ${booking.customerEmail}`);
+  } catch (error) {
+    console.error("❌ Failed to send customer confirmation email:", error);
+  }
+}

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { supabaseAdmin } from "@/lib/supabase";
-import { sendBookingNotification } from "@/lib/notifications";
+import { sendBookingNotification, sendCustomerConfirmation } from "@/lib/notifications";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2026-01-28.clover",
@@ -50,8 +50,8 @@ export async function POST(request: NextRequest) {
     if (updateError) {
       console.error("Failed to update booking:", updateError);
     } else if (booking) {
-      // Send notification
-      await sendBookingNotification({
+      // Send notification to owner + confirmation to customer
+      const notificationData = {
         bookingId: booking.id,
         customerName: booking.customer_name,
         customerEmail: booking.customer_email,
@@ -61,7 +61,12 @@ export async function POST(request: NextRequest) {
         guestCount: booking.guest_count,
         meats: booking.meats as string[],
         totalPrice: booking.total_price,
-      });
+      };
+
+      await Promise.all([
+        sendBookingNotification(notificationData),
+        sendCustomerConfirmation(notificationData),
+      ]);
     }
   }
 

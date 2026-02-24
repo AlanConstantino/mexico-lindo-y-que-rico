@@ -248,7 +248,7 @@ When a booking is confirmed (paid via Stripe), an email is sent to the owner via
 
 ### Nice-to-Haves
 - [ ] Twilio SMS notifications to owner
-- [ ] Customer confirmation email (they get one too)
+- [x] Customer confirmation email (they get one too)
 - [ ] Google Calendar integration
 - [ ] Reviews/testimonials section
 - [ ] SEO (Open Graph tags, sitemap.xml)
