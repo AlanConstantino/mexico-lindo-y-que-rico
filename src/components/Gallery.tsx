@@ -5,14 +5,14 @@ export default function Gallery() {
   const t = useTranslations("gallery");
 
   return (
-    <section id="gallery" className="relative py-32 lg:py-40">
+    <section id="gallery" className="relative py-16 sm:py-32 lg:py-40">
       <div className="max-w-7xl mx-auto px-6">
         {/* Section header */}
-        <div className="text-center mb-20 reveal">
+        <div className="text-center mb-10 sm:mb-20 reveal">
           <p className="text-amber text-xs uppercase tracking-[0.3em] mb-4 font-medium">
             {t("label")}
           </p>
-          <h2 className="font-heading text-4xl sm:text-5xl lg:text-6xl text-cream mb-6">
+          <h2 className="font-heading text-3xl sm:text-5xl lg:text-6xl text-cream mb-6">
             {t("heading")}
           </h2>
           <p className="text-cream/50 text-base max-w-xl mx-auto leading-relaxed">

@@ -22,17 +22,17 @@ export default function Extras() {
   const t = useTranslations("extras");
 
   return (
-    <section className="relative py-32 lg:py-40">
+    <section className="relative py-16 sm:py-32 lg:py-40">
       <div className="absolute inset-0 bg-navy-light/30" />
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber/20 to-transparent" />
 
       <div className="relative max-w-4xl mx-auto px-6">
         {/* Section header */}
-        <div className="text-center mb-16 reveal">
+        <div className="text-center mb-8 sm:mb-16 reveal">
           <p className="text-terracotta text-xs uppercase tracking-[0.3em] mb-4 font-medium">
             {t("label")}
           </p>
-          <h2 className="font-heading text-4xl sm:text-5xl text-cream mb-6">
+          <h2 className="font-heading text-3xl sm:text-5xl text-cream mb-6">
             {t("heading")}
           </h2>
           <p className="text-cream/50 text-base max-w-lg mx-auto leading-relaxed">

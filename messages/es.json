@@ -1,19 +1,19 @@
 {
   "nav": {
-    "about": "Inicio",
-    "menu": "Servicios",
-    "packages": "Servicios Incluyen",
-    "gallery": "Galería de Fotos",
+    "about": "Nosotros",
+    "menu": "Menú",
+    "packages": "Paquetes",
+    "gallery": "Galería",
     "contact": "Contacto",
     "bookNow": "Reservar"
   },
   "hero": {
-    "subtitle": "Taquizas Auténticas · Los Ángeles · 20+ Años",
+    "subtitle": "Taquizas Auténticas · Los Ángeles · Más de 20 Años",
     "heading1": "México Lindo",
     "heading2": "Y Que Rico",
     "tagline": "Aquí la panza es primero.",
-    "bookEvent": "Reservar Su Evento",
-    "viewPackages": "Ver Servicios",
+    "bookEvent": "Reserve Su Evento",
+    "viewPackages": "Ver Paquetes",
     "scroll": "Scroll"
   },
   "about": {
@@ -46,7 +46,7 @@
       },
       "chicken": {
         "name": "Pollo",
-        "description": "Pollo tierno y sazonado, asado a la parrilla y deshebrado para el taco perfecto",
+        "description": "Pollo tierno y sazonado, asado y deshebrado para el taco perfecto",
         "tag": "Popular"
       },
       "chorizo": {
@@ -78,57 +78,57 @@
   },
   "packages": {
     "label": "Precios Transparentes",
-    "heading": "Servicios",
-    "description": "Precios sencillos para cada celebración. Cada servicio incluye cuatro carnes de su elección y todos los esenciales.",
-    "twoHour": "2-Horas de Servicio",
+    "heading": "Paquetes de Catering",
+    "description": "Precios sencillos para cada celebración. Cada paquete incluye cuatro carnes de su elección y todos los esenciales.",
+    "twoHour": "Servicio de 2 Horas",
     "twoHourSub": "Perfecto para reuniones íntimas",
-    "threeHour": "3-Horas de Servicio",
+    "threeHour": "Servicio de 3 Horas",
     "threeHourSub": "Ideal para celebraciones grandes",
     "upTo": "Hasta",
-    "guests": "Personas",
+    "guests": "Invitados",
     "popular": "Popular",
-    "bookPackage": "Reservar Este Servicio",
+    "bookPackage": "Reservar Este Paquete",
     "moreTimeLabel": "¿Necesita Más Tiempo?",
-    "moreTimeText": "$40 por una hora extra.",
+    "moreTimeText": "Agregue una hora extra por solo",
     "moreTimePrice": "$40",
-    "moreTimeNote": "Llegamos una hora antes del servicio para cocinar, todo va fresco.",
-    "includesLabel": "Nuestros Servicios Incluyen",
+    "moreTimeNote": "Llegamos 1 hora antes para preparar todo — esto no cuenta como tiempo de servicio.",
+    "includesLabel": "Cada Paquete Incluye",
     "included": {
-      "tortillas": "Tortillas (Maíz)",
+      "tortillas": "Tortillas de Maíz",
       "sauces": "Salsa Roja y Salsa Verde",
       "garnish": "Rábanos, Cebolla y Cilantro, Limones",
       "plates": "Platos y Servilletas",
-      "forks": "Tenedores incluido con Arroz y Frijoles",
-      "drinks": "Aguas Frescas Incluyen Hielo y Vasos"
+      "forks": "Tenedores con Arroz y Frijoles",
+      "drinks": "Vasos, Hielo y Aguas Frescas"
     }
   },
   "extras": {
-    "label": "Extras",
+    "label": "Complementos",
     "heading": "Extras",
-    "description": "Aproximadamente es para 40 a 50 personas.",
-    "serves": "Sirve {count}",
+    "description": "Complemente su taquiza. Cada artículo rinde para 40–50 personas a menos que se indique lo contrario.",
+    "serves": "Rinde para {count}",
     "perUnit": "Por unidad",
     "items": {
       "rice": "Arroz",
       "beans": "Frijoles",
-      "quesadillas": "Quesadillas (Flour Tortilla)",
+      "quesadillas": "Quesadillas (Tortilla de Harina)",
       "jalapenos": "Jalapeños y Cebollas Asadas",
-      "guacamole": "Guacamole Fresco y Chips",
-      "salsa": "Salsa Fresca y Chips",
+      "guacamole": "Guacamole Fresco con Totopos",
+      "salsa": "Salsa Fresca con Totopos",
       "agua": "Agua Fresca",
-      "aguaNote": "Sabores de aguas frescas: horchata, jamaica, limón, piña, tamarindo, y melón.",
-      "salad": "Ensalada Verde",
-      "burgers": "Hamburguesas Con Queso",
+      "aguaNote": "Horchata, Jamaica, Limón, Piña, Tamarindo, Melón",
+      "salad": "Ensalada",
+      "burgers": "Hamburguesas con Queso",
       "hotdogs": "Hot Dogs"
     },
     "prices": {
-      "each4": "$4 cada uno",
-      "each2": "$2 cada uno"
+      "each4": "$4 c/u",
+      "each2": "$2 c/u"
     }
   },
   "gallery": {
     "label": "Nuestro Trabajo",
-    "heading": "Galería de Fotos",
+    "heading": "Galería",
     "description": "Un vistazo a lo que llevamos a su celebración.",
     "freshTacos": "Tacos Frescos",
     "freshTacosSub": "Preparados en el lugar para cada evento",
@@ -138,18 +138,18 @@
     "eventsCateredSub": "En toda el área de Los Ángeles"
   },
   "contact": {
-    "label": "Contacto",
-    "heading": "¿Interesado en",
-    "headingHighlight": "Nuestros Servicios",
-    "headingEnd": "a Domicilio?",
-    "description": "¿Interesado en contratar nuestros servicios a domicilio para su evento? Ya sea cumpleaños, boda, evento corporativo o fiesta — lo haremos inolvidable.",
-    "bookEvent": "Reservar Su Evento",
-    "callLabel": "Llámenos al",
+    "label": "Contáctenos",
+    "heading": "¿Listo para los",
+    "headingHighlight": "Mejores Tacos",
+    "headingEnd": "de LA?",
+    "description": "Ya sea cumpleaños, boda, evento corporativo o fiesta en el patio — lo haremos inolvidable.",
+    "bookEvent": "Reserve Su Evento",
+    "callLabel": "Llámenos Directamente",
     "areaLabel": "Área de Servicio",
-    "area": "Área de Los Ángeles",
+    "area": "Área Metropolitana de Los Ángeles",
     "factsLabel": "Datos Rápidos",
-    "fact1": "Eventos de 25 a 200+ invitados",
-    "fact2": "Servicios desde $395",
+    "fact1": "Eventos de 25 a más de 200 invitados",
+    "fact2": "Paquetes desde $395",
     "fact3": "Montaje y limpieza incluidos",
     "fact4": "Preparación fresca en el lugar"
   },
@@ -166,9 +166,9 @@
     "reserveLabel": "Reserve Su Fecha",
     "subtitle": "Nuestro sistema de reservas en línea estará disponible pronto. Mientras tanto, llámenos para reservar su fecha.",
     "comingSoonTitle": "Reservas en Línea Próximamente",
-    "comingSoonDescription": "Estamos construyendo una experiencia de reserva fácil. Seleccione su fecha, servicio, carnes, extras y pague — todo en un solo lugar.",
+    "comingSoonDescription": "Estamos construyendo una experiencia de reserva fácil. Seleccione su fecha, paquete, carnes, extras y pague — todo en un solo lugar.",
     "step1": "Elegir Fecha",
-    "step2": "Elegir Servicio",
+    "step2": "Elegir Paquete",
     "step3": "Seleccionar Carnes",
     "step4": "Pagar y Confirmar",
     "phoneCta": "Reserve por teléfono hoy",
@@ -176,7 +176,7 @@
     "maxGuests": "Máx. Invitados",
     "proteins": "Proteínas",
     "guests25": "25 invitados",
-    "threeHourService": "3 horas de servicio",
+    "threeHourService": "Servicio de 3 horas",
     "choose4": "Elija 4"
   },
   "metadata": {
@@ -186,7 +186,7 @@
     },
     "booking": {
       "title": "Reserve Su Evento | México Lindo Y Que Rico",
-      "description": "Reserve su evento de taquiza en línea. Seleccione su servicio, carnes y extras."
+      "description": "Reserve su evento de taquiza en línea. Seleccione su paquete, carnes y extras."
     }
   }
 }

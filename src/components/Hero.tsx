@@ -29,27 +29,27 @@ export default function Hero() {
           {t("subtitle")}
         </p>
 
-        <h1 className="animate-fade-in-up opacity-0 animate-delay-100 font-heading text-6xl sm:text-7xl md:text-8xl lg:text-9xl text-cream leading-[0.9] mb-4">
+        <h1 className="animate-fade-in-up opacity-0 animate-delay-100 font-heading text-4xl sm:text-7xl md:text-8xl lg:text-9xl text-cream leading-[0.9] mb-3 sm:mb-4">
           {t("heading1")}
         </h1>
-        <h1 className="animate-fade-in-up opacity-0 animate-delay-200 font-heading text-6xl sm:text-7xl md:text-8xl lg:text-9xl text-amber leading-[0.9] mb-8">
+        <h1 className="animate-fade-in-up opacity-0 animate-delay-200 font-heading text-4xl sm:text-7xl md:text-8xl lg:text-9xl text-amber leading-[0.9] mb-5 sm:mb-8">
           {t("heading2")}
         </h1>
 
-        <p className="animate-fade-in-up opacity-0 animate-delay-300 font-heading text-xl sm:text-2xl md:text-3xl text-cream/60 italic mb-12">
+        <p className="animate-fade-in-up opacity-0 animate-delay-300 font-heading text-lg sm:text-2xl md:text-3xl text-cream/60 italic mb-8 sm:mb-12">
           &ldquo;{t("tagline")}&rdquo;
         </p>
 
-        <div className="animate-fade-in-up opacity-0 animate-delay-500 flex flex-col sm:flex-row gap-5 justify-center">
+        <div className="animate-fade-in-up opacity-0 animate-delay-500 flex flex-col sm:flex-row gap-3 sm:gap-5 justify-center">
           <Link
             href="/booking"
-            className="group px-10 py-4 bg-amber text-navy font-semibold text-base tracking-wide rounded-full hover:bg-amber-light transition-all duration-500 hover:shadow-2xl hover:shadow-amber/30 hover:scale-105 active:scale-95"
+            className="group px-8 sm:px-10 py-3 sm:py-4 bg-amber text-navy font-semibold text-sm sm:text-base tracking-wide rounded-full hover:bg-amber-light transition-all duration-500 hover:shadow-2xl hover:shadow-amber/30 hover:scale-105 active:scale-95"
           >
             {t("bookEvent")}
           </Link>
           <a
             href="#packages"
-            className="px-10 py-4 border border-cream/20 text-cream/90 font-medium text-base tracking-wide rounded-full hover:border-amber/60 hover:text-amber transition-all duration-500 hover:scale-105 active:scale-95"
+            className="px-8 sm:px-10 py-3 sm:py-4 border border-cream/20 text-cream/90 font-medium text-sm sm:text-base tracking-wide rounded-full hover:border-amber/60 hover:text-amber transition-all duration-500 hover:scale-105 active:scale-95"
           >
             {t("viewPackages")}
           </a>

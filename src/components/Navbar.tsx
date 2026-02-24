@@ -35,19 +35,19 @@ export default function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 overflow-x-hidden ${
         scrolled
-          ? "bg-navy/95 backdrop-blur-md shadow-lg shadow-black/20 py-3"
-          : "bg-transparent py-6"
+          ? "bg-navy/95 backdrop-blur-md shadow-lg shadow-black/20 py-2 sm:py-3"
+          : "bg-transparent py-3 sm:py-6"
       }`}
     >
-      <nav className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between gap-4">
         {/* Logo */}
         <a
           href="#hero"
-          className="font-heading text-2xl text-cream hover:text-amber transition-colors duration-300"
+          className="font-heading text-cream hover:text-amber transition-colors duration-300 text-sm sm:text-2xl leading-tight min-w-0"
         >
-          México Lindo <span className="text-amber">Y Que Rico</span>
+          México Lindo<br /><span className="text-amber">Y Que Rico</span>
         </a>
 
         {/* Desktop Nav */}
@@ -93,7 +93,7 @@ export default function Navbar() {
         {/* Mobile toggle */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden relative w-8 h-8 flex flex-col justify-center items-center gap-1.5"
+          className="md:hidden relative w-8 h-8 shrink-0 flex flex-col justify-center items-center gap-1.5"
           aria-label="Toggle menu"
         >
           <span

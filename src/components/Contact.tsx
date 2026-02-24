@@ -5,7 +5,7 @@ export default function Contact() {
   const t = useTranslations("contact");
 
   return (
-    <section id="contact" className="relative py-32 lg:py-40">
+    <section id="contact" className="relative py-16 sm:py-32 lg:py-40">
       <div className="absolute inset-0 bg-navy-light/30" />
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber/20 to-transparent" />
 
@@ -16,7 +16,7 @@ export default function Contact() {
             <p className="text-amber text-xs uppercase tracking-[0.3em] mb-4 font-medium">
               {t("label")}
             </p>
-            <h2 className="font-heading text-4xl sm:text-5xl lg:text-6xl text-cream mb-6 leading-tight">
+            <h2 className="font-heading text-3xl sm:text-5xl lg:text-6xl text-cream mb-6 leading-tight">
               {t("heading")}<br />
               <span className="text-amber">{t("headingHighlight")}</span><br />
               {t("headingEnd")}

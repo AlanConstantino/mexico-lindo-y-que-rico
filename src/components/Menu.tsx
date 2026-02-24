@@ -27,16 +27,16 @@ export default function Menu() {
   const t = useTranslations("menu");
 
   return (
-    <section id="menu" className="relative py-32 lg:py-40">
+    <section id="menu" className="relative py-16 sm:py-32 lg:py-40">
       <div className="absolute inset-0 bg-gradient-to-b from-navy via-navy-light/60 to-navy" />
 
       <div className="relative max-w-6xl mx-auto px-6">
         {/* Section header */}
-        <div className="text-center mb-20 reveal">
+        <div className="text-center mb-10 sm:mb-20 reveal">
           <p className="text-teal text-xs uppercase tracking-[0.3em] mb-4 font-medium">
             {t("label")}
           </p>
-          <h2 className="font-heading text-5xl sm:text-6xl lg:text-7xl text-cream mb-6 italic font-medium">
+          <h2 className="font-heading text-3xl sm:text-6xl lg:text-7xl text-cream mb-4 sm:mb-6 italic font-medium">
             {t("heading")}
           </h2>
           <div className="w-24 h-0.5 bg-gradient-to-r from-transparent via-terracotta to-transparent mx-auto mb-6" />
@@ -46,14 +46,14 @@ export default function Menu() {
         </div>
 
         {/* Meat cards grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 stagger-children">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5 stagger-children">
           {meatKeys.map((key) => (
             <div
               key={key}
               className="reveal group relative overflow-hidden rounded-2xl bg-gradient-to-br from-navy-light to-navy-dark border border-cream/5 hover:border-terracotta/30 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-terracotta/10"
             >
               {/* Image */}
-              <div className="relative h-44 overflow-hidden">
+              <div className="relative h-28 sm:h-44 overflow-hidden">
                 <Image
                   src={meatImages[key]}
                   alt={t(`meats.${key}.name`)}
@@ -63,19 +63,19 @@ export default function Menu() {
                   unoptimized
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/80 to-transparent" />
-                <span className="absolute top-3 right-3 text-[10px] uppercase tracking-widest text-teal font-semibold bg-navy/80 backdrop-blur-sm px-3 py-1 rounded-full">
+                <span className="absolute top-2 right-2 sm:top-3 sm:right-3 text-[8px] sm:text-[10px] uppercase tracking-widest text-teal font-semibold bg-navy/80 backdrop-blur-sm px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">
                   {t(`meats.${key}.tag`)}
                 </span>
               </div>
 
-              <div className="p-5">
+              <div className="p-3 sm:p-5">
                 {/* Name */}
-                <h3 className="font-heading text-2xl text-cream group-hover:text-amber transition-colors duration-500 mb-2 italic">
+                <h3 className="font-heading text-lg sm:text-2xl text-cream group-hover:text-amber transition-colors duration-500 mb-1 sm:mb-2 italic">
                   {t(`meats.${key}.name`)}
                 </h3>
 
-                {/* Description */}
-                <p className="text-cream/40 text-sm leading-relaxed group-hover:text-cream/60 transition-colors duration-500">
+                {/* Description - hidden on mobile to save space */}
+                <p className="text-cream/40 text-xs sm:text-sm leading-relaxed group-hover:text-cream/60 transition-colors duration-500 hidden sm:block">
                   {t(`meats.${key}.description`)}
                 </p>
               </div>

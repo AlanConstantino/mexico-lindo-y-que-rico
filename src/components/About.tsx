@@ -11,7 +11,7 @@ export default function About() {
   ];
 
   return (
-    <section id="about" className="relative py-32 lg:py-40 overflow-hidden">
+    <section id="about" className="relative py-16 sm:py-32 lg:py-40 overflow-hidden">
       {/* Subtle background texture */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(42,107,94,0.08),transparent_50%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_50%,rgba(184,92,58,0.06),transparent_50%)]" />
@@ -44,7 +44,7 @@ export default function About() {
             <p className="text-amber text-xs uppercase tracking-[0.3em] mb-4 font-medium">
               {t("label")}
             </p>
-            <h2 className="font-heading text-4xl sm:text-5xl lg:text-6xl text-cream mb-8 leading-tight">
+            <h2 className="font-heading text-3xl sm:text-5xl lg:text-6xl text-cream mb-5 sm:mb-8 leading-tight">
               {t("heading")}<br />
               <span className="text-amber">{t("headingHighlight")}</span> {t("headingEnd")}
             </h2>

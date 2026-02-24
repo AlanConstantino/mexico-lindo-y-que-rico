@@ -42,3 +42,4 @@ next-env.d.ts
 
 # temp
 /nextjs-temp
+.env.local
