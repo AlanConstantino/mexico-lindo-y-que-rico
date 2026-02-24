@@ -11,6 +11,7 @@ interface BookingNotification {
   serviceType: string;
   guestCount: number;
   meats: string[];
+  eventAddress?: string;
   extras?: { name: string; quantity: number; price: string }[];
   totalPrice: number;
 }
@@ -40,6 +41,7 @@ export async function sendBookingNotification(
     `Phone: ${booking.customerPhone}`,
     ``,
     `Event Date: ${formattedDate}`,
+    `Event Address: ${booking.eventAddress || "Not provided"}`,
     `Package: ${booking.serviceType === "2hr" ? "2-Hour" : "3-Hour"} Service`,
     `Guests: ${booking.guestCount}`,
     ``,
@@ -67,6 +69,7 @@ export async function sendBookingNotification(
       
       <h3 style="color: #3B2A1E;">Event Details</h3>
       <p><strong>Date:</strong> ${formattedDate}</p>
+      <p><strong>Address:</strong> ${booking.eventAddress || "Not provided"}</p>
       <p><strong>Package:</strong> ${booking.serviceType === "2hr" ? "2-Hour" : "3-Hour"} Service</p>
       <p><strong>Guests:</strong> ${booking.guestCount}</p>
       
@@ -130,6 +133,7 @@ export async function sendCustomerConfirmation(
     `Here's your booking summary:`,
     ``,
     `Event Date: ${formattedDate}`,
+    `Event Address: ${booking.eventAddress || "Not provided"}`,
     `Package: ${booking.serviceType === "2hr" ? "2-Hour" : "3-Hour"} Service`,
     `Guests: ${booking.guestCount}`,
     ``,
@@ -171,6 +175,10 @@ export async function sendCustomerConfirmation(
             <tr>
               <td style="padding: 6px 0; color: #888; font-size: 14px;">Date</td>
               <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${formattedDate}</td>
+            </tr>
+            <tr>
+              <td style="padding: 6px 0; color: #888; font-size: 14px;">Address</td>
+              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${booking.eventAddress || "Not provided"}</td>
             </tr>
             <tr>
               <td style="padding: 6px 0; color: #888; font-size: 14px;">Package</td>

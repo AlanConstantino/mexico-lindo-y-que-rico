@@ -23,6 +23,7 @@ interface CheckoutBody {
   customerName: string;
   customerEmail: string;
   customerPhone: string;
+  eventAddress: string;
   totalPrice: number;
   locale?: string;
 }
@@ -54,6 +55,7 @@ export async function POST(request: NextRequest) {
       customerName,
       customerEmail,
       customerPhone,
+      eventAddress,
       locale = "en",
     } = body;
 
@@ -66,7 +68,8 @@ export async function POST(request: NextRequest) {
       meats.length !== 4 ||
       !customerName ||
       !customerEmail ||
-      !customerPhone
+      !customerPhone ||
+      !eventAddress
     ) {
       return NextResponse.json(
         { error: "Missing required fields" },
@@ -130,6 +133,7 @@ export async function POST(request: NextRequest) {
         meats: JSON.stringify(meats),
         customerName,
         customerPhone,
+        eventAddress,
       },
     });
 
@@ -147,6 +151,7 @@ export async function POST(request: NextRequest) {
         customer_name: customerName,
         customer_email: customerEmail,
         customer_phone: customerPhone,
+        event_address: eventAddress,
         total_price: totalCents,
         stripe_session_id: session.id,
         stripe_payment_status: "unpaid",

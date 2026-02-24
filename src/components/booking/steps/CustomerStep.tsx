@@ -78,6 +78,25 @@ export default function CustomerStep({ data, updateData }: CustomerStepProps) {
             className="w-full px-4 py-3 rounded-xl bg-navy-light/50 border border-cream/10 text-cream placeholder:text-cream/20 focus:border-amber/40 focus:outline-none focus:ring-1 focus:ring-amber/20 transition-all text-sm"
           />
         </div>
+
+        {/* Event Address */}
+        <div>
+          <label
+            htmlFor="address"
+            className="block text-cream/60 text-sm mb-2 font-medium"
+          >
+            {t("eventAddress")} <span className="text-terracotta">*</span>
+          </label>
+          <input
+            id="address"
+            type="text"
+            value={data.eventAddress}
+            onChange={(e) => updateData({ eventAddress: e.target.value })}
+            placeholder={t("addressPlaceholder")}
+            className="w-full px-4 py-3 rounded-xl bg-navy-light/50 border border-cream/10 text-cream placeholder:text-cream/20 focus:border-amber/40 focus:outline-none focus:ring-1 focus:ring-amber/20 transition-all text-sm"
+          />
+          <p className="text-cream/30 text-xs mt-1.5">{t("addressNote")}</p>
+        </div>
       </div>
     </div>
   );

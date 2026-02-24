@@ -20,6 +20,7 @@ export interface BookingData {
   customerName: string;
   customerEmail: string;
   customerPhone: string;
+  eventAddress: string;
 }
 
 const TOTAL_STEPS = 6;
@@ -49,6 +50,7 @@ export default function BookingForm() {
     customerName: "",
     customerEmail: "",
     customerPhone: "",
+    eventAddress: "",
   });
 
   const updateData = (updates: Partial<BookingData>) => {
@@ -70,7 +72,8 @@ export default function BookingForm() {
           data.customerName.trim() !== "" &&
           data.customerEmail.trim() !== "" &&
           /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.customerEmail) &&
-          data.customerPhone.trim() !== ""
+          data.customerPhone.trim() !== "" &&
+          data.eventAddress.trim() !== ""
         );
       case 6:
         return true;
@@ -118,6 +121,7 @@ export default function BookingForm() {
           customerName: data.customerName,
           customerEmail: data.customerEmail,
           customerPhone: data.customerPhone,
+          eventAddress: data.eventAddress,
           totalPrice,
           locale,
         }),

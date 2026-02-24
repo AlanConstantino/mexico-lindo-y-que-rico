@@ -110,6 +110,14 @@ export default function ReviewStep({
           )}
         </div>
 
+        {/* Event Address */}
+        <div className="p-4 rounded-xl bg-navy-light/30 border border-cream/5">
+          <div className="text-cream/40 text-xs uppercase tracking-wider mb-1">
+            {t("eventAddress")}
+          </div>
+          <div className="text-cream font-medium">{data.eventAddress}</div>
+        </div>
+
         {/* Contact Info */}
         <div className="p-4 rounded-xl bg-navy-light/30 border border-cream/5">
           <div className="text-cream/40 text-xs uppercase tracking-wider mb-2">

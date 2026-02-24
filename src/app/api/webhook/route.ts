@@ -60,6 +60,7 @@ export async function POST(request: NextRequest) {
         serviceType: booking.service_type,
         guestCount: booking.guest_count,
         meats: booking.meats as string[],
+        eventAddress: booking.event_address,
         totalPrice: booking.total_price,
       };
 
