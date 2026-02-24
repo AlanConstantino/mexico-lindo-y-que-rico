@@ -17,7 +17,7 @@ export default function BookingPage() {
             href="/"
             className="font-heading text-2xl text-cream hover:text-amber transition-colors duration-300"
           >
-            Que Rico
+            México Lindo <span className="text-amber">Y Que Rico</span>
           </Link>
           <Link
             href="/"

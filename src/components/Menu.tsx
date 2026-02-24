@@ -53,18 +53,20 @@ const meats = [
 
 export default function Menu() {
   return (
-    <section id="menu" className="relative py-28 lg:py-36 bg-cream-warm">
-      <div className="max-w-6xl mx-auto px-6">
+    <section id="menu" className="relative py-32 lg:py-40">
+      <div className="absolute inset-0 bg-gradient-to-b from-navy via-navy-light/60 to-navy" />
+
+      <div className="relative max-w-6xl mx-auto px-6">
         {/* Section header */}
         <div className="text-center mb-20 reveal">
-          <p className="text-sage text-xs uppercase tracking-[0.3em] mb-4 font-medium">
+          <p className="text-teal text-xs uppercase tracking-[0.3em] mb-4 font-medium">
             Your Selection
           </p>
-          <h2 className="font-heading text-5xl sm:text-6xl lg:text-7xl text-brown mb-6 italic font-medium">
+          <h2 className="font-heading text-5xl sm:text-6xl lg:text-7xl text-cream mb-6 italic font-medium">
             Choose Four
           </h2>
           <div className="w-24 h-0.5 bg-gradient-to-r from-transparent via-terracotta to-transparent mx-auto mb-6" />
-          <p className="text-brown/50 text-base max-w-xl mx-auto leading-relaxed">
+          <p className="text-cream/50 text-base max-w-xl mx-auto leading-relaxed">
             Each protein is prepared fresh on-site with authentic recipes.
             Pick four to make your event unforgettable.
           </p>
@@ -75,7 +77,7 @@ export default function Menu() {
           {meats.map((meat) => (
             <div
               key={meat.name}
-              className="reveal group relative overflow-hidden rounded-2xl bg-cream border border-brown/8 hover:border-terracotta/30 transition-all duration-500 hover:-translate-y-2 hover:shadow-xl hover:shadow-brown/10"
+              className="reveal group relative overflow-hidden rounded-2xl bg-gradient-to-br from-navy-light to-navy-dark border border-cream/5 hover:border-terracotta/30 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-terracotta/10"
             >
               {/* Image */}
               <div className="relative h-44 overflow-hidden">
@@ -87,26 +89,26 @@ export default function Menu() {
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                   unoptimized
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-brown/40 to-transparent" />
-                <span className="absolute top-3 right-3 text-[10px] uppercase tracking-widest text-sage-dark font-semibold bg-cream/90 backdrop-blur-sm px-3 py-1 rounded-full">
+                <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/80 to-transparent" />
+                <span className="absolute top-3 right-3 text-[10px] uppercase tracking-widest text-teal font-semibold bg-navy/80 backdrop-blur-sm px-3 py-1 rounded-full">
                   {meat.tag}
                 </span>
               </div>
 
               <div className="p-5">
                 {/* Name */}
-                <h3 className="font-heading text-2xl text-brown group-hover:text-terracotta transition-colors duration-500 mb-2 italic">
+                <h3 className="font-heading text-2xl text-cream group-hover:text-amber transition-colors duration-500 mb-2 italic">
                   {meat.name}
                 </h3>
 
                 {/* Description */}
-                <p className="text-brown/40 text-sm leading-relaxed group-hover:text-brown/60 transition-colors duration-500">
+                <p className="text-cream/40 text-sm leading-relaxed group-hover:text-cream/60 transition-colors duration-500">
                   {meat.description}
                 </p>
               </div>
 
               {/* Bottom accent line */}
-              <div className="h-0.5 w-0 group-hover:w-full bg-gradient-to-r from-terracotta via-marigold to-sage transition-all duration-700" />
+              <div className="h-0.5 w-0 group-hover:w-full bg-gradient-to-r from-terracotta via-amber to-teal transition-all duration-700" />
             </div>
           ))}
         </div>
