@@ -1,0 +1,114 @@
+@import "tailwindcss";
+
+@theme {
+  --color-navy: #1B1F2A;
+  --color-navy-light: #252A38;
+  --color-navy-dark: #12151D;
+  --color-amber: #D4A24E;
+  --color-amber-light: #E0B86B;
+  --color-amber-dark: #B8893A;
+  --color-terracotta: #B85C3A;
+  --color-terracotta-light: #D06E4A;
+  --color-terracotta-dark: #9A4D30;
+  --color-cream: #F5F0E8;
+  --color-cream-dark: #E8E0D4;
+  --color-teal: #2A6B5E;
+  --color-teal-light: #358573;
+  --color-teal-dark: #1F5248;
+
+  --font-heading: "Supermercado One", cursive;
+  --font-body: "Inter", sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-navy);
+  color: var(--color-cream);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-navy-dark);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-amber-dark);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-amber);
+}
+
+/* Animations */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.8s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out forwards;
+}
+
+.animate-delay-100 { animation-delay: 0.1s; }
+.animate-delay-200 { animation-delay: 0.2s; }
+.animate-delay-300 { animation-delay: 0.3s; }
+.animate-delay-400 { animation-delay: 0.4s; }
+.animate-delay-500 { animation-delay: 0.5s; }
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(212, 162, 78, 0.1) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite;
+}
+
+/* Decorative divider */
+.divider-ornament {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.divider-ornament::before,
+.divider-ornament::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-amber),
+    transparent
+  );
+}
