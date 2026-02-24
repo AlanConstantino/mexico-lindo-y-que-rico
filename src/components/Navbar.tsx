@@ -27,7 +27,7 @@ export default function Navbar() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "bg-navy/95 backdrop-blur-md shadow-lg shadow-black/20 py-3"
+          ? "bg-cream/95 backdrop-blur-md shadow-md shadow-brown/5 py-3"
           : "bg-transparent py-6"
       }`}
     >
@@ -35,9 +35,13 @@ export default function Navbar() {
         {/* Logo */}
         <a
           href="#hero"
-          className="font-heading text-2xl text-cream hover:text-amber transition-colors duration-300"
+          className={`font-heading text-2xl transition-colors duration-300 ${
+            scrolled
+              ? "text-brown hover:text-terracotta"
+              : "text-cream hover:text-marigold"
+          }`}
         >
-          Que Rico
+          México Lindo Y Que Rico
         </a>
 
         {/* Desktop Nav */}
@@ -46,7 +50,11 @@ export default function Navbar() {
             <li key={link.href}>
               <a
                 href={link.href}
-                className="text-sm text-cream/70 hover:text-amber transition-colors duration-300 tracking-wide uppercase"
+                className={`text-sm transition-colors duration-300 tracking-wide uppercase ${
+                  scrolled
+                    ? "text-brown/60 hover:text-terracotta"
+                    : "text-cream/80 hover:text-marigold"
+                }`}
               >
                 {link.label}
               </a>
@@ -55,7 +63,7 @@ export default function Navbar() {
           <li>
             <Link
               href="/booking"
-              className="text-sm px-6 py-2.5 bg-amber text-navy font-semibold rounded-full hover:bg-amber-light transition-all duration-300 hover:shadow-lg hover:shadow-amber/20"
+              className="text-sm px-6 py-2.5 bg-marigold text-brown font-semibold rounded-full hover:bg-marigold-light transition-all duration-300 hover:shadow-lg hover:shadow-marigold/20"
             >
               Book Now
             </Link>
@@ -69,19 +77,19 @@ export default function Navbar() {
           aria-label="Toggle menu"
         >
           <span
-            className={`block w-6 h-0.5 bg-cream transition-all duration-300 ${
-              mobileOpen ? "rotate-45 translate-y-2" : ""
-            }`}
+            className={`block w-6 h-0.5 transition-all duration-300 ${
+              scrolled ? "bg-brown" : "bg-cream"
+            } ${mobileOpen ? "rotate-45 translate-y-2" : ""}`}
           />
           <span
-            className={`block w-6 h-0.5 bg-cream transition-all duration-300 ${
-              mobileOpen ? "opacity-0" : ""
-            }`}
+            className={`block w-6 h-0.5 transition-all duration-300 ${
+              scrolled ? "bg-brown" : "bg-cream"
+            } ${mobileOpen ? "opacity-0" : ""}`}
           />
           <span
-            className={`block w-6 h-0.5 bg-cream transition-all duration-300 ${
-              mobileOpen ? "-rotate-45 -translate-y-2" : ""
-            }`}
+            className={`block w-6 h-0.5 transition-all duration-300 ${
+              scrolled ? "bg-brown" : "bg-cream"
+            } ${mobileOpen ? "-rotate-45 -translate-y-2" : ""}`}
           />
         </button>
       </nav>
@@ -92,14 +100,14 @@ export default function Navbar() {
           mobileOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
         }`}
       >
-        <div className="bg-navy/98 backdrop-blur-lg border-t border-amber/10 px-6 py-8">
+        <div className="bg-cream/98 backdrop-blur-lg border-t border-brown/10 px-6 py-8">
           <ul className="flex flex-col gap-6">
             {navLinks.map((link) => (
               <li key={link.href}>
                 <a
                   href={link.href}
                   onClick={handleLinkClick}
-                  className="text-lg text-cream/80 hover:text-amber transition-colors duration-300 tracking-wide"
+                  className="text-lg text-brown/70 hover:text-terracotta transition-colors duration-300 tracking-wide"
                 >
                   {link.label}
                 </a>
@@ -109,7 +117,7 @@ export default function Navbar() {
               <Link
                 href="/booking"
                 onClick={handleLinkClick}
-                className="inline-block text-lg px-8 py-3 bg-amber text-navy font-semibold rounded-full hover:bg-amber-light transition-all duration-300"
+                className="inline-block text-lg px-8 py-3 bg-marigold text-brown font-semibold rounded-full hover:bg-marigold-light transition-all duration-300"
               >
                 Book Now
               </Link>

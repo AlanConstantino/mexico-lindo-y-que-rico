@@ -1,23 +1,24 @@
 @import "tailwindcss";
 
 @theme {
-  --color-navy: #1B1F2A;
-  --color-navy-light: #252A38;
-  --color-navy-dark: #12151D;
-  --color-amber: #D4A24E;
-  --color-amber-light: #E0B86B;
-  --color-amber-dark: #B8893A;
-  --color-terracotta: #B85C3A;
-  --color-terracotta-light: #D06E4A;
-  --color-terracotta-dark: #9A4D30;
-  --color-cream: #F5F0E8;
-  --color-cream-dark: #E8E0D4;
-  --color-teal: #2A6B5E;
-  --color-teal-light: #358573;
-  --color-teal-dark: #1F5248;
+  --color-cream: #FDF6EC;
+  --color-cream-dark: #F5EBDA;
+  --color-cream-warm: #FAF0E0;
+  --color-terracotta: #C45A3C;
+  --color-terracotta-light: #D46E52;
+  --color-terracotta-dark: #A64B30;
+  --color-brown: #3B2A1E;
+  --color-brown-light: #5C4333;
+  --color-brown-dark: #2A1D14;
+  --color-sage: #7A8B6F;
+  --color-sage-light: #8FA382;
+  --color-sage-dark: #65745B;
+  --color-marigold: #E8A935;
+  --color-marigold-light: #F0BD55;
+  --color-marigold-dark: #C8912A;
 
-  --font-heading: "Supermercado One", cursive;
-  --font-body: "Inter", sans-serif;
+  --font-heading: "Lora", serif;
+  --font-body: "DM Sans", sans-serif;
 }
 
 /* ─── Base ─── */
@@ -27,16 +28,16 @@ html {
 
 body {
   font-family: var(--font-body);
-  background-color: var(--color-navy);
-  color: var(--color-cream);
+  background-color: var(--color-cream);
+  color: var(--color-brown);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
 
 ::selection {
-  background-color: var(--color-amber);
-  color: var(--color-navy);
+  background-color: var(--color-marigold);
+  color: var(--color-brown);
 }
 
 /* ─── Custom scrollbar ─── */
@@ -44,20 +45,20 @@ body {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--color-navy-dark);
+  background: var(--color-cream-dark);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-amber-dark);
+  background: var(--color-terracotta);
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-amber);
+  background: var(--color-terracotta-light);
 }
 
 /* ─── Scroll-triggered animations ─── */
 .reveal {
   opacity: 0;
-  transform: translateY(40px);
+  transform: translateY(30px);
   transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
               transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -69,7 +70,7 @@ body {
 
 .reveal-left {
   opacity: 0;
-  transform: translateX(-60px);
+  transform: translateX(-40px);
   transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
               transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -81,7 +82,7 @@ body {
 
 .reveal-right {
   opacity: 0;
-  transform: translateX(60px);
+  transform: translateX(40px);
   transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
               transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -93,7 +94,7 @@ body {
 
 .reveal-scale {
   opacity: 0;
-  transform: scale(0.9);
+  transform: scale(0.95);
   transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
               transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -106,12 +107,12 @@ body {
 /* Stagger children */
 .stagger-children > .reveal:nth-child(1) { transition-delay: 0s; }
 .stagger-children > .reveal:nth-child(2) { transition-delay: 0.1s; }
-.stagger-children > .reveal:nth-child(3) { transition-delay: 0.2s; }
-.stagger-children > .reveal:nth-child(4) { transition-delay: 0.3s; }
-.stagger-children > .reveal:nth-child(5) { transition-delay: 0.4s; }
-.stagger-children > .reveal:nth-child(6) { transition-delay: 0.5s; }
-.stagger-children > .reveal:nth-child(7) { transition-delay: 0.6s; }
-.stagger-children > .reveal:nth-child(8) { transition-delay: 0.7s; }
+.stagger-children > .reveal:nth-child(3) { transition-delay: 0.15s; }
+.stagger-children > .reveal:nth-child(4) { transition-delay: 0.2s; }
+.stagger-children > .reveal:nth-child(5) { transition-delay: 0.25s; }
+.stagger-children > .reveal:nth-child(6) { transition-delay: 0.3s; }
+.stagger-children > .reveal:nth-child(7) { transition-delay: 0.35s; }
+.stagger-children > .reveal:nth-child(8) { transition-delay: 0.4s; }
 
 /* ─── Parallax ─── */
 .parallax-slow {
@@ -129,14 +130,14 @@ body {
   content: "";
   flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--color-amber), transparent);
+  background: linear-gradient(90deg, transparent, var(--color-terracotta), transparent);
 }
 
 /* ─── Keyframes ─── */
 @keyframes fade-in-up {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(24px);
   }
   to {
     opacity: 1;
@@ -156,7 +157,7 @@ body {
 
 @keyframes float {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  50% { transform: translateY(-8px); }
 }
 
 .animate-fade-in-up {
