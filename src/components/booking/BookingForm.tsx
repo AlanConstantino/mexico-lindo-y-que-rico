@@ -73,7 +73,11 @@ export default function BookingForm() {
           data.customerEmail.trim() !== "" &&
           /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.customerEmail) &&
           data.customerPhone.trim() !== "" &&
-          data.eventAddress.trim() !== ""
+          data.eventAddress.trim() !== "" &&
+          /\d/.test(data.eventAddress) &&
+          data.eventAddress.includes(",") &&
+          /\d{5}/.test(data.eventAddress) &&
+          data.eventAddress.trim().length >= 10
         );
       case 6:
         return true;

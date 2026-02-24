@@ -207,6 +207,8 @@
     "eventAddress": "Dirección del Evento",
     "addressPlaceholder": "123 Calle Principal, Los Ángeles, CA 90001",
     "addressNote": "¿A dónde debe llegar nuestro equipo para la preparación?",
+    "invalidAddress": "Incluya número, ciudad y código postal (ej. 123 Calle Principal, Los Ángeles, CA 90001)",
+    "validAddress": "¡La dirección se ve bien!",
     "required": "Requerido",
     "invalidEmail": "Ingrese un correo válido",
     "reviewOrder": "Revisar y Pagar",

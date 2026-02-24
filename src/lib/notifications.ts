@@ -97,7 +97,7 @@ export async function sendBookingNotification(
   try {
     // Send email to owner
     await resend.emails.send({
-      from: "México Lindo Y Que Rico <onboarding@resend.dev>",
+      from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: "constantinoalan98@gmail.com",
       subject: `New Booking — ${booking.customerName} — ${formattedDate}`,
       text: textMessage,
@@ -244,7 +244,7 @@ export async function sendCustomerConfirmation(
 
   try {
     await resend.emails.send({
-      from: "México Lindo Y Que Rico <onboarding@resend.dev>",
+      from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: booking.customerEmail,
       subject: `Booking Confirmed — ${formattedDate} 🌮`,
       text: textMessage,

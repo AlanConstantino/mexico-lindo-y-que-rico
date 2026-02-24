@@ -207,6 +207,8 @@
     "eventAddress": "Event Address",
     "addressPlaceholder": "123 Main St, Los Angeles, CA 90001",
     "addressNote": "Where should our team arrive for setup?",
+    "invalidAddress": "Please include a street number, city, and zip code (e.g. 123 Main St, Los Angeles, CA 90001)",
+    "validAddress": "Address looks good!",
     "required": "Required",
     "invalidEmail": "Please enter a valid email",
     "reviewOrder": "Review & Pay",
