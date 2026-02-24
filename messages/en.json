@@ -231,6 +231,74 @@
     "tryAgain": "Try Again",
     "errorGeneric": "Something went wrong. Please try again."
   },
+  "admin": {
+    "loading": "Loading...",
+    "nav": {
+      "title": "Admin Panel",
+      "dashboard": "Dashboard",
+      "settings": "Settings",
+      "backToSite": "Back to Site",
+      "logout": "Logout"
+    },
+    "login": {
+      "title": "Admin Access",
+      "subtitle": "Enter your password to continue",
+      "password": "Password",
+      "submit": "Sign In",
+      "loggingIn": "Signing in...",
+      "error": "Invalid password. Please try again."
+    },
+    "stats": {
+      "totalBookings": "Total Bookings",
+      "upcoming": "Upcoming Events",
+      "revenue": "Total Revenue"
+    },
+    "filters": {
+      "all": "All Statuses",
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "cancelled": "Cancelled",
+      "from": "From date",
+      "to": "To date",
+      "apply": "Apply",
+      "csv": "Export CSV"
+    },
+    "table": {
+      "date": "Date",
+      "customer": "Customer",
+      "contact": "Contact",
+      "guests": "Guests",
+      "service": "Service",
+      "total": "Total",
+      "payment": "Payment",
+      "status": "Status",
+      "meats": "Meats",
+      "extras": "Extras"
+    },
+    "dashboard": {
+      "noBookings": "No bookings found",
+      "noExtras": "None"
+    },
+    "actions": {
+      "confirm": "Mark Confirmed",
+      "cancel": "Mark Cancelled",
+      "pending": "Mark Pending"
+    },
+    "settings": {
+      "title": "Settings",
+      "maxEvents": "Max Events Per Day",
+      "maxEventsHint": "Maximum number of bookings allowed per day",
+      "minNotice": "Minimum Notice (Days)",
+      "minNoticeHint": "Minimum number of days before an event can be booked",
+      "email": "Notification Email",
+      "phone": "Notification Phone",
+      "save": "Save Settings",
+      "saving": "Saving...",
+      "saved": "Settings saved successfully!",
+      "fetchError": "Failed to load settings",
+      "saveError": "Failed to save settings"
+    }
+  },
   "metadata": {
     "home": {
       "title": "México Lindo Y Que Rico | Taco Catering in Los Angeles",

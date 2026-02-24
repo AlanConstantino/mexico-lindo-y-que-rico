@@ -231,6 +231,74 @@
     "tryAgain": "Intentar de Nuevo",
     "errorGeneric": "Algo salió mal. Por favor intente de nuevo."
   },
+  "admin": {
+    "loading": "Cargando...",
+    "nav": {
+      "title": "Panel de Admin",
+      "dashboard": "Panel",
+      "settings": "Configuración",
+      "backToSite": "Volver al Sitio",
+      "logout": "Cerrar Sesión"
+    },
+    "login": {
+      "title": "Acceso Admin",
+      "subtitle": "Ingrese su contraseña para continuar",
+      "password": "Contraseña",
+      "submit": "Iniciar Sesión",
+      "loggingIn": "Iniciando sesión...",
+      "error": "Contraseña incorrecta. Intente de nuevo."
+    },
+    "stats": {
+      "totalBookings": "Total de Reservas",
+      "upcoming": "Próximos Eventos",
+      "revenue": "Ingresos Totales"
+    },
+    "filters": {
+      "all": "Todos los Estados",
+      "pending": "Pendiente",
+      "confirmed": "Confirmado",
+      "cancelled": "Cancelado",
+      "from": "Desde",
+      "to": "Hasta",
+      "apply": "Aplicar",
+      "csv": "Exportar CSV"
+    },
+    "table": {
+      "date": "Fecha",
+      "customer": "Cliente",
+      "contact": "Contacto",
+      "guests": "Invitados",
+      "service": "Servicio",
+      "total": "Total",
+      "payment": "Pago",
+      "status": "Estado",
+      "meats": "Carnes",
+      "extras": "Extras"
+    },
+    "dashboard": {
+      "noBookings": "No se encontraron reservas",
+      "noExtras": "Ninguno"
+    },
+    "actions": {
+      "confirm": "Confirmar",
+      "cancel": "Cancelar",
+      "pending": "Marcar Pendiente"
+    },
+    "settings": {
+      "title": "Configuración",
+      "maxEvents": "Máx. Eventos por Día",
+      "maxEventsHint": "Número máximo de reservas permitidas por día",
+      "minNotice": "Anticipación Mínima (Días)",
+      "minNoticeHint": "Número mínimo de días antes de que se pueda reservar un evento",
+      "email": "Correo de Notificación",
+      "phone": "Teléfono de Notificación",
+      "save": "Guardar Configuración",
+      "saving": "Guardando...",
+      "saved": "¡Configuración guardada exitosamente!",
+      "fetchError": "Error al cargar la configuración",
+      "saveError": "Error al guardar la configuración"
+    }
+  },
   "metadata": {
     "home": {
       "title": "México Lindo Y Que Rico | Taquizas en Los Ángeles",
