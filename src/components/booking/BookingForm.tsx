@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import type { ServiceType, MeatId, ExtraId } from "@/lib/pricing";
 import { calculateTotal, getBasePrice, getExtrasTotal } from "@/lib/pricing";
 import DateStep from "./steps/DateStep";
@@ -35,6 +35,7 @@ const STEP_LABELS = [
 
 export default function BookingForm() {
   const t = useTranslations("booking");
+  const locale = useLocale();
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -118,6 +119,7 @@ export default function BookingForm() {
           customerEmail: data.customerEmail,
           customerPhone: data.customerPhone,
           totalPrice,
+          locale,
         }),
       });
 

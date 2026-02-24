@@ -251,7 +251,18 @@
     "stats": {
       "totalBookings": "Total de Reservas",
       "upcoming": "Próximos Eventos",
-      "revenue": "Ingresos Totales"
+      "revenue": "Ingresos Totales",
+      "avgBooking": "Valor Promedio",
+      "changeRevenue": "+8% del mes anterior",
+      "changeBookings": "+12% del mes anterior",
+      "changeUpcoming": "+3 nuevos esta semana",
+      "changeAvg": "+5% del mes anterior"
+    },
+    "charts": {
+      "revenue": "Resumen de Ingresos",
+      "bookings": "Reservas en el Tiempo",
+      "popularMeats": "Carnes Populares",
+      "guestDistribution": "Distribución por Servicio"
     },
     "filters": {
       "all": "Todos los Estados",
@@ -277,7 +288,11 @@
     },
     "dashboard": {
       "noBookings": "No se encontraron reservas",
-      "noExtras": "Ninguno"
+      "noExtras": "Ninguno",
+      "upcomingEvents": "Próximos Eventos",
+      "noUpcoming": "Sin próximos eventos",
+      "bookingsTable": "Todas las Reservas",
+      "searchPlaceholder": "Buscar por nombre..."
     },
     "actions": {
       "confirm": "Confirmar",

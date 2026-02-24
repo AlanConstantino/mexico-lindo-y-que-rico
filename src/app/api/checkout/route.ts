@@ -24,6 +24,7 @@ interface CheckoutBody {
   customerEmail: string;
   customerPhone: string;
   totalPrice: number;
+  locale?: string;
 }
 
 // Extra display names for Stripe line items
@@ -53,6 +54,7 @@ export async function POST(request: NextRequest) {
       customerName,
       customerEmail,
       customerPhone,
+      locale = "en",
     } = body;
 
     // Validate required fields
@@ -118,8 +120,8 @@ export async function POST(request: NextRequest) {
       payment_method_types: ["card"],
       line_items: lineItems,
       mode: "payment",
-      success_url: `${origin}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/booking/cancel`,
+      success_url: `${origin}/${locale}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/${locale}/booking/cancel`,
       customer_email: customerEmail,
       metadata: {
         eventDate,

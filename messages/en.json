@@ -251,7 +251,18 @@
     "stats": {
       "totalBookings": "Total Bookings",
       "upcoming": "Upcoming Events",
-      "revenue": "Total Revenue"
+      "revenue": "Total Revenue",
+      "avgBooking": "Avg. Booking Value",
+      "changeRevenue": "+8% from last month",
+      "changeBookings": "+12% from last month",
+      "changeUpcoming": "+3 new this week",
+      "changeAvg": "+5% from last month"
+    },
+    "charts": {
+      "revenue": "Revenue Overview",
+      "bookings": "Bookings Over Time",
+      "popularMeats": "Popular Meats",
+      "guestDistribution": "Service Type Distribution"
     },
     "filters": {
       "all": "All Statuses",
@@ -277,7 +288,11 @@
     },
     "dashboard": {
       "noBookings": "No bookings found",
-      "noExtras": "None"
+      "noExtras": "None",
+      "upcomingEvents": "Upcoming Events",
+      "noUpcoming": "No upcoming events",
+      "bookingsTable": "All Bookings",
+      "searchPlaceholder": "Search by name..."
     },
     "actions": {
       "confirm": "Mark Confirmed",
