@@ -26,7 +26,7 @@
     "p3": "Desde reuniones íntimas en el patio hasta grandes celebraciones de más de 200 invitados, nos encargamos de todo — montaje, servicio y limpieza — para que usted disfrute cada momento.",
     "floatingCard": "Años de Sabor",
     "statYears": "Años",
-    "statProteins": "Proteínas",
+    "statProteins": "Carnes",
     "statGuests": "Máx. Invitados"
   },
   "menu": {
@@ -190,7 +190,7 @@
     "upTo": "Hasta",
     "guests": "invitados",
     "selectMeats": "Elija Sus Carnes",
-    "selectMeatsDesc": "Seleccione exactamente 4 proteínas para su evento. Cada una se prepara fresca en el lugar.",
+    "selectMeatsDesc": "Seleccione 4 carnes para su evento — ¡puede elegir la misma más de una vez! Cada una se prepara fresca en el lugar.",
     "meatsCount": "{count} de 4 seleccionadas",
     "selectExtras": "Agregar Extras",
     "selectExtrasDesc": "Complementos opcionales para su taquiza. Cada uno rinde para 40–50 personas salvo que se indique.",

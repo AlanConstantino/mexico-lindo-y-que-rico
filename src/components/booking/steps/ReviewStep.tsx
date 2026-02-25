@@ -67,9 +67,9 @@ export default function ReviewStep({
             {t("meats")}
           </div>
           <div className="flex flex-wrap gap-2">
-            {data.meats.map((id) => (
+            {data.meats.map((id, idx) => (
               <span
-                key={id}
+                key={`${id}-${idx}`}
                 className="px-3 py-1 rounded-full bg-amber/10 text-amber text-xs font-medium border border-amber/20"
               >
                 {tMenu(`${id}.name`)}
