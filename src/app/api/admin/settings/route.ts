@@ -28,6 +28,7 @@ export async function GET(request: NextRequest) {
         settings: {
           max_events_per_day: 3,
           min_notice_days: 3,
+          reminder_days: 5,
           notification_email: "constantinoalan98@gmail.com",
           notification_phone: "562-688-7250",
         },
@@ -50,6 +51,7 @@ export async function PUT(request: NextRequest) {
     const {
       max_events_per_day,
       min_notice_days,
+      reminder_days,
       notification_email,
       notification_phone,
     } = body;
@@ -67,6 +69,7 @@ export async function PUT(request: NextRequest) {
         .update({
           max_events_per_day,
           min_notice_days,
+          reminder_days,
           notification_email,
           notification_phone,
         })
@@ -79,6 +82,7 @@ export async function PUT(request: NextRequest) {
         .insert({
           max_events_per_day,
           min_notice_days,
+          reminder_days,
           notification_email,
           notification_phone,
         })

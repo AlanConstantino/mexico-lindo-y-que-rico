@@ -318,6 +318,8 @@
       "maxEventsHint": "Número máximo de reservas permitidas por día",
       "minNotice": "Anticipación Mínima (Días)",
       "minNoticeHint": "Número mínimo de días antes de que se pueda reservar un evento",
+      "reminderDays": "Recordatorio del Evento (Días Antes)",
+      "reminderDaysHint": "Enviar un correo recordatorio al cliente y a ti estos días antes del evento",
       "email": "Correo de Notificación",
       "phone": "Teléfono de Notificación",
       "save": "Guardar Configuración",

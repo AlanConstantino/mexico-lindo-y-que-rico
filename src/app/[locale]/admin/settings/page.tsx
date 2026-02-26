@@ -7,6 +7,7 @@ import AdminNav from "@/components/admin/AdminNav";
 interface Settings {
   max_events_per_day: number;
   min_notice_days: number;
+  reminder_days: number;
   notification_email: string;
   notification_phone: string;
 }
@@ -32,6 +33,7 @@ export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<Settings>({
     max_events_per_day: 3,
     min_notice_days: 3,
+    reminder_days: 5,
     notification_email: "",
     notification_phone: "",
   });
@@ -179,6 +181,28 @@ export default function AdminSettingsPage() {
               />
               <p className="text-xs text-cream/40 mt-1">
                 {t("settings.minNoticeHint")}
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm text-cream/70 mb-1.5">
+                {t("settings.reminderDays")}
+              </label>
+              <input
+                type="number"
+                min={1}
+                max={30}
+                value={settings.reminder_days}
+                onChange={(e) =>
+                  setSettings({
+                    ...settings,
+                    reminder_days: parseInt(e.target.value) || 5,
+                  })
+                }
+                className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors"
+              />
+              <p className="text-xs text-cream/40 mt-1">
+                {t("settings.reminderDaysHint")}
               </p>
             </div>
 

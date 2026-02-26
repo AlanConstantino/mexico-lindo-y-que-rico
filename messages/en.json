@@ -318,6 +318,8 @@
       "maxEventsHint": "Maximum number of bookings allowed per day",
       "minNotice": "Minimum Notice (Days)",
       "minNoticeHint": "Minimum number of days before an event can be booked",
+      "reminderDays": "Event Reminder (Days Before)",
+      "reminderDaysHint": "Send a reminder email to you and the customer this many days before the event",
       "email": "Notification Email",
       "phone": "Notification Phone",
       "save": "Save Settings",
