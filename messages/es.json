@@ -116,7 +116,14 @@
       "guacamole": "Guacamole Fresco con Totopos",
       "salsa": "Salsa Fresca con Totopos",
       "agua": "Agua Fresca",
-      "aguaNote": "Horchata, Jamaica, Limón, Piña, Tamarindo, Melón",
+      "aguaNote": "Horchata, Jamaica, Limón, Piña, Tamarindo",
+      "aguaFlavors": {
+        "horchata": "Horchata",
+        "jamaica": "Jamaica",
+        "tamarindo": "Tamarindo",
+        "limon": "Limón",
+        "pina": "Piña"
+      },
       "salad": "Ensalada",
       "burgers": "Hamburguesas con Queso",
       "hotdogs": "Hot Dogs"
@@ -195,6 +202,7 @@
     "selectExtras": "Agregar Extras",
     "selectExtrasDesc": "Complementos opcionales para su taquiza. Cada uno rinde para 40–50 personas salvo que se indique.",
     "servesNote": "Rinde 40–50",
+    "chooseFlavors": "Elige tus sabores",
     "perItem": "por unidad",
     "customerInfo": "Su Información",
     "customerInfoDesc": "Usaremos estos datos para confirmar su reserva.",

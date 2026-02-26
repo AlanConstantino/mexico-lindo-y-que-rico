@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import type { ServiceType, MeatId, ExtraId } from "@/lib/pricing";
+import type { ServiceType, MeatId, ExtraId, AguaFlavor } from "@/lib/pricing";
 import { calculateTotal, getBasePrice, getExtrasTotal } from "@/lib/pricing";
 import DateStep from "./steps/DateStep";
 import PackageStep from "./steps/PackageStep";
@@ -17,6 +17,7 @@ export interface BookingData {
   guestCount: number | null;
   meats: MeatId[];
   extras: Partial<Record<ExtraId, number>>;
+  aguaFlavors: AguaFlavor[];
   customerName: string;
   customerEmail: string;
   customerPhone: string;
@@ -47,6 +48,7 @@ export default function BookingForm() {
     guestCount: null,
     meats: [],
     extras: {},
+    aguaFlavors: [],
     customerName: "",
     customerEmail: "",
     customerPhone: "",
@@ -65,8 +67,12 @@ export default function BookingForm() {
         return data.serviceType !== null && data.guestCount !== null;
       case 3:
         return data.meats.length === 4;
-      case 4:
-        return true; // extras are optional
+      case 4: {
+        // If agua is selected, at least one flavor must be chosen
+        const aguaQty = data.extras.agua || 0;
+        if (aguaQty > 0 && data.aguaFlavors.length === 0) return false;
+        return true;
+      }
       case 5:
         return (
           data.customerName.trim() !== "" &&
@@ -122,6 +128,7 @@ export default function BookingForm() {
           guestCount: data.guestCount,
           meats: data.meats,
           extras: data.extras,
+          aguaFlavors: data.aguaFlavors,
           customerName: data.customerName,
           customerEmail: data.customerEmail,
           customerPhone: data.customerPhone,

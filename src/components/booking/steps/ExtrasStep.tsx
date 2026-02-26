@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import type { BookingData } from "../BookingForm";
-import { EXTRA_OPTIONS, type ExtraId } from "@/lib/pricing";
+import { EXTRA_OPTIONS, AGUA_FLAVORS, type ExtraId, type AguaFlavor } from "@/lib/pricing";
 
 interface ExtrasStepProps {
   data: BookingData;
@@ -22,7 +22,20 @@ export default function ExtrasStep({ data, updateData }: ExtrasStepProps) {
     } else {
       newExtras[id] = newVal;
     }
-    updateData({ extras: newExtras });
+    // Clear agua flavors when agua is removed
+    if (id === "agua" && newVal === 0) {
+      updateData({ extras: newExtras, aguaFlavors: [] });
+    } else {
+      updateData({ extras: newExtras });
+    }
+  };
+
+  const toggleFlavor = (flavor: AguaFlavor) => {
+    const current = data.aguaFlavors;
+    const updated = current.includes(flavor)
+      ? current.filter((f) => f !== flavor)
+      : [...current, flavor];
+    updateData({ aguaFlavors: updated });
   };
 
   return (
@@ -36,15 +49,16 @@ export default function ExtrasStep({ data, updateData }: ExtrasStepProps) {
         {EXTRA_OPTIONS.map((extra) => {
           const qty = data.extras[extra.id] || 0;
           const hasQty = qty > 0;
+          const isAgua = extra.id === "agua";
 
           return (
+            <div key={extra.id} className="space-y-0">
             <div
-              key={extra.id}
               className={`flex items-center justify-between p-4 rounded-xl border transition-all duration-300 ${
                 hasQty
                   ? "border-amber/20 bg-amber/5"
                   : "border-cream/10 bg-navy-light/30"
-              }`}
+              } ${isAgua && hasQty ? "rounded-b-none border-b-0" : ""}`}
             >
               <div className="flex-1 min-w-0">
                 <div
@@ -110,6 +124,32 @@ export default function ExtrasStep({ data, updateData }: ExtrasStepProps) {
                   ${(qty * extra.price).toLocaleString()}
                 </div>
               )}
+            </div>
+
+            {/* Agua flavor picker */}
+            {isAgua && hasQty && (
+              <div className="px-4 pb-4 pt-3 rounded-b-xl border border-t-0 border-amber/20 bg-amber/5">
+                <p className="text-cream/50 text-xs mb-2.5">{t("chooseFlavors")}</p>
+                <div className="flex flex-wrap gap-2">
+                  {AGUA_FLAVORS.map((flavor) => {
+                    const isSelected = data.aguaFlavors.includes(flavor);
+                    return (
+                      <button
+                        key={flavor}
+                        onClick={() => toggleFlavor(flavor)}
+                        className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all duration-200 ${
+                          isSelected
+                            ? "border-amber/40 bg-amber/15 text-amber"
+                            : "border-cream/10 bg-navy-light/30 text-cream/50 hover:border-cream/20 hover:text-cream/70"
+                        }`}
+                      >
+                        {tExtras(`aguaFlavors.${flavor}`)}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
             </div>
           );
         })}
