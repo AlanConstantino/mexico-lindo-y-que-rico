@@ -20,6 +20,7 @@ interface CheckoutBody {
   guestCount: number;
   meats: MeatId[];
   extras: Partial<Record<ExtraId, number>>;
+  aguaFlavors?: string[];
   customerName: string;
   customerEmail: string;
   customerPhone: string;
@@ -56,6 +57,7 @@ export async function POST(request: NextRequest) {
       customerEmail,
       customerPhone,
       eventAddress,
+      aguaFlavors = [],
       locale = "en",
     } = body;
 
@@ -101,12 +103,17 @@ export async function POST(request: NextRequest) {
     for (const extra of EXTRA_OPTIONS) {
       const qty = extras[extra.id] || 0;
       if (qty > 0) {
+        const productData: Stripe.Checkout.SessionCreateParams.LineItem.PriceData.ProductData = {
+          name: EXTRA_NAMES[extra.id],
+        };
+        // Add flavor info to Agua Fresca line item
+        if (extra.id === "agua" && aguaFlavors.length > 0) {
+          productData.description = `Flavors: ${aguaFlavors.join(", ")}`;
+        }
         lineItems.push({
           price_data: {
             currency: "usd",
-            product_data: {
-              name: EXTRA_NAMES[extra.id],
-            },
+            product_data: productData,
             unit_amount: extra.price * 100,
           },
           quantity: qty,
@@ -134,6 +141,7 @@ export async function POST(request: NextRequest) {
         customerName,
         customerPhone,
         eventAddress,
+        ...(aguaFlavors.length > 0 && { aguaFlavors: JSON.stringify(aguaFlavors) }),
       },
     });
 
@@ -147,7 +155,11 @@ export async function POST(request: NextRequest) {
         meats: meats,
         extras: Object.entries(extras)
           .filter(([, qty]) => (qty || 0) > 0)
-          .map(([id, qty]) => ({ id, quantity: qty })),
+          .map(([id, qty]) => ({
+            id,
+            quantity: qty,
+            ...(id === "agua" && aguaFlavors.length > 0 && { flavors: aguaFlavors }),
+          })),
         customer_name: customerName,
         customer_email: customerEmail,
         customer_phone: customerPhone,

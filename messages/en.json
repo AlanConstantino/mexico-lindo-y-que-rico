@@ -116,7 +116,14 @@
       "guacamole": "Fresh Guacamole & Chips",
       "salsa": "Fresh Salsa & Chips",
       "agua": "Agua Fresca",
-      "aguaNote": "Horchata, Jamaica, Lemon, Pineapple, Tamarindo, Melon",
+      "aguaNote": "Horchata, Jamaica, Limón, Piña, Tamarindo",
+      "aguaFlavors": {
+        "horchata": "Horchata",
+        "jamaica": "Jamaica",
+        "tamarindo": "Tamarindo",
+        "limon": "Limón",
+        "pina": "Piña"
+      },
       "salad": "Salad",
       "burgers": "Cheeseburgers",
       "hotdogs": "Hot Dogs"
@@ -195,6 +202,7 @@
     "selectExtras": "Add Extras",
     "selectExtrasDesc": "Optional add-ons to complement your taco spread. Each serves 40–50 people unless noted.",
     "servesNote": "Serves 40–50",
+    "chooseFlavors": "Choose your flavors",
     "perItem": "per item",
     "customerInfo": "Your Information",
     "customerInfoDesc": "We'll use this to confirm your booking details.",

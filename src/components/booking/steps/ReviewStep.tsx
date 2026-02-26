@@ -88,19 +88,30 @@ export default function ReviewStep({
               {activeExtras.map((extra) => {
                 const qty = data.extras[extra.id] || 0;
                 return (
-                  <div
-                    key={extra.id}
-                    className="flex justify-between text-sm"
-                  >
-                    <span className="text-cream/70">
-                      {tExtras(extra.id)}{" "}
-                      <span className="text-cream/30">
-                        {t("qty", { count: qty })}
+                  <div key={extra.id}>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-cream/70">
+                        {tExtras(extra.id)}{" "}
+                        <span className="text-cream/30">
+                          {t("qty", { count: qty })}
+                        </span>
                       </span>
-                    </span>
-                    <span className="text-cream/50">
-                      ${(qty * extra.price).toLocaleString()}
-                    </span>
+                      <span className="text-cream/50">
+                        ${(qty * extra.price).toLocaleString()}
+                      </span>
+                    </div>
+                    {extra.id === "agua" && data.aguaFlavors.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 mt-1.5 ml-1">
+                        {data.aguaFlavors.map((flavor) => (
+                          <span
+                            key={flavor}
+                            className="px-2 py-0.5 rounded-full bg-amber/10 text-amber/70 text-[10px] font-medium border border-amber/15"
+                          >
+                            {tExtras(`aguaFlavors.${flavor}`)}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 );
               })}

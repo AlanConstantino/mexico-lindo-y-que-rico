@@ -10,6 +10,21 @@ export type MeatId =
   | "veggies"
   | "alambres";
 
+export type AguaFlavor =
+  | "horchata"
+  | "jamaica"
+  | "tamarindo"
+  | "limon"
+  | "pina";
+
+export const AGUA_FLAVORS: AguaFlavor[] = [
+  "horchata",
+  "jamaica",
+  "tamarindo",
+  "limon",
+  "pina",
+];
+
 export type ExtraId =
   | "rice"
   | "beans"
