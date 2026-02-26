@@ -53,8 +53,8 @@ export default function ExtrasStep({ data, updateData }: ExtrasStepProps) {
 
           return (
             <div key={extra.id} className="space-y-0">
-            <div
-              className={`flex items-center justify-between p-4 rounded-xl border transition-all duration-300 ${
+              <div
+                className={`flex items-center justify-between p-4 rounded-xl border transition-all duration-300 ${
                 hasQty
                   ? "border-amber/20 bg-amber/5"
                   : "border-cream/10 bg-navy-light/30"
