@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import type { ServiceType, MeatId, ExtraId, AguaFlavorQuantities } from "@/lib/pricing";
 import { calculateTotal, getBasePrice, getExtrasTotal, calculateSurcharge, calculateDeposit } from "@/lib/pricing";
@@ -39,7 +40,12 @@ const STEP_LABELS = [
 export default function BookingForm() {
   const t = useTranslations("booking");
   const locale = useLocale();
-  const [step, setStep] = useState(1);
+  const searchParams = useSearchParams();
+  const preselectedService = searchParams.get("service") as ServiceType | null;
+  const preselectedGuests = searchParams.get("guests");
+  const hasPreselection = preselectedService && preselectedGuests;
+
+  const [step, setStep] = useState(hasPreselection ? 1 : 1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [paymentSettings, setPaymentSettings] = useState({
@@ -56,8 +62,8 @@ export default function BookingForm() {
 
   const [data, setData] = useState<BookingData>({
     eventDate: null,
-    serviceType: null,
-    guestCount: null,
+    serviceType: hasPreselection ? preselectedService : null,
+    guestCount: hasPreselection ? parseInt(preselectedGuests, 10) : null,
     meats: [],
     extras: {},
     aguaFlavors: {},

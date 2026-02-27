@@ -28,6 +28,7 @@ function PricingCard({
   guests,
   price,
   featured,
+  serviceType,
   upToLabel,
   guestsLabel,
   popularLabel,
@@ -36,6 +37,7 @@ function PricingCard({
   guests: number;
   price: string;
   featured?: boolean;
+  serviceType: "2hr" | "3hr";
   upToLabel: string;
   guestsLabel: string;
   popularLabel: string;
@@ -72,7 +74,7 @@ function PricingCard({
         <p className="text-xl sm:text-3xl font-bold text-cream mb-4 sm:mb-8">{price}</p>
 
         <Link
-          href="/booking"
+          href={`/booking?service=${serviceType}&guests=${guests}`}
           className={`block w-full py-2 sm:py-3 rounded-full font-medium text-xs sm:text-sm tracking-wide transition-all duration-500 hover:scale-105 active:scale-95 ${
             featured
               ? "bg-amber text-navy hover:bg-amber-light hover:shadow-lg hover:shadow-amber/20"
@@ -124,6 +126,7 @@ export default function Packages() {
                 guests={pkg.guests}
                 price={pkg.price}
                 featured={i === 1}
+                serviceType="2hr"
                 upToLabel={t("upTo")}
                 guestsLabel={t("guests")}
                 popularLabel={t("popular")}
@@ -150,6 +153,7 @@ export default function Packages() {
                 guests={pkg.guests}
                 price={pkg.price}
                 featured={i === 2}
+                serviceType="3hr"
                 upToLabel={t("upTo")}
                 guestsLabel={t("guests")}
                 popularLabel={t("popular")}
