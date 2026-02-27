@@ -147,6 +147,7 @@ export default function AdminSettingsPage() {
         {loading ? (
           <div className="text-center py-12 text-cream/50">{t("loading")}</div>
         ) : (
+          <>
           <form onSubmit={handleSave} className="space-y-5">
             <div>
               <label className="block text-sm text-cream/70 mb-1.5">
@@ -309,8 +310,79 @@ export default function AdminSettingsPage() {
               {saving ? t("settings.saving") : t("settings.save")}
             </button>
           </form>
+
+          {/* Test Emails Section */}
+          <div className="mt-10 pt-8 border-t border-cream/10">
+            <h2 className="font-heading text-amber text-xl mb-4">
+              {t("settings.testEmails")}
+            </h2>
+            <p className="text-cream/40 text-sm mb-6">
+              {t("settings.testEmailsHint")}
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {[
+                { key: "owner_booking", label: t("settings.testOwnerBooking") },
+                { key: "customer_confirmation", label: t("settings.testCustomerConfirmation") },
+                { key: "customer_reminder", label: t("settings.testCustomerReminder") },
+                { key: "owner_reminder", label: t("settings.testOwnerReminder") },
+                { key: "day_before", label: t("settings.testDayBefore") },
+              ].map((email) => (
+                <TestEmailButton
+                  key={email.key}
+                  emailType={email.key}
+                  label={email.label}
+                />
+              ))}
+            </div>
+          </div>
+          </>
         )}
       </div>
     </div>
+  );
+}
+
+function TestEmailButton({ emailType, label }: { emailType: string; label: string }) {
+  const [sending, setSending] = useState(false);
+  const [result, setResult] = useState<"success" | "error" | null>(null);
+
+  const handleSend = async () => {
+    const token = typeof window !== "undefined" ? sessionStorage.getItem("admin_token") : null;
+    if (!token) return;
+
+    setSending(true);
+    setResult(null);
+    try {
+      const res = await fetch("/api/admin/test-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ emailType }),
+      });
+      setResult(res.ok ? "success" : "error");
+    } catch {
+      setResult("error");
+    } finally {
+      setSending(false);
+      setTimeout(() => setResult(null), 3000);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleSend}
+      disabled={sending}
+      className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 disabled:opacity-50 border ${
+        result === "success"
+          ? "bg-green-500/10 border-green-500/30 text-green-400"
+          : result === "error"
+            ? "bg-red-500/10 border-red-500/30 text-red-400"
+            : "bg-navy-light border-cream/10 text-cream/70 hover:border-amber/30 hover:text-amber"
+      }`}
+    >
+      {sending ? "Sending..." : result === "success" ? "✓ Sent!" : result === "error" ? "✗ Failed" : label}
+    </button>
   );
 }
