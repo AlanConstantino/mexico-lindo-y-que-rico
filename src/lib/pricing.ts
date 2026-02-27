@@ -25,6 +25,8 @@ export const AGUA_FLAVORS: AguaFlavor[] = [
   "pina",
 ];
 
+export type AguaFlavorQuantities = Partial<Record<AguaFlavor, number>>;
+
 export type ExtraId =
   | "rice"
   | "beans"

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import type { ServiceType, MeatId, ExtraId, AguaFlavor } from "@/lib/pricing";
+import type { ServiceType, MeatId, ExtraId, AguaFlavorQuantities } from "@/lib/pricing";
 import { calculateTotal, getBasePrice, getExtrasTotal } from "@/lib/pricing";
 import DateStep from "./steps/DateStep";
 import PackageStep from "./steps/PackageStep";
@@ -17,7 +17,7 @@ export interface BookingData {
   guestCount: number | null;
   meats: MeatId[];
   extras: Partial<Record<ExtraId, number>>;
-  aguaFlavors: AguaFlavor[];
+  aguaFlavors: AguaFlavorQuantities;
   customerName: string;
   customerEmail: string;
   customerPhone: string;
@@ -48,7 +48,7 @@ export default function BookingForm() {
     guestCount: null,
     meats: [],
     extras: {},
-    aguaFlavors: [],
+    aguaFlavors: {},
     customerName: "",
     customerEmail: "",
     customerPhone: "",
@@ -68,9 +68,12 @@ export default function BookingForm() {
       case 3:
         return data.meats.length === 4;
       case 4: {
-        // If agua is selected, at least one flavor must be chosen
+        // If agua is selected, flavor quantities must sum to agua count
         const aguaQty = data.extras.agua || 0;
-        if (aguaQty > 0 && data.aguaFlavors.length === 0) return false;
+        if (aguaQty > 0) {
+          const flavorSum = Object.values(data.aguaFlavors).reduce<number>((sum, n) => sum + (n || 0), 0);
+          if (flavorSum !== aguaQty) return false;
+        }
         return true;
       }
       case 5:
