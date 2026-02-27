@@ -109,6 +109,14 @@ export function getExtrasTotal(
   return total;
 }
 
+export function calculateSurcharge(subtotal: number, percent: number): number {
+  return Math.round(subtotal * (percent / 100));
+}
+
+export function calculateDeposit(subtotal: number, percent: number): number {
+  return Math.round(subtotal * (percent / 100));
+}
+
 export function calculateTotal(
   serviceType: ServiceType,
   guestCount: number,

@@ -31,6 +31,8 @@ export async function GET(request: NextRequest) {
           reminder_days: 5,
           notification_email: "constantinoalan98@gmail.com",
           notification_phone: "562-688-7250",
+          cc_surcharge_percent: 10,
+          cash_deposit_percent: 50,
         },
       });
     }
@@ -54,7 +56,27 @@ export async function PUT(request: NextRequest) {
       reminder_days,
       notification_email,
       notification_phone,
+      cc_surcharge_percent,
+      cash_deposit_percent,
+      cancellation_fee_type,
+      cancellation_fee_flat,
+      cancellation_fee_percent,
+      free_cancellation_days,
     } = body;
+
+    const payload = {
+      max_events_per_day,
+      min_notice_days,
+      reminder_days,
+      notification_email,
+      notification_phone,
+      ...(cc_surcharge_percent !== undefined && { cc_surcharge_percent }),
+      ...(cash_deposit_percent !== undefined && { cash_deposit_percent }),
+      ...(cancellation_fee_type !== undefined && { cancellation_fee_type }),
+      ...(cancellation_fee_flat !== undefined && { cancellation_fee_flat }),
+      ...(cancellation_fee_percent !== undefined && { cancellation_fee_percent }),
+      ...(free_cancellation_days !== undefined && { free_cancellation_days }),
+    };
 
     // Try to update existing row first
     const { data: existing } = await supabaseAdmin
@@ -66,26 +88,14 @@ export async function PUT(request: NextRequest) {
     if (existing) {
       result = await supabaseAdmin
         .from("settings")
-        .update({
-          max_events_per_day,
-          min_notice_days,
-          reminder_days,
-          notification_email,
-          notification_phone,
-        })
+        .update(payload)
         .eq("id", existing.id)
         .select()
         .single();
     } else {
       result = await supabaseAdmin
         .from("settings")
-        .insert({
-          max_events_per_day,
-          min_notice_days,
-          reminder_days,
-          notification_email,
-          notification_phone,
-        })
+        .insert(payload)
         .select()
         .single();
     }

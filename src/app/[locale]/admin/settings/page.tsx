@@ -10,6 +10,12 @@ interface Settings {
   reminder_days: number;
   notification_email: string;
   notification_phone: string;
+  cc_surcharge_percent: number;
+  cash_deposit_percent: number;
+  cancellation_fee_type: "flat" | "percentage";
+  cancellation_fee_flat: number;
+  cancellation_fee_percent: number;
+  free_cancellation_days: number;
 }
 
 function getToken(): string | null {
@@ -36,6 +42,12 @@ export default function AdminSettingsPage() {
     reminder_days: 5,
     notification_email: "",
     notification_phone: "",
+    cc_surcharge_percent: 10,
+    cash_deposit_percent: 50,
+    cancellation_fee_type: "flat",
+    cancellation_fee_flat: 50,
+    cancellation_fee_percent: 25,
+    free_cancellation_days: 3,
   });
 
   useEffect(() => {
@@ -240,6 +252,102 @@ export default function AdminSettingsPage() {
                 className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream placeholder:text-cream/30 focus:outline-none focus:border-amber/50 transition-colors"
                 placeholder="(555) 123-4567"
               />
+            </div>
+
+            <div className="border-t border-cream/10 pt-5 mt-2">
+              <h3 className="text-cream/60 text-xs uppercase tracking-wider mb-4">
+                Payment Settings
+              </h3>
+              <div className="space-y-5">
+                <div>
+                  <label className="block text-sm text-cream/70 mb-1.5">
+                    {t("settings.ccSurchargeSetting")}
+                  </label>
+                  <input
+                    type="number"
+                    min={0}
+                    max={100}
+                    value={settings.cc_surcharge_percent}
+                    onChange={(e) =>
+                      setSettings({
+                        ...settings,
+                        cc_surcharge_percent: parseInt(e.target.value) || 0,
+                      })
+                    }
+                    className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors"
+                  />
+                  <p className="text-xs text-cream/40 mt-1">
+                    {t("settings.ccSurchargeHint")}
+                  </p>
+                </div>
+                <div>
+                  <label className="block text-sm text-cream/70 mb-1.5">
+                    {t("settings.cashDepositSetting")}
+                  </label>
+                  <input
+                    type="number"
+                    min={0}
+                    max={100}
+                    value={settings.cash_deposit_percent}
+                    onChange={(e) =>
+                      setSettings({
+                        ...settings,
+                        cash_deposit_percent: parseInt(e.target.value) || 0,
+                      })
+                    }
+                    className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors"
+                  />
+                  <p className="text-xs text-cream/40 mt-1">
+                    {t("settings.cashDepositHint")}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Cancellation Settings */}
+            <div className="border-t border-cream/10 pt-5 mt-2">
+              <h3 className="text-cream/60 text-xs uppercase tracking-wider mb-4">
+                {t("settings.cancellationTitle")}
+              </h3>
+              <div className="space-y-5">
+                <div>
+                  <label className="block text-sm text-cream/70 mb-1.5">{t("settings.cancellationFeeType")}</label>
+                  <div className="flex gap-3">
+                    <button type="button" onClick={() => setSettings({ ...settings, cancellation_fee_type: "flat" })}
+                      className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-colors ${settings.cancellation_fee_type === "flat" ? "bg-amber text-navy" : "bg-navy-light border border-cream/10 text-cream/50"}`}>
+                      {t("settings.flatRate")}
+                    </button>
+                    <button type="button" onClick={() => setSettings({ ...settings, cancellation_fee_type: "percentage" })}
+                      className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-colors ${settings.cancellation_fee_type === "percentage" ? "bg-amber text-navy" : "bg-navy-light border border-cream/10 text-cream/50"}`}>
+                      {t("settings.percentage")}
+                    </button>
+                  </div>
+                </div>
+                {settings.cancellation_fee_type === "flat" ? (
+                  <div>
+                    <label className="block text-sm text-cream/70 mb-1.5">{t("settings.flatRateAmount")}</label>
+                    <input type="number" min={0} max={1000} value={settings.cancellation_fee_flat}
+                      onChange={(e) => setSettings({ ...settings, cancellation_fee_flat: parseInt(e.target.value) || 0 })}
+                      className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors" />
+                    <p className="text-xs text-cream/40 mt-1">{t("settings.flatRateHint")}</p>
+                  </div>
+                ) : (
+                  <div>
+                    <label className="block text-sm text-cream/70 mb-1.5">{t("settings.percentageAmount")}</label>
+                    <input type="number" min={0} max={100} value={settings.cancellation_fee_percent}
+                      onChange={(e) => setSettings({ ...settings, cancellation_fee_percent: parseInt(e.target.value) || 0 })}
+                      className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors" />
+                    <p className="text-xs text-cream/40 mt-1">{t("settings.percentageHint")}</p>
+                  </div>
+                )}
+                <div>
+                  <label className="block text-sm text-cream/70 mb-1.5">{t("settings.freeCancellationDays")}</label>
+                  <input type="number" min={0} max={30} value={settings.free_cancellation_days}
+                    onChange={(e) => setSettings({ ...settings, free_cancellation_days: parseInt(e.target.value) || 0 })}
+                    className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors" />
+                  <p className="text-xs text-cream/40 mt-1">{t("settings.freeCancellationHint")}</p>
+                </div>
+              </div>
             </div>
 
             {error && <p className="text-terracotta text-sm">{error}</p>}
