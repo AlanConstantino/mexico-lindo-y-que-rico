@@ -147,7 +147,7 @@ export async function sendCustomerConfirmation(
     ``,
     `Total Paid: ${formattedPrice}`,
     ``,
-    `We'll arrive 1 hour before your event to set up.`,
+    `We'll arrive 1 hour before your event begins to set up.`,
     ``,
     `Questions? Call us at (562) 235-9361 or (562) 746-3998.`,
     ``,
@@ -222,7 +222,7 @@ export async function sendCustomerConfirmation(
         <!-- Setup Note -->
         <div style="background: #E8A93520; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
           <p style="margin: 0; color: #2D2926; font-size: 14px;">
-            ⏰ <strong>Setup:</strong> Our team will arrive 1 hour before your event to get everything ready. No action needed on your end!
+            ⏰ <strong>Setup:</strong> Our team will arrive 1 hour before your event begins to get everything ready. No action needed on your end!
           </p>
         </div>
 
@@ -341,7 +341,7 @@ export async function sendEventReminder(
     ``,
     `Total Paid: ${formattedPrice}`,
     ``,
-    `Our team will arrive 1 hour before your event to set up.`,
+    `Our team will arrive 1 hour before your event begins to set up.`,
     ``,
     `Questions or changes? Call us at (562) 235-9361 or (562) 746-3998.`,
     ...(data.cancelUrl ? [``, `Cancel your booking: ${data.cancelUrl}`] : []),
@@ -407,7 +407,7 @@ export async function sendEventReminder(
         <!-- Setup Note -->
         <div style="background: #E8A93520; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
           <p style="margin: 0; color: #2D2926; font-size: 14px;">
-            ⏰ <strong>Setup:</strong> Our team will arrive 1 hour before your event to get everything ready. No action needed on your end!
+            ⏰ <strong>Setup:</strong> Our team will arrive 1 hour before your event begins to get everything ready. No action needed on your end!
           </p>
         </div>
 
@@ -560,7 +560,7 @@ export async function sendDayBeforeReminder(
     ``,
     `Total Paid: ${formattedPrice}`,
     ``,
-    `Our team will arrive 1 hour before your event to set up.`,
+    `Our team will arrive 1 hour before your event begins to set up.`,
     ``,
     `Need to cancel? Cancelling at this point will incur a fee of ${formattedFee}.`,
     `Cancel here: ${data.cancelUrl}`,
@@ -602,7 +602,7 @@ export async function sendDayBeforeReminder(
           <p style="margin: 0; font-size: 32px; font-weight: bold; color: #E8A935;">${formattedPrice}</p>
         </div>
         <div style="background: #E8A93520; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
-          <p style="margin: 0; color: #2D2926; font-size: 14px;">⏰ <strong>Setup:</strong> Our team will arrive 1 hour before your event!</p>
+          <p style="margin: 0; color: #2D2926; font-size: 14px;">⏰ <strong>Setup:</strong> Our team will arrive 1 hour before your event begins!</p>
         </div>
         <div style="background: #C45A3C15; border: 1px solid #C45A3C30; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
           <p style="margin: 0 0 8px; color: #C45A3C; font-size: 14px; font-weight: 600;">⚠️ Need to cancel?</p>
