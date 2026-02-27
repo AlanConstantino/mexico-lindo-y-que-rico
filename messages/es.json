@@ -326,7 +326,17 @@
       "saving": "Guardando...",
       "saved": "¡Configuración guardada exitosamente!",
       "fetchError": "Error al cargar la configuración",
-      "saveError": "Error al guardar la configuración"
+      "saveError": "Error al guardar la configuración",
+      "cancellationTitle": "Configuración de Cancelación",
+      "cancellationFeeType": "Tipo de Tarifa de Cancelación",
+      "flatRate": "Tarifa Fija",
+      "percentage": "Porcentaje",
+      "flatRateAmount": "Tarifa Fija ($)",
+      "flatRateHint": "Monto en dólares cobrado como tarifa de cancelación",
+      "percentageAmount": "Tarifa Porcentual (%)",
+      "percentageHint": "Porcentaje del total cobrado como tarifa de cancelación",
+      "freeCancellationDays": "Días para Cancelación Gratuita",
+      "freeCancellationHint": "Los clientes pueden cancelar gratis hasta este número de días antes del evento"
     }
   },
   "metadata": {
@@ -338,5 +348,46 @@
       "title": "Reserve Su Evento | México Lindo Y Que Rico",
       "description": "Reserve su evento de taquiza en línea. Seleccione su paquete, carnes y extras."
     }
+  },
+  "cancel": {
+    "loading": "Cargando...",
+    "invalidLink": "Este enlace de cancelación es inválido o ha expirado.",
+    "cancelError": "Algo salió mal. Intenta de nuevo o contáctanos.",
+    "title": "Cancelar Reserva",
+    "subtitle": "Revisa los detalles antes de cancelar.",
+    "bookingDetails": "Detalles de la Reserva",
+    "date": "Fecha",
+    "package": "Paquete",
+    "guests": "Invitados",
+    "total": "Total Pagado",
+    "freeCancellation": "Cancelación Gratuita",
+    "fullRefundMessage": "Tu reserva será cancelada y recibirás un reembolso completo de {amount}.",
+    "feeApplies": "Se Aplica Tarifa de Cancelación",
+    "feeMessage": "Cancelar tendrá un cargo de {fee}. Se te reembolsará {refund}.",
+    "keepBooking": "Mantener Reserva",
+    "confirmCancel": "Confirmar Cancelación",
+    "cancelling": "Cancelando...",
+    "cancelledTitle": "Reserva Cancelada",
+    "cancelledWithFee": "Se cobró una tarifa de cancelación de {fee}. Se te reembolsará {refund}.",
+    "cancelledFullRefund": "Recibirás un reembolso completo de {refund}.",
+    "refundNote": "Los reembolsos generalmente tardan de 5 a 10 días hábiles.",
+    "returnHome": "Volver al Inicio",
+    "errorTitle": "Algo Salió Mal"
+  },
+  "reschedule": {
+    "loading": "Cargando...",
+    "invalidLink": "Este enlace de reprogramación es inválido o ha expirado.",
+    "rescheduleError": "Algo salió mal. Intenta de nuevo o contáctanos.",
+    "title": "Reprogramar Reserva",
+    "subtitle": "Elige una nueva fecha para tu evento.",
+    "currentDate": "Fecha Actual del Evento",
+    "selectNewDate": "Seleccionar Nueva Fecha",
+    "cancel": "Cancelar",
+    "confirmReschedule": "Confirmar Reprogramación",
+    "rescheduling": "Reprogramando...",
+    "successTitle": "¡Reserva Reprogramada!",
+    "successMessage": "Tu evento ha sido reprogramado para {date}.",
+    "returnHome": "Volver al Inicio",
+    "errorTitle": "Algo Salió Mal"
   }
 }

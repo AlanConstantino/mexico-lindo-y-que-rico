@@ -54,7 +54,18 @@ export async function PUT(request: NextRequest) {
       reminder_days,
       notification_email,
       notification_phone,
+      cancellation_fee_type,
+      cancellation_fee_flat,
+      cancellation_fee_percent,
+      free_cancellation_days,
     } = body;
+
+    const cancellationFields = {
+      ...(cancellation_fee_type !== undefined && { cancellation_fee_type }),
+      ...(cancellation_fee_flat !== undefined && { cancellation_fee_flat }),
+      ...(cancellation_fee_percent !== undefined && { cancellation_fee_percent }),
+      ...(free_cancellation_days !== undefined && { free_cancellation_days }),
+    };
 
     // Try to update existing row first
     const { data: existing } = await supabaseAdmin
@@ -72,6 +83,7 @@ export async function PUT(request: NextRequest) {
           reminder_days,
           notification_email,
           notification_phone,
+          ...cancellationFields,
         })
         .eq("id", existing.id)
         .select()
@@ -85,6 +97,7 @@ export async function PUT(request: NextRequest) {
           reminder_days,
           notification_email,
           notification_phone,
+          ...cancellationFields,
         })
         .select()
         .single();
