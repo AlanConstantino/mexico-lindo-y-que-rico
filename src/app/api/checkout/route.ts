@@ -4,6 +4,8 @@ import { supabaseAdmin } from "@/lib/supabase";
 import {
   calculateTotal,
   getBasePrice,
+  calculateSurcharge,
+  calculateDeposit,
   EXTRA_OPTIONS,
   type ServiceType,
   type MeatId,
@@ -26,6 +28,9 @@ interface CheckoutBody {
   customerPhone: string;
   eventAddress: string;
   totalPrice: number;
+  paymentMethod?: "card" | "cash";
+  ccSurchargePercent?: number;
+  cashDepositPercent?: number;
   locale?: string;
 }
 
@@ -58,6 +63,9 @@ export async function POST(request: NextRequest) {
       customerPhone,
       eventAddress,
       aguaFlavors = {},
+      paymentMethod = "card",
+      ccSurchargePercent = 10,
+      cashDepositPercent = 50,
       locale = "en",
     } = body;
 
@@ -82,7 +90,22 @@ export async function POST(request: NextRequest) {
     // Recalculate price on server side (never trust client price)
     const basePrice = getBasePrice(serviceType, guestCount);
     const serverTotal = calculateTotal(serviceType, guestCount, extras);
-    const totalCents = serverTotal * 100;
+
+    let chargeAmount: number;
+    let surchargeAmount = 0;
+    let depositAmount = 0;
+    let balanceDue = 0;
+
+    if (paymentMethod === "cash") {
+      depositAmount = calculateDeposit(serverTotal, cashDepositPercent);
+      balanceDue = serverTotal - depositAmount;
+      chargeAmount = depositAmount;
+    } else {
+      surchargeAmount = calculateSurcharge(serverTotal, ccSurchargePercent);
+      chargeAmount = serverTotal + surchargeAmount;
+    }
+
+    const totalCents = chargeAmount * 100;
 
     // Build Stripe line items
     const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [
@@ -122,6 +145,36 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Add surcharge line item for card payments
+    if (paymentMethod === "card" && surchargeAmount > 0) {
+      lineItems.push({
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: `Credit Card Processing Fee (${ccSurchargePercent}%)`,
+          },
+          unit_amount: surchargeAmount * 100,
+        },
+        quantity: 1,
+      });
+    }
+
+    // For cash payments, replace line items with a single deposit line
+    if (paymentMethod === "cash") {
+      lineItems.length = 0;
+      lineItems.push({
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: `Catering Deposit (${cashDepositPercent}%)`,
+            description: `Non-refundable deposit for ${serviceType === "2hr" ? "2-Hour" : "3-Hour"} Taco Catering · ${guestCount} guests`,
+          },
+          unit_amount: depositAmount * 100,
+        },
+        quantity: 1,
+      });
+    }
+
     // Determine origin for redirect URLs
     const origin =
       request.headers.get("origin") || "http://localhost:3000";
@@ -143,6 +196,7 @@ export async function POST(request: NextRequest) {
         customerPhone,
         eventAddress,
         ...(Object.keys(aguaFlavors).length > 0 && { aguaFlavors: JSON.stringify(aguaFlavors) }),
+        paymentMethod,
       },
     });
 
@@ -166,6 +220,9 @@ export async function POST(request: NextRequest) {
         customer_phone: customerPhone,
         event_address: eventAddress,
         total_price: totalCents,
+        payment_type: paymentMethod,
+        deposit_amount: paymentMethod === "cash" ? depositAmount * 100 : 0,
+        balance_due: paymentMethod === "cash" ? balanceDue * 100 : 0,
         stripe_session_id: session.id,
         stripe_payment_status: "unpaid",
         status: "pending",

@@ -2,13 +2,16 @@
 
 import { useTranslations, useLocale } from "next-intl";
 import type { BookingData } from "../BookingForm";
-import { EXTRA_OPTIONS } from "@/lib/pricing";
+import { EXTRA_OPTIONS, calculateSurcharge, calculateDeposit } from "@/lib/pricing";
 
 interface ReviewStepProps {
   data: BookingData;
   basePrice: number;
   extrasTotal: number;
   total: number;
+  ccSurchargePercent: number;
+  cashDepositPercent: number;
+  onPaymentMethodChange: (method: "card" | "cash") => void;
 }
 
 export default function ReviewStep({
@@ -16,6 +19,9 @@ export default function ReviewStep({
   basePrice,
   extrasTotal,
   total,
+  ccSurchargePercent,
+  cashDepositPercent,
+  onPaymentMethodChange,
 }: ReviewStepProps) {
   const t = useTranslations("booking");
   const tMenu = useTranslations("menu.meats");
@@ -34,6 +40,11 @@ export default function ReviewStep({
   const activeExtras = EXTRA_OPTIONS.filter(
     (e) => (data.extras[e.id] || 0) > 0
   );
+
+  const surcharge = calculateSurcharge(total, ccSurchargePercent);
+  const cardTotal = total + surcharge;
+  const depositAmount = calculateDeposit(total, cashDepositPercent);
+  const balanceDue = total - depositAmount;
 
   return (
     <div>
@@ -143,6 +154,77 @@ export default function ReviewStep({
           </div>
         </div>
 
+        {/* Payment Method Selection */}
+        <div className="p-5 rounded-xl bg-navy-light/30 border border-cream/5">
+          <div className="text-cream/40 text-xs uppercase tracking-wider mb-4">
+            {t("paymentMethod")}
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {/* Pay with Card */}
+            <button
+              type="button"
+              onClick={() => onPaymentMethodChange("card")}
+              className={`p-4 rounded-xl border-2 text-left transition-all duration-200 ${
+                data.paymentMethod === "card"
+                  ? "border-amber bg-amber/5"
+                  : "border-cream/10 hover:border-cream/20"
+              }`}
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <svg className="w-5 h-5 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                </svg>
+                <span className="text-cream font-medium text-sm">{t("payWithCard")}</span>
+              </div>
+              <div className="space-y-1">
+                <div className="flex justify-between text-xs">
+                  <span className="text-cream/50">{t("subtotal")}</span>
+                  <span className="text-cream/70">${total.toLocaleString()}</span>
+                </div>
+                {surcharge > 0 && (
+                  <div className="flex justify-between text-xs">
+                    <span className="text-cream/50">{t("ccSurcharge", { percent: ccSurchargePercent })}</span>
+                    <span className="text-cream/70">${surcharge.toLocaleString()}</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-sm font-medium pt-1 border-t border-cream/5">
+                  <span className="text-cream">{t("total")}</span>
+                  <span className="text-amber">${cardTotal.toLocaleString()}</span>
+                </div>
+              </div>
+            </button>
+
+            {/* Pay with Cash */}
+            <button
+              type="button"
+              onClick={() => onPaymentMethodChange("cash")}
+              className={`p-4 rounded-xl border-2 text-left transition-all duration-200 ${
+                data.paymentMethod === "cash"
+                  ? "border-amber bg-amber/5"
+                  : "border-cream/10 hover:border-cream/20"
+              }`}
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <svg className="w-5 h-5 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <span className="text-cream font-medium text-sm">{t("payWithCash")}</span>
+              </div>
+              <div className="space-y-1">
+                <div className="flex justify-between text-xs">
+                  <span className="text-cream/50">{t("cashDeposit", { percent: cashDepositPercent })}</span>
+                  <span className="text-cream/70">${depositAmount.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-cream/50">{t("remainingBalance")}</span>
+                  <span className="text-cream/70">${balanceDue.toLocaleString()}</span>
+                </div>
+                <div className="text-[10px] text-amber/60 mt-1">{t("depositNonRefundable")}</div>
+              </div>
+            </button>
+          </div>
+        </div>
+
         {/* Price Breakdown */}
         <div className="p-5 rounded-xl bg-gradient-to-b from-amber/5 to-transparent border border-amber/10">
           <div className="flex justify-between text-sm mb-2">
@@ -157,12 +239,26 @@ export default function ReviewStep({
               </span>
             </div>
           )}
+          {data.paymentMethod === "card" && surcharge > 0 && (
+            <div className="flex justify-between text-sm mb-2">
+              <span className="text-cream/50">{t("ccSurcharge", { percent: ccSurchargePercent })}</span>
+              <span className="text-cream">${surcharge.toLocaleString()}</span>
+            </div>
+          )}
           <div className="border-t border-cream/10 mt-3 pt-3 flex justify-between">
-            <span className="text-cream font-medium">{t("total")}</span>
+            <span className="text-cream font-medium">
+              {data.paymentMethod === "cash" ? t("depositDueNow") : t("total")}
+            </span>
             <span className="font-heading text-2xl text-amber">
-              ${total.toLocaleString()}
+              ${data.paymentMethod === "cash" ? depositAmount.toLocaleString() : cardTotal.toLocaleString()}
             </span>
           </div>
+          {data.paymentMethod === "cash" && (
+            <div className="flex justify-between text-sm mt-2 text-cream/40">
+              <span>{t("remainingBalance")}</span>
+              <span>${balanceDue.toLocaleString()}</span>
+            </div>
+          )}
         </div>
       </div>
     </div>

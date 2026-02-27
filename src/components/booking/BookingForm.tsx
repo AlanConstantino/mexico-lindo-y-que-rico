@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import type { ServiceType, MeatId, ExtraId, AguaFlavorQuantities } from "@/lib/pricing";
-import { calculateTotal, getBasePrice, getExtrasTotal } from "@/lib/pricing";
+import { calculateTotal, getBasePrice, getExtrasTotal, calculateSurcharge, calculateDeposit } from "@/lib/pricing";
 import DateStep from "./steps/DateStep";
 import PackageStep from "./steps/PackageStep";
 import MeatStep from "./steps/MeatStep";
@@ -22,6 +22,7 @@ export interface BookingData {
   customerEmail: string;
   customerPhone: string;
   eventAddress: string;
+  paymentMethod: "card" | "cash";
 }
 
 const TOTAL_STEPS = 6;
@@ -41,6 +42,17 @@ export default function BookingForm() {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [paymentSettings, setPaymentSettings] = useState({
+    cc_surcharge_percent: 10,
+    cash_deposit_percent: 50,
+  });
+
+  useEffect(() => {
+    fetch("/api/settings/public")
+      .then((res) => res.json())
+      .then((d) => setPaymentSettings(d))
+      .catch(() => {});
+  }, []);
 
   const [data, setData] = useState<BookingData>({
     eventDate: null,
@@ -53,6 +65,7 @@ export default function BookingForm() {
     customerEmail: "",
     customerPhone: "",
     eventAddress: "",
+    paymentMethod: "card",
   });
 
   const updateData = (updates: Partial<BookingData>) => {
@@ -116,7 +129,7 @@ export default function BookingForm() {
     setError(null);
 
     try {
-      const totalPrice = calculateTotal(
+      const subtotal = calculateTotal(
         data.serviceType,
         data.guestCount,
         data.extras
@@ -136,7 +149,10 @@ export default function BookingForm() {
           customerEmail: data.customerEmail,
           customerPhone: data.customerPhone,
           eventAddress: data.eventAddress,
-          totalPrice,
+          totalPrice: subtotal,
+          paymentMethod: data.paymentMethod,
+          ccSurchargePercent: paymentSettings.cc_surcharge_percent,
+          cashDepositPercent: paymentSettings.cash_deposit_percent,
           locale,
         }),
       });
@@ -252,6 +268,9 @@ export default function BookingForm() {
             basePrice={basePrice!}
             extrasTotal={extrasTotal}
             total={total!}
+            ccSurchargePercent={paymentSettings.cc_surcharge_percent}
+            cashDepositPercent={paymentSettings.cash_deposit_percent}
+            onPaymentMethodChange={(method: "card" | "cash") => updateData({ paymentMethod: method })}
           />
         )}
       </div>
@@ -313,8 +332,10 @@ export default function BookingForm() {
                 </svg>
                 {t("processing")}
               </>
+            ) : data.paymentMethod === "cash" ? (
+              `${t("payDeposit")} $${total ? calculateDeposit(total, paymentSettings.cash_deposit_percent) : 0}`
             ) : (
-              t("payWithStripe")
+              `${t("payWithCard")} $${total ? (total + calculateSurcharge(total, paymentSettings.cc_surcharge_percent)).toLocaleString() : 0}`
             )}
           </button>
         )}

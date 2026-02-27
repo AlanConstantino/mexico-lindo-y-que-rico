@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
-import { sendEventReminder, sendOwnerReminder } from "@/lib/notifications";
+import {
+  sendEventReminder,
+  sendOwnerReminder,
+  sendDayBeforeReminder,
+} from "@/lib/notifications";
+
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://que.rico.catering";
 
 export async function GET(request: NextRequest) {
-  // Verify cron secret to prevent unauthorized access
   const authHeader = request.headers.get("authorization");
   const cronSecret = process.env.CRON_SECRET;
 
@@ -12,22 +17,23 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // 1. Get reminder_days from settings
     const { data: settings } = await supabaseAdmin
       .from("settings")
-      .select("reminder_days, notification_email")
+      .select(
+        "reminder_days, notification_email, cancellation_fee_type, cancellation_fee_flat, cancellation_fee_percent, free_cancellation_days"
+      )
       .single();
 
     const reminderDays = settings?.reminder_days ?? 5;
     const ownerEmail = settings?.notification_email ?? "constantinoalan98@gmail.com";
+    const freeCancellationDays = settings?.free_cancellation_days ?? 3;
 
-    // 2. Calculate the target date (today + reminderDays)
+    // ── Part 1: N-days-before reminders ──
     const targetDate = new Date();
     targetDate.setDate(targetDate.getDate() + reminderDays);
-    const targetDateStr = targetDate.toISOString().split("T")[0]; // YYYY-MM-DD
+    const targetDateStr = targetDate.toISOString().split("T")[0];
 
-    // 3. Find confirmed, paid bookings on that date that haven't been reminded yet
-    const { data: bookings, error: queryError } = await supabaseAdmin
+    const { data: firstReminders, error: firstErr } = await supabaseAdmin
       .from("bookings")
       .select("*")
       .eq("event_date", targetDateStr)
@@ -35,26 +41,22 @@ export async function GET(request: NextRequest) {
       .eq("stripe_payment_status", "paid")
       .eq("reminder_sent", false);
 
-    if (queryError) {
-      console.error("❌ Reminder query error:", queryError);
-      return NextResponse.json(
-        { error: "Failed to query bookings" },
-        { status: 500 }
-      );
-    }
+    if (firstErr) console.error("❌ First reminder query error:", firstErr);
 
-    if (!bookings || bookings.length === 0) {
-      return NextResponse.json({
-        message: "No reminders to send",
-        targetDate: targetDateStr,
-        reminderDays,
-      });
-    }
-
-    // 4. Send reminders for each booking
-    const results = [];
-    for (const booking of bookings) {
+    const firstResults = [];
+    for (const booking of firstReminders || []) {
       try {
+        const cancelToken = crypto.randomUUID();
+        const rescheduleToken = crypto.randomUUID();
+
+        await supabaseAdmin
+          .from("bookings")
+          .update({ cancel_token: cancelToken, reschedule_token: rescheduleToken })
+          .eq("id", booking.id);
+
+        const cancelUrl = `${BASE_URL}/en/booking/cancel/${cancelToken}`;
+        const rescheduleUrl = `${BASE_URL}/en/booking/reschedule/${rescheduleToken}`;
+
         const reminderData = {
           bookingId: booking.id,
           customerName: booking.customer_name,
@@ -65,41 +67,125 @@ export async function GET(request: NextRequest) {
           guestCount: booking.guest_count,
           meats: booking.meats as string[],
           eventAddress: booking.event_address,
-          extras: booking.extras as { id: string; quantity: number; flavors?: string[] }[],
+          extras: booking.extras as { id: string; quantity: number; flavors?: string[] }[] | undefined,
           totalPrice: booking.total_price,
           reminderDays,
+          cancelUrl,
+          rescheduleUrl,
         };
 
-        // Send both customer reminder and owner reminder
         await Promise.all([
           sendEventReminder(reminderData),
           sendOwnerReminder({ ...reminderData, ownerEmail }),
         ]);
 
-        // Mark as reminded
         await supabaseAdmin
           .from("bookings")
           .update({ reminder_sent: true })
           .eq("id", booking.id);
 
-        results.push({ bookingId: booking.id, status: "sent" });
+        firstResults.push({ bookingId: booking.id, status: "sent" });
       } catch (err) {
-        console.error(`❌ Failed to send reminder for ${booking.id}:`, err);
-        results.push({ bookingId: booking.id, status: "failed" });
+        console.error(`❌ Failed first reminder for ${booking.id}:`, err);
+        firstResults.push({ bookingId: booking.id, status: "failed" });
+      }
+    }
+
+    // ── Part 2: Day-before reminders ──
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = tomorrow.toISOString().split("T")[0];
+
+    const { data: dayBeforeBookings, error: dayBeforeErr } = await supabaseAdmin
+      .from("bookings")
+      .select("*")
+      .eq("event_date", tomorrowStr)
+      .eq("status", "confirmed")
+      .eq("stripe_payment_status", "paid")
+      .eq("day_before_reminder_sent", false);
+
+    if (dayBeforeErr) console.error("❌ Day-before query error:", dayBeforeErr);
+
+    const dayBeforeResults = [];
+    for (const booking of dayBeforeBookings || []) {
+      try {
+        let cancelToken = booking.cancel_token as string | null;
+        if (!cancelToken) {
+          cancelToken = crypto.randomUUID();
+          await supabaseAdmin
+            .from("bookings")
+            .update({ cancel_token: cancelToken })
+            .eq("id", booking.id);
+        }
+
+        let cancellationFee = 0;
+        if (1 < freeCancellationDays) {
+          const feeType = settings?.cancellation_fee_type ?? "flat";
+          if (feeType === "flat") {
+            cancellationFee = (settings?.cancellation_fee_flat ?? 50) * 100;
+          } else {
+            const percent = settings?.cancellation_fee_percent ?? 25;
+            cancellationFee = Math.round((booking.total_price * percent) / 100);
+          }
+        }
+
+        const cancelUrl = `${BASE_URL}/en/booking/cancel/${cancelToken}`;
+
+        await sendDayBeforeReminder({
+          bookingId: booking.id,
+          customerName: booking.customer_name,
+          customerEmail: booking.customer_email,
+          customerPhone: booking.customer_phone,
+          eventDate: booking.event_date,
+          serviceType: booking.service_type,
+          guestCount: booking.guest_count,
+          meats: booking.meats as string[],
+          eventAddress: booking.event_address,
+          extras: booking.extras as { id: string; quantity: number; flavors?: string[] }[] | undefined,
+          totalPrice: booking.total_price,
+          reminderDays: 1,
+          cancellationFee,
+          cancelUrl,
+        });
+
+        await sendOwnerReminder({
+          bookingId: booking.id,
+          customerName: booking.customer_name,
+          customerEmail: booking.customer_email,
+          customerPhone: booking.customer_phone,
+          eventDate: booking.event_date,
+          serviceType: booking.service_type,
+          guestCount: booking.guest_count,
+          meats: booking.meats as string[],
+          eventAddress: booking.event_address,
+          extras: booking.extras as { id: string; quantity: number; flavors?: string[] }[] | undefined,
+          totalPrice: booking.total_price,
+          reminderDays: 1,
+          ownerEmail,
+        });
+
+        await supabaseAdmin
+          .from("bookings")
+          .update({ day_before_reminder_sent: true })
+          .eq("id", booking.id);
+
+        dayBeforeResults.push({ bookingId: booking.id, status: "sent" });
+      } catch (err) {
+        console.error(`❌ Failed day-before reminder for ${booking.id}:`, err);
+        dayBeforeResults.push({ bookingId: booking.id, status: "failed" });
       }
     }
 
     return NextResponse.json({
-      message: `Processed ${bookings.length} reminder(s)`,
+      message: `Processed ${firstResults.length} first reminder(s) and ${dayBeforeResults.length} day-before reminder(s)`,
       targetDate: targetDateStr,
+      tomorrowDate: tomorrowStr,
       reminderDays,
-      results,
+      firstResults,
+      dayBeforeResults,
     });
   } catch (err) {
     console.error("❌ Cron error:", err);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
