@@ -8,6 +8,18 @@ import {
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://que.rico.catering";
 
+/** Get today's date in Los Angeles timezone as YYYY-MM-DD */
+function getTodayPST(): string {
+  return new Date().toLocaleDateString("en-CA", { timeZone: "America/Los_Angeles" });
+}
+
+/** Add days to today in PST and return YYYY-MM-DD */
+function addDaysPST(days: number): string {
+  const today = new Date(getTodayPST() + "T12:00:00");
+  today.setDate(today.getDate() + days);
+  return today.toISOString().split("T")[0];
+}
+
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
   const cronSecret = process.env.CRON_SECRET;
@@ -29,9 +41,7 @@ export async function GET(request: NextRequest) {
     const freeCancellationDays = settings?.free_cancellation_days ?? 3;
 
     // ── Part 1: N-days-before reminders ──
-    const targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() + reminderDays);
-    const targetDateStr = targetDate.toISOString().split("T")[0];
+    const targetDateStr = addDaysPST(reminderDays);
 
     const { data: firstReminders, error: firstErr } = await supabaseAdmin
       .from("bookings")
@@ -95,9 +105,7 @@ export async function GET(request: NextRequest) {
     }
 
     // ── Part 2: Day-before reminders ──
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const tomorrowStr = tomorrow.toISOString().split("T")[0];
+    const tomorrowStr = addDaysPST(1);
 
     const { data: dayBeforeBookings, error: dayBeforeErr } = await supabaseAdmin
       .from("bookings")
