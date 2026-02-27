@@ -20,7 +20,7 @@ interface CheckoutBody {
   guestCount: number;
   meats: MeatId[];
   extras: Partial<Record<ExtraId, number>>;
-  aguaFlavors?: string[];
+  aguaFlavors?: Record<string, number>;
   customerName: string;
   customerEmail: string;
   customerPhone: string;
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
       customerEmail,
       customerPhone,
       eventAddress,
-      aguaFlavors = [],
+      aguaFlavors = {},
       locale = "en",
     } = body;
 
@@ -107,8 +107,9 @@ export async function POST(request: NextRequest) {
           name: EXTRA_NAMES[extra.id],
         };
         // Add flavor info to Agua Fresca line item
-        if (extra.id === "agua" && aguaFlavors.length > 0) {
-          productData.description = `Flavors: ${aguaFlavors.join(", ")}`;
+        const flavorEntries = Object.entries(aguaFlavors).filter(([, q]) => (q || 0) > 0);
+        if (extra.id === "agua" && flavorEntries.length > 0) {
+          productData.description = `Flavors: ${flavorEntries.map(([f, q]) => `${f} ×${q}`).join(", ")}`;
         }
         lineItems.push({
           price_data: {
@@ -141,7 +142,7 @@ export async function POST(request: NextRequest) {
         customerName,
         customerPhone,
         eventAddress,
-        ...(aguaFlavors.length > 0 && { aguaFlavors: JSON.stringify(aguaFlavors) }),
+        ...(Object.keys(aguaFlavors).length > 0 && { aguaFlavors: JSON.stringify(aguaFlavors) }),
       },
     });
 
@@ -158,7 +159,7 @@ export async function POST(request: NextRequest) {
           .map(([id, qty]) => ({
             id,
             quantity: qty,
-            ...(id === "agua" && aguaFlavors.length > 0 && { flavors: aguaFlavors }),
+            ...(id === "agua" && Object.keys(aguaFlavors).length > 0 && { flavors: aguaFlavors }),
           })),
         customer_name: customerName,
         customer_email: customerEmail,

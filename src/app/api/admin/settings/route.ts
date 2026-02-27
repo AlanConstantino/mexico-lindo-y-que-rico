@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         settings: {
           max_events_per_day: 3,
-          min_notice_days: 3,
+          min_notice_days: 7,
           reminder_days: 5,
           notification_email: "constantinoalan98@gmail.com",
           notification_phone: "562-688-7250",

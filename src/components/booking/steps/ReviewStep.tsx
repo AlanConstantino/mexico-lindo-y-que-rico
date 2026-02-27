@@ -100,14 +100,16 @@ export default function ReviewStep({
                         ${(qty * extra.price).toLocaleString()}
                       </span>
                     </div>
-                    {extra.id === "agua" && data.aguaFlavors.length > 0 && (
+                    {extra.id === "agua" && Object.keys(data.aguaFlavors).length > 0 && (
                       <div className="flex flex-wrap gap-1.5 mt-1.5 ml-1">
-                        {data.aguaFlavors.map((flavor) => (
+                        {Object.entries(data.aguaFlavors)
+                          .filter(([, q]) => (q || 0) > 0)
+                          .map(([flavor, q]) => (
                           <span
                             key={flavor}
                             className="px-2 py-0.5 rounded-full bg-amber/10 text-amber/70 text-[10px] font-medium border border-amber/15"
                           >
-                            {tExtras(`aguaFlavors.${flavor}`)}
+                            {tExtras(`aguaFlavors.${flavor}`)} ×{q}
                           </span>
                         ))}
                       </div>

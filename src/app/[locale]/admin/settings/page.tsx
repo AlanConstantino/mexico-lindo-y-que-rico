@@ -32,7 +32,7 @@ export default function AdminSettingsPage() {
 
   const [settings, setSettings] = useState<Settings>({
     max_events_per_day: 3,
-    min_notice_days: 3,
+    min_notice_days: 7,
     reminder_days: 5,
     notification_email: "",
     notification_phone: "",

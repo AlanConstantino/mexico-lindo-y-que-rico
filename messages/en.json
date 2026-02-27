@@ -203,6 +203,7 @@
     "selectExtrasDesc": "Optional add-ons to complement your taco spread. Each serves 40–50 people unless noted.",
     "servesNote": "Serves 40–50",
     "chooseFlavors": "Choose your flavors",
+    "flavorsAssigned": "{assigned} of {total} assigned",
     "perItem": "per item",
     "customerInfo": "Your Information",
     "customerInfoDesc": "We'll use this to confirm your booking details.",
