@@ -15,6 +15,8 @@ interface BookingNotification {
   eventAddress?: string;
   extras?: { name: string; quantity: number; price: string }[];
   totalPrice: number;
+  cancelUrl?: string;
+  rescheduleUrl?: string;
 }
 
 export async function sendBookingNotification(
@@ -151,6 +153,9 @@ export async function sendCustomerConfirmation(
     ``,
     `Questions? Call us at (562) 235-9361 or (562) 746-3998.`,
     ``,
+    ...(booking.rescheduleUrl ? [`Need to reschedule? ${booking.rescheduleUrl}`] : []),
+    ...(booking.cancelUrl ? [`Need to cancel? ${booking.cancelUrl}`] : []),
+    ``,
     `¡Gracias! — México Lindo Y Que Rico`,
   ].join("\n");
 
@@ -225,6 +230,18 @@ export async function sendCustomerConfirmation(
             ⏰ <strong>Setup:</strong> Our team will arrive 1 hour before your event begins to get everything ready. No action needed on your end!
           </p>
         </div>
+
+        ${booking.cancelUrl || booking.rescheduleUrl ? `
+        <!-- Manage Booking -->
+        <div style="background: #f5f0eb; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px; text-align: center;">
+          <p style="margin: 0 0 8px; color: #2D2926; font-size: 13px; font-weight: 600;">Manage Your Booking</p>
+          <p style="margin: 0; font-size: 13px;">
+            ${booking.rescheduleUrl ? `<a href="${booking.rescheduleUrl}" style="color: #C45A3C; text-decoration: none; font-weight: 600;">Reschedule</a>` : ""}
+            ${booking.cancelUrl && booking.rescheduleUrl ? ' &nbsp;·&nbsp; ' : ""}
+            ${booking.cancelUrl ? `<a href="${booking.cancelUrl}" style="color: #888; text-decoration: none;">Cancel Booking</a>` : ""}
+          </p>
+        </div>
+        ` : ""}
 
         <!-- Contact -->
         <p style="color: #555; font-size: 14px; text-align: center; margin: 0;">

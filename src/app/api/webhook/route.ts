@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { randomUUID } from "crypto";
 import Stripe from "stripe";
 import { supabaseAdmin } from "@/lib/supabase";
 import { sendBookingNotification, sendCustomerConfirmation } from "@/lib/notifications";
@@ -36,12 +37,18 @@ export async function POST(request: NextRequest) {
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
 
+    // Generate cancel/reschedule tokens
+    const cancelToken = randomUUID();
+    const rescheduleToken = randomUUID();
+
     // Update booking in Supabase
     const { data: booking, error: updateError } = await supabaseAdmin
       .from("bookings")
       .update({
         stripe_payment_status: "paid",
         status: "confirmed",
+        cancel_token: cancelToken,
+        reschedule_token: rescheduleToken,
       })
       .eq("stripe_session_id", session.id)
       .select()
@@ -50,6 +57,11 @@ export async function POST(request: NextRequest) {
     if (updateError) {
       console.error("Failed to update booking:", updateError);
     } else if (booking) {
+      // Build cancel/reschedule URLs
+      const origin = request.headers.get("origin") || request.headers.get("referer")?.replace(/\/api.*/, "") || "https://que.rico.catering";
+      const cancelUrl = `${origin}/en/booking/cancel/${cancelToken}`;
+      const rescheduleUrl = `${origin}/en/booking/reschedule/${rescheduleToken}`;
+
       // Send notification to owner + confirmation to customer
       const notificationData = {
         bookingId: booking.id,
@@ -62,6 +74,8 @@ export async function POST(request: NextRequest) {
         meats: booking.meats as string[],
         eventAddress: booking.event_address,
         totalPrice: booking.total_price,
+        cancelUrl,
+        rescheduleUrl,
       };
 
       await Promise.all([

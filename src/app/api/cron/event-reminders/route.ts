@@ -46,13 +46,16 @@ export async function GET(request: NextRequest) {
     const firstResults = [];
     for (const booking of firstReminders || []) {
       try {
-        const cancelToken = crypto.randomUUID();
-        const rescheduleToken = crypto.randomUUID();
+        // Use existing tokens (generated at booking time) or create new ones as fallback
+        const cancelToken = (booking.cancel_token as string) || crypto.randomUUID();
+        const rescheduleToken = (booking.reschedule_token as string) || crypto.randomUUID();
 
-        await supabaseAdmin
-          .from("bookings")
-          .update({ cancel_token: cancelToken, reschedule_token: rescheduleToken })
-          .eq("id", booking.id);
+        if (!booking.cancel_token || !booking.reschedule_token) {
+          await supabaseAdmin
+            .from("bookings")
+            .update({ cancel_token: cancelToken, reschedule_token: rescheduleToken })
+            .eq("id", booking.id);
+        }
 
         const cancelUrl = `${BASE_URL}/en/booking/cancel/${cancelToken}`;
         const rescheduleUrl = `${BASE_URL}/en/booking/reschedule/${rescheduleToken}`;
