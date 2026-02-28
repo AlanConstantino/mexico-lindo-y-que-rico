@@ -184,7 +184,8 @@
     "paymentMethod": "Payment Method",
     "payWithCard": "Pay with Card",
     "payWithCash": "Pay with Cash",
-    "ccSurcharge": "Credit Card Fee ({percent}%)",
+    "ccSurcharge": "Credit Card Surcharge ({percent}%)",
+    "processingFee": "Payment Processing Fee ({percent}% + $0.30)",
     "cashDeposit": "Deposit ({percent}%)",
     "depositNonRefundable": "Deposit is non-refundable",
     "depositDueNow": "Deposit Due Now",
@@ -360,7 +361,13 @@
       "noshowFeeTitle": "No-Show Fee",
       "noshowFeeFlat": "No-Show Fee Amount ($)",
       "noshowFeePercent": "No-Show Fee (%)",
-      "noshowFeeHint": "Charged to the customer's card on file if they don't show up or don't pay for a cash booking."
+      "noshowFeeHint": "Charged to the customer's card on file if they don't show up or don't pay for a cash booking.",
+      "paymentFeesTitle": "Payment Fees",
+      "ccSurchargeLabel": "Credit Card Surcharge (%)",
+      "ccSurchargeHint": "Additional fee charged to the customer for paying with a credit card",
+      "stripeFeePercentLabel": "Stripe Processing Fee (%)",
+      "stripeFeeFlatLabel": "Stripe Flat Fee (¢)",
+      "stripeFeeHint": "Stripe's processing fee (default: 2.9% + 30¢). Adjust if your Stripe rate is different."
     }
   },
   "metadata": {

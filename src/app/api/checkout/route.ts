@@ -6,6 +6,7 @@ import {
   getBasePrice,
   calculateSurcharge,
   calculateDeposit,
+  calculateProcessingFee,
   EXTRA_OPTIONS,
   type ServiceType,
   type MeatId,
@@ -87,22 +88,33 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Fetch payment settings from DB (server-side truth)
+    const { data: paySettings } = await supabaseAdmin
+      .from("settings")
+      .select("cc_surcharge_percent, cash_deposit_percent, stripe_fee_percent, stripe_fee_flat")
+      .single();
+
+    const serverSurchargePercent = paySettings?.cc_surcharge_percent ?? 10;
+    const serverStripeFeePercent = paySettings?.stripe_fee_percent ?? 2.9;
+    const serverStripeFeeFlatCents = paySettings?.stripe_fee_flat ?? 30;
+
     // Recalculate price on server side (never trust client price)
     const basePrice = getBasePrice(serviceType, guestCount);
     const serverTotal = calculateTotal(serviceType, guestCount, extras);
 
     let chargeAmount: number;
     let surchargeAmount = 0;
+    let processingFee = 0;
     let depositAmount = 0;
     let balanceDue = 0;
 
     if (paymentMethod === "cash") {
-      depositAmount = calculateDeposit(serverTotal, cashDepositPercent);
-      balanceDue = serverTotal - depositAmount;
-      chargeAmount = depositAmount;
+      chargeAmount = 0; // No charge for cash — just save card on file
+      balanceDue = serverTotal;
     } else {
-      surchargeAmount = calculateSurcharge(serverTotal, ccSurchargePercent);
-      chargeAmount = serverTotal + surchargeAmount;
+      surchargeAmount = calculateSurcharge(serverTotal, serverSurchargePercent);
+      processingFee = calculateProcessingFee(serverTotal, serverStripeFeePercent, serverStripeFeeFlatCents);
+      chargeAmount = serverTotal + surchargeAmount + processingFee;
     }
 
     const totalCents = chargeAmount * 100;
@@ -145,18 +157,32 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Add surcharge line item for card payments
-    if (paymentMethod === "card" && surchargeAmount > 0) {
-      lineItems.push({
-        price_data: {
-          currency: "usd",
-          product_data: {
-            name: `Credit Card Processing Fee (${ccSurchargePercent}%)`,
+    // Add surcharge and processing fee line items for card payments
+    if (paymentMethod === "card") {
+      if (surchargeAmount > 0) {
+        lineItems.push({
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: `Credit Card Surcharge (${serverSurchargePercent}%)`,
+            },
+            unit_amount: surchargeAmount * 100,
           },
-          unit_amount: surchargeAmount * 100,
-        },
-        quantity: 1,
-      });
+          quantity: 1,
+        });
+      }
+      if (processingFee > 0) {
+        lineItems.push({
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: `Payment Processing Fee (${serverStripeFeePercent}% + $${(serverStripeFeeFlatCents / 100).toFixed(2)})`,
+            },
+            unit_amount: Math.round(processingFee * 100),
+          },
+          quantity: 1,
+        });
+      }
     }
 
     // Determine origin for redirect URLs

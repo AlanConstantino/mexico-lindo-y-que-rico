@@ -184,7 +184,8 @@
     "paymentMethod": "Método de Pago",
     "payWithCard": "Pagar con Tarjeta",
     "payWithCash": "Pagar en Efectivo",
-    "ccSurcharge": "Cargo por Tarjeta ({percent}%)",
+    "ccSurcharge": "Recargo por Tarjeta ({percent}%)",
+    "processingFee": "Cargo por Procesamiento ({percent}% + $0.30)",
     "cashDeposit": "Depósito ({percent}%)",
     "depositNonRefundable": "El depósito no es reembolsable",
     "depositDueNow": "Depósito a Pagar Ahora",
@@ -360,7 +361,13 @@
       "noshowFeeTitle": "Cargo por No Presentarse",
       "noshowFeeFlat": "Monto del cargo ($)",
       "noshowFeePercent": "Cargo por no presentarse (%)",
-      "noshowFeeHint": "Se cobra a la tarjeta del cliente si no se presenta o no paga en una reserva en efectivo."
+      "noshowFeeHint": "Se cobra a la tarjeta del cliente si no se presenta o no paga en una reserva en efectivo.",
+      "paymentFeesTitle": "Cargos de Pago",
+      "ccSurchargeLabel": "Recargo por Tarjeta (%)",
+      "ccSurchargeHint": "Cargo adicional al cliente por pagar con tarjeta de crédito",
+      "stripeFeePercentLabel": "Cargo de Stripe (%)",
+      "stripeFeeFlatLabel": "Cargo Fijo de Stripe (¢)",
+      "stripeFeeHint": "Cargo de procesamiento de Stripe (predeterminado: 2.9% + 30¢). Ajusta si tu tarifa de Stripe es diferente."
     }
   },
   "metadata": {

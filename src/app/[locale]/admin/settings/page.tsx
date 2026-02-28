@@ -10,6 +10,9 @@ interface Settings {
   reminder_days: number;
   notification_email: string;
   notification_phone: string;
+  cc_surcharge_percent: number;
+  stripe_fee_percent: number;
+  stripe_fee_flat: number;
   cancellation_fee_type: "flat" | "percentage";
   cancellation_fee_flat: number;
   cancellation_fee_percent: number;
@@ -43,6 +46,9 @@ export default function AdminSettingsPage() {
     reminder_days: 5,
     notification_email: "",
     notification_phone: "",
+    cc_surcharge_percent: 10,
+    stripe_fee_percent: 2.9,
+    stripe_fee_flat: 30,
     cancellation_fee_type: "flat",
     cancellation_fee_flat: 50,
     cancellation_fee_percent: 25,
@@ -255,6 +261,35 @@ export default function AdminSettingsPage() {
                 className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream placeholder:text-cream/30 focus:outline-none focus:border-amber/50 transition-colors"
                 placeholder="(555) 123-4567"
               />
+            </div>
+
+            {/* Payment Fee Settings */}
+            <div className="border-t border-cream/10 pt-5 mt-2">
+              <h3 className="text-cream/60 text-xs uppercase tracking-wider mb-4">
+                {t("settings.paymentFeesTitle")}
+              </h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm text-cream/70 mb-1.5">{t("settings.ccSurchargeLabel")}</label>
+                  <input type="number" min={0} max={100} value={settings.cc_surcharge_percent}
+                    onChange={(e) => setSettings({ ...settings, cc_surcharge_percent: parseInt(e.target.value) || 0 })}
+                    className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors" />
+                  <p className="text-xs text-cream/40 mt-1">{t("settings.ccSurchargeHint")}</p>
+                </div>
+                <div>
+                  <label className="block text-sm text-cream/70 mb-1.5">{t("settings.stripeFeePercentLabel")}</label>
+                  <input type="number" min={0} max={20} step={0.1} value={settings.stripe_fee_percent}
+                    onChange={(e) => setSettings({ ...settings, stripe_fee_percent: parseFloat(e.target.value) || 0 })}
+                    className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors" />
+                </div>
+                <div>
+                  <label className="block text-sm text-cream/70 mb-1.5">{t("settings.stripeFeeFlatLabel")}</label>
+                  <input type="number" min={0} max={100} value={settings.stripe_fee_flat}
+                    onChange={(e) => setSettings({ ...settings, stripe_fee_flat: parseInt(e.target.value) || 0 })}
+                    className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors" />
+                  <p className="text-xs text-cream/40 mt-1">{t("settings.stripeFeeHint")}</p>
+                </div>
+              </div>
             </div>
 
             {/* Cancellation Settings */}

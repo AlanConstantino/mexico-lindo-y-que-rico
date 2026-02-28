@@ -2,7 +2,7 @@
 
 import { useTranslations, useLocale } from "next-intl";
 import type { BookingData } from "../BookingForm";
-import { EXTRA_OPTIONS, calculateSurcharge, calculateDeposit } from "@/lib/pricing";
+import { EXTRA_OPTIONS, calculateSurcharge, calculateDeposit, calculateProcessingFee } from "@/lib/pricing";
 
 interface ReviewStepProps {
   data: BookingData;
@@ -11,6 +11,8 @@ interface ReviewStepProps {
   total: number;
   ccSurchargePercent: number;
   cashDepositPercent: number;
+  stripeFeePercent: number;
+  stripeFeeFlatCents: number;
   onPaymentMethodChange: (method: "card" | "cash") => void;
 }
 
@@ -21,6 +23,8 @@ export default function ReviewStep({
   total,
   ccSurchargePercent,
   cashDepositPercent,
+  stripeFeePercent,
+  stripeFeeFlatCents,
   onPaymentMethodChange,
 }: ReviewStepProps) {
   const t = useTranslations("booking");
@@ -42,7 +46,8 @@ export default function ReviewStep({
   );
 
   const surcharge = calculateSurcharge(total, ccSurchargePercent);
-  const cardTotal = total + surcharge;
+  const processingFee = calculateProcessingFee(total, stripeFeePercent, stripeFeeFlatCents);
+  const cardTotal = total + surcharge + processingFee;
   const depositAmount = calculateDeposit(total, cashDepositPercent);
   const balanceDue = total - depositAmount;
 
@@ -187,6 +192,12 @@ export default function ReviewStep({
                     <span className="text-cream/70">${surcharge.toLocaleString()}</span>
                   </div>
                 )}
+                {processingFee > 0 && (
+                  <div className="flex justify-between text-xs">
+                    <span className="text-cream/50">{t("processingFee", { percent: stripeFeePercent })}</span>
+                    <span className="text-cream/70">${processingFee.toFixed(2)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-sm font-medium pt-1 border-t border-cream/5">
                   <span className="text-cream">{t("total")}</span>
                   <span className="text-amber">${cardTotal.toLocaleString()}</span>
@@ -239,6 +250,12 @@ export default function ReviewStep({
             <div className="flex justify-between text-sm mb-2">
               <span className="text-cream/50">{t("ccSurcharge", { percent: ccSurchargePercent })}</span>
               <span className="text-cream">${surcharge.toLocaleString()}</span>
+            </div>
+          )}
+          {data.paymentMethod === "card" && processingFee > 0 && (
+            <div className="flex justify-between text-sm mb-2">
+              <span className="text-cream/50">{t("processingFee", { percent: stripeFeePercent })}</span>
+              <span className="text-cream">${processingFee.toFixed(2)}</span>
             </div>
           )}
           <div className="border-t border-cream/10 mt-3 pt-3 flex justify-between">

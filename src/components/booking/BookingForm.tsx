@@ -51,6 +51,8 @@ export default function BookingForm() {
   const [paymentSettings, setPaymentSettings] = useState({
     cc_surcharge_percent: 10,
     cash_deposit_percent: 50,
+    stripe_fee_percent: 2.9,
+    stripe_fee_flat: 30,
   });
 
   useEffect(() => {
@@ -275,6 +277,8 @@ export default function BookingForm() {
             total={total!}
             ccSurchargePercent={paymentSettings.cc_surcharge_percent}
             cashDepositPercent={paymentSettings.cash_deposit_percent}
+            stripeFeePercent={paymentSettings.stripe_fee_percent}
+            stripeFeeFlatCents={paymentSettings.stripe_fee_flat}
             onPaymentMethodChange={(method: "card" | "cash") => updateData({ paymentMethod: method })}
           />
         )}

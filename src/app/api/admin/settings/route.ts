@@ -61,6 +61,9 @@ export async function PUT(request: NextRequest) {
       noshow_fee_type,
       noshow_fee_flat,
       noshow_fee_percent,
+      cc_surcharge_percent,
+      stripe_fee_percent,
+      stripe_fee_flat,
     } = body;
 
     const cancellationFields = {
@@ -71,6 +74,9 @@ export async function PUT(request: NextRequest) {
       ...(noshow_fee_type !== undefined && { noshow_fee_type }),
       ...(noshow_fee_flat !== undefined && { noshow_fee_flat }),
       ...(noshow_fee_percent !== undefined && { noshow_fee_percent }),
+      ...(cc_surcharge_percent !== undefined && { cc_surcharge_percent }),
+      ...(stripe_fee_percent !== undefined && { stripe_fee_percent }),
+      ...(stripe_fee_flat !== undefined && { stripe_fee_flat }),
     };
 
     // Try to update existing row first

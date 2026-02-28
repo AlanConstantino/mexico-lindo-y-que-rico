@@ -113,6 +113,11 @@ export function calculateSurcharge(subtotal: number, percent: number): number {
   return Math.round(subtotal * (percent / 100));
 }
 
+/** Returns processing fee in dollars. flatCents is in cents (e.g., 30 = $0.30) */
+export function calculateProcessingFee(subtotal: number, percent: number, flatCents: number): number {
+  return Math.round(subtotal * (percent / 100) * 100 + flatCents) / 100;
+}
+
 export function calculateDeposit(subtotal: number, percent: number): number {
   return Math.round(subtotal * (percent / 100));
 }
