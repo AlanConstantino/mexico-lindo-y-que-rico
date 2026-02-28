@@ -168,7 +168,6 @@ export async function POST(request: NextRequest) {
     if (paymentMethod === "cash") {
       // Cash: save card on file only (no charge) via Stripe Setup mode
       session = await stripe.checkout.sessions.create({
-        payment_method_types: ["card"],
         mode: "setup",
         success_url: `${origin}/${locale}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${origin}/${locale}/booking/cancel`,
@@ -186,9 +185,8 @@ export async function POST(request: NextRequest) {
         },
       });
     } else {
-      // Card: normal payment checkout
+      // Card: normal payment checkout (Stripe auto-enables Apple Pay, Google Pay, etc.)
       session = await stripe.checkout.sessions.create({
-        payment_method_types: ["card"],
         line_items: lineItems,
         mode: "payment",
         success_url: `${origin}/${locale}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
