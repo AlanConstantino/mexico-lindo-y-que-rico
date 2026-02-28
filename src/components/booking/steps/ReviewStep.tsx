@@ -211,15 +211,11 @@ export default function ReviewStep({
                 <span className="text-cream font-medium text-sm">{t("payWithCash")}</span>
               </div>
               <div className="space-y-1">
+                <p className="text-cream/50 text-xs">{t("cardOnFileNote")}</p>
                 <div className="flex justify-between text-xs">
-                  <span className="text-cream/50">{t("cashDeposit", { percent: cashDepositPercent })}</span>
-                  <span className="text-cream/70">${depositAmount.toLocaleString()}</span>
+                  <span className="text-cream/50">{t("cashDueOnEventDay")}</span>
+                  <span className="text-cream/70">${total.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-cream/50">{t("remainingBalance")}</span>
-                  <span className="text-cream/70">${balanceDue.toLocaleString()}</span>
-                </div>
-                <div className="text-[10px] text-amber/60 mt-1">{t("depositNonRefundable")}</div>
               </div>
             </button>
           </div>
@@ -247,16 +243,15 @@ export default function ReviewStep({
           )}
           <div className="border-t border-cream/10 mt-3 pt-3 flex justify-between">
             <span className="text-cream font-medium">
-              {data.paymentMethod === "cash" ? t("depositDueNow") : t("total")}
+              {t("total")}
             </span>
             <span className="font-heading text-2xl text-amber">
-              ${data.paymentMethod === "cash" ? depositAmount.toLocaleString() : cardTotal.toLocaleString()}
+              ${data.paymentMethod === "card" ? cardTotal.toLocaleString() : total.toLocaleString()}
             </span>
           </div>
           {data.paymentMethod === "cash" && (
-            <div className="flex justify-between text-sm mt-2 text-cream/40">
-              <span>{t("remainingBalance")}</span>
-              <span>${balanceDue.toLocaleString()}</span>
+            <div className="text-xs text-cream/40 mt-2">
+              {t("cardOnFileSummary")}
             </div>
           )}
         </div>

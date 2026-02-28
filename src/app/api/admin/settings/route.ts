@@ -58,6 +58,9 @@ export async function PUT(request: NextRequest) {
       cancellation_fee_flat,
       cancellation_fee_percent,
       free_cancellation_days,
+      noshow_fee_type,
+      noshow_fee_flat,
+      noshow_fee_percent,
     } = body;
 
     const cancellationFields = {
@@ -65,6 +68,9 @@ export async function PUT(request: NextRequest) {
       ...(cancellation_fee_flat !== undefined && { cancellation_fee_flat }),
       ...(cancellation_fee_percent !== undefined && { cancellation_fee_percent }),
       ...(free_cancellation_days !== undefined && { free_cancellation_days }),
+      ...(noshow_fee_type !== undefined && { noshow_fee_type }),
+      ...(noshow_fee_flat !== undefined && { noshow_fee_flat }),
+      ...(noshow_fee_percent !== undefined && { noshow_fee_percent }),
     };
 
     // Try to update existing row first

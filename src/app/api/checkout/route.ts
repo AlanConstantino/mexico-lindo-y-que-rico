@@ -159,46 +159,54 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // For cash payments, replace line items with a single deposit line
-    if (paymentMethod === "cash") {
-      lineItems.length = 0;
-      lineItems.push({
-        price_data: {
-          currency: "usd",
-          product_data: {
-            name: `Catering Deposit (${cashDepositPercent}%)`,
-            description: `Non-refundable deposit for ${serviceType === "2hr" ? "2-Hour" : "3-Hour"} Taco Catering · ${guestCount} guests`,
-          },
-          unit_amount: depositAmount * 100,
-        },
-        quantity: 1,
-      });
-    }
-
     // Determine origin for redirect URLs
     const origin =
       request.headers.get("origin") || "http://localhost:3000";
 
-    // Create Stripe Checkout session
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      line_items: lineItems,
-      mode: "payment",
-      success_url: `${origin}/${locale}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/${locale}/booking/cancel`,
-      customer_email: customerEmail,
-      metadata: {
-        eventDate,
-        serviceType,
-        guestCount: String(guestCount),
-        meats: JSON.stringify(meats),
-        customerName,
-        customerPhone,
-        eventAddress,
-        ...(Object.keys(aguaFlavors).length > 0 && { aguaFlavors: JSON.stringify(aguaFlavors) }),
-        paymentMethod,
-      },
-    });
+    let session;
+
+    if (paymentMethod === "cash") {
+      // Cash: save card on file only (no charge) via Stripe Setup mode
+      session = await stripe.checkout.sessions.create({
+        payment_method_types: ["card"],
+        mode: "setup",
+        success_url: `${origin}/${locale}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${origin}/${locale}/booking/cancel`,
+        customer_email: customerEmail,
+        metadata: {
+          eventDate,
+          serviceType,
+          guestCount: String(guestCount),
+          meats: JSON.stringify(meats),
+          customerName,
+          customerPhone,
+          eventAddress,
+          ...(Object.keys(aguaFlavors).length > 0 && { aguaFlavors: JSON.stringify(aguaFlavors) }),
+          paymentMethod,
+        },
+      });
+    } else {
+      // Card: normal payment checkout
+      session = await stripe.checkout.sessions.create({
+        payment_method_types: ["card"],
+        line_items: lineItems,
+        mode: "payment",
+        success_url: `${origin}/${locale}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${origin}/${locale}/booking/cancel`,
+        customer_email: customerEmail,
+        metadata: {
+          eventDate,
+          serviceType,
+          guestCount: String(guestCount),
+          meats: JSON.stringify(meats),
+          customerName,
+          customerPhone,
+          eventAddress,
+          ...(Object.keys(aguaFlavors).length > 0 && { aguaFlavors: JSON.stringify(aguaFlavors) }),
+          paymentMethod,
+        },
+      });
+    }
 
     // Save booking to Supabase
     const { data: booking, error: dbError } = await supabaseAdmin
@@ -221,8 +229,8 @@ export async function POST(request: NextRequest) {
         event_address: eventAddress,
         total_price: totalCents,
         payment_type: paymentMethod,
-        deposit_amount: paymentMethod === "cash" ? depositAmount * 100 : 0,
-        balance_due: paymentMethod === "cash" ? balanceDue * 100 : 0,
+        deposit_amount: 0,
+        balance_due: paymentMethod === "cash" ? totalCents : 0,
         stripe_session_id: session.id,
         stripe_payment_status: "unpaid",
         status: "pending",

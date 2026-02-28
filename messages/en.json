@@ -190,6 +190,9 @@
     "depositDueNow": "Deposit Due Now",
     "remainingBalance": "Remaining balance due on event day",
     "subtotal": "Subtotal",
+    "cardOnFileNote": "Your card will be saved on file but not charged. Pay in cash on the day of your event.",
+    "cashDueOnEventDay": "Due on event day (cash)",
+    "cardOnFileSummary": "No charge today — your card is saved on file as a guarantee. Full amount due in cash on event day.",
     "processing": "Processing...",
     "selectDate": "Select Event Date",
     "selectDateDesc": "Choose a date for your event. We book up to 3 events per day.",
@@ -353,7 +356,11 @@
       "percentageAmount": "Percentage Fee (%)",
       "percentageHint": "Percentage of booking total charged as cancellation fee",
       "freeCancellationDays": "Free Cancellation Cutoff (Days)",
-      "freeCancellationHint": "Customers can cancel for free up to this many days before the event"
+      "freeCancellationHint": "Customers can cancel for free up to this many days before the event",
+      "noshowFeeTitle": "No-Show Fee",
+      "noshowFeeFlat": "No-Show Fee Amount ($)",
+      "noshowFeePercent": "No-Show Fee (%)",
+      "noshowFeeHint": "Charged to the customer's card on file if they don't show up or don't pay for a cash booking."
     }
   },
   "metadata": {

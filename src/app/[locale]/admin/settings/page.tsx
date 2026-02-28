@@ -14,6 +14,9 @@ interface Settings {
   cancellation_fee_flat: number;
   cancellation_fee_percent: number;
   free_cancellation_days: number;
+  noshow_fee_type: "flat" | "percentage";
+  noshow_fee_flat: number;
+  noshow_fee_percent: number;
 }
 
 function getToken(): string | null {
@@ -44,6 +47,9 @@ export default function AdminSettingsPage() {
     cancellation_fee_flat: 50,
     cancellation_fee_percent: 25,
     free_cancellation_days: 3,
+    noshow_fee_type: "flat",
+    noshow_fee_flat: 100,
+    noshow_fee_percent: 50,
   });
 
   useEffect(() => {
@@ -294,6 +300,42 @@ export default function AdminSettingsPage() {
                     className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors" />
                   <p className="text-xs text-cream/40 mt-1">{t("settings.freeCancellationHint")}</p>
                 </div>
+              </div>
+            </div>
+
+            {/* No-Show Fee */}
+            <div className="pt-6 border-t border-cream/10">
+              <h3 className="text-cream font-medium mb-4">{t("settings.noshowFeeTitle")}</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm text-cream/70 mb-1.5">{t("settings.feeType")}</label>
+                  <div className="flex gap-2">
+                    <button type="button" onClick={() => setSettings({ ...settings, noshow_fee_type: "flat" })}
+                      className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-colors ${settings.noshow_fee_type === "flat" ? "bg-amber text-navy" : "bg-navy-light border border-cream/10 text-cream/50"}`}>
+                      {t("settings.flatRate")}
+                    </button>
+                    <button type="button" onClick={() => setSettings({ ...settings, noshow_fee_type: "percentage" })}
+                      className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-colors ${settings.noshow_fee_type === "percentage" ? "bg-amber text-navy" : "bg-navy-light border border-cream/10 text-cream/50"}`}>
+                      {t("settings.percentage")}
+                    </button>
+                  </div>
+                </div>
+                {settings.noshow_fee_type === "flat" ? (
+                  <div>
+                    <label className="block text-sm text-cream/70 mb-1.5">{t("settings.noshowFeeFlat")}</label>
+                    <input type="number" min={0} max={5000} value={settings.noshow_fee_flat}
+                      onChange={(e) => setSettings({ ...settings, noshow_fee_flat: parseInt(e.target.value) || 0 })}
+                      className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors" />
+                  </div>
+                ) : (
+                  <div>
+                    <label className="block text-sm text-cream/70 mb-1.5">{t("settings.noshowFeePercent")}</label>
+                    <input type="number" min={0} max={100} value={settings.noshow_fee_percent}
+                      onChange={(e) => setSettings({ ...settings, noshow_fee_percent: parseInt(e.target.value) || 0 })}
+                      className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors" />
+                  </div>
+                )}
+                <p className="text-xs text-cream/40">{t("settings.noshowFeeHint")}</p>
               </div>
             </div>
 

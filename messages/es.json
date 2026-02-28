@@ -190,6 +190,9 @@
     "depositDueNow": "Depósito a Pagar Ahora",
     "remainingBalance": "Saldo restante a pagar el día del evento",
     "subtotal": "Subtotal",
+    "cardOnFileNote": "Tu tarjeta se guardará en archivo pero no se cobrará. Paga en efectivo el día de tu evento.",
+    "cashDueOnEventDay": "A pagar el día del evento (efectivo)",
+    "cardOnFileSummary": "Sin cargo hoy — tu tarjeta se guarda como garantía. El monto total se paga en efectivo el día del evento.",
     "processing": "Procesando...",
     "selectDate": "Seleccione la Fecha",
     "selectDateDesc": "Elija una fecha para su evento. Aceptamos hasta 3 eventos por día.",
@@ -353,7 +356,11 @@
       "percentageAmount": "Tarifa Porcentual (%)",
       "percentageHint": "Porcentaje del total cobrado como tarifa de cancelación",
       "freeCancellationDays": "Días para Cancelación Gratuita",
-      "freeCancellationHint": "Los clientes pueden cancelar gratis hasta este número de días antes del evento"
+      "freeCancellationHint": "Los clientes pueden cancelar gratis hasta este número de días antes del evento",
+      "noshowFeeTitle": "Cargo por No Presentarse",
+      "noshowFeeFlat": "Monto del cargo ($)",
+      "noshowFeePercent": "Cargo por no presentarse (%)",
+      "noshowFeeHint": "Se cobra a la tarjeta del cliente si no se presenta o no paga en una reserva en efectivo."
     }
   },
   "metadata": {

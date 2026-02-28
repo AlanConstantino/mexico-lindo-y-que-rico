@@ -36,20 +36,43 @@ export async function POST(request: NextRequest) {
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
+    const isSetupMode = session.mode === "setup";
 
     // Generate cancel/reschedule tokens
     const cancelToken = randomUUID();
     const rescheduleToken = randomUUID();
 
+    // Build update payload
+    const updatePayload: Record<string, unknown> = {
+      stripe_payment_status: isSetupMode ? "card_on_file" : "paid",
+      status: "confirmed",
+      cancel_token: cancelToken,
+      reschedule_token: rescheduleToken,
+    };
+
+    // For setup mode (cash), save the Stripe customer ID and setup intent for future charges
+    if (isSetupMode && session.customer) {
+      updatePayload.stripe_customer_id = typeof session.customer === "string"
+        ? session.customer
+        : session.customer.id;
+    }
+    if (isSetupMode && session.setup_intent) {
+      const setupIntentId = typeof session.setup_intent === "string"
+        ? session.setup_intent
+        : session.setup_intent.id;
+      // Retrieve the setup intent to get the payment method
+      const setupIntent = await stripe.setupIntents.retrieve(setupIntentId);
+      if (setupIntent.payment_method) {
+        updatePayload.stripe_payment_method_id = typeof setupIntent.payment_method === "string"
+          ? setupIntent.payment_method
+          : setupIntent.payment_method.id;
+      }
+    }
+
     // Update booking in Supabase
     const { data: booking, error: updateError } = await supabaseAdmin
       .from("bookings")
-      .update({
-        stripe_payment_status: "paid",
-        status: "confirmed",
-        cancel_token: cancelToken,
-        reschedule_token: rescheduleToken,
-      })
+      .update(updatePayload)
       .eq("stripe_session_id", session.id)
       .select()
       .single();
