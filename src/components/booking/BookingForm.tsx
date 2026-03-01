@@ -23,7 +23,7 @@ export interface BookingData {
   customerEmail: string;
   customerPhone: string;
   eventAddress: string;
-  paymentMethod: "card" | "cash" | "zelle";
+  paymentMethod: "card" | "cash";
 }
 
 const TOTAL_STEPS = 6;
@@ -279,7 +279,7 @@ export default function BookingForm() {
             cashDepositPercent={paymentSettings.cash_deposit_percent}
             stripeFeePercent={paymentSettings.stripe_fee_percent}
             stripeFeeFlatCents={paymentSettings.stripe_fee_flat}
-            onPaymentMethodChange={(method: "card" | "cash" | "zelle") => updateData({ paymentMethod: method })}
+            onPaymentMethodChange={(method: "card" | "cash") => updateData({ paymentMethod: method })}
           />
         )}
       </div>
@@ -342,8 +342,6 @@ export default function BookingForm() {
                 {t("processing")}
               </>
             ) : data.paymentMethod === "cash" ? (
-              t("saveCardAndConfirm")
-            ) : data.paymentMethod === "zelle" ? (
               t("saveCardAndConfirm")
             ) : (
               `${t("payWithCard")} $${total ? (total + calculateSurcharge(total, paymentSettings.cc_surcharge_percent) + calculateProcessingFee(total, paymentSettings.stripe_fee_percent, paymentSettings.stripe_fee_flat)).toLocaleString() : 0}`

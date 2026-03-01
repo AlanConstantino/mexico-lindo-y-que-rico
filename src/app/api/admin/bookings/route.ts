@@ -80,8 +80,8 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    // Send confirmation email when a pending booking (cash/zelle) is confirmed by the owner
-    if (status === "confirmed" && (data.payment_type === "cash" || data.payment_type === "zelle")) {
+    // Send confirmation email when a pending booking (cash) is confirmed by the owner
+    if (status === "confirmed" && data.payment_type === "cash") {
       const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://que.rico.catering";
       const locale = data.locale || "en";
       const cancelUrl = data.cancel_token ? `${BASE_URL}/${locale}/booking/cancel/${data.cancel_token}` : undefined;

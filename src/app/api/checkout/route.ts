@@ -29,7 +29,7 @@ interface CheckoutBody {
   customerPhone: string;
   eventAddress: string;
   totalPrice: number;
-  paymentMethod?: "card" | "cash" | "zelle";
+  paymentMethod?: "card" | "cash";
   ccSurchargePercent?: number;
   cashDepositPercent?: number;
   locale?: string;
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
     let depositAmount = 0;
     let balanceDue = 0;
 
-    if (paymentMethod === "cash" || paymentMethod === "zelle") {
+    if (paymentMethod === "cash") {
       chargeAmount = 0;
       balanceDue = serverTotal;
     } else {
@@ -254,63 +254,6 @@ export async function POST(request: NextRequest) {
       // Redirect to success page with booking ID instead of Stripe session
       return NextResponse.json({
         url: `${origin}/${locale}/booking/success?booking_id=${booking.id}&cash=true`,
-        bookingId: booking.id,
-      });
-    }
-
-    if (paymentMethod === "zelle") {
-      const cancelToken = crypto.randomUUID();
-      const rescheduleToken = crypto.randomUUID();
-
-      const { data: booking, error: dbError } = await supabaseAdmin
-        .from("bookings")
-        .insert({
-          event_date: eventDate,
-          service_type: serviceType,
-          guest_count: guestCount,
-          meats,
-          extras: extrasData,
-          customer_name: customerName,
-          customer_email: customerEmail,
-          customer_phone: customerPhone,
-          event_address: eventAddress,
-          total_price: serverTotal * 100,
-          payment_type: "zelle",
-          deposit_amount: 0,
-          balance_due: serverTotal * 100,
-          stripe_payment_status: "not_applicable",
-          status: "pending",
-          cancel_token: cancelToken,
-          reschedule_token: rescheduleToken,
-        })
-        .select("id")
-        .single();
-
-      if (dbError) {
-        console.error("Supabase insert error:", dbError);
-        return NextResponse.json({ error: "Failed to create booking" }, { status: 500 });
-      }
-
-      const { sendBookingNotification, sendCashPendingConfirmation } = await import("@/lib/notifications");
-      const notifData = {
-        bookingId: booking.id,
-        customerName,
-        customerEmail,
-        customerPhone,
-        eventDate,
-        serviceType,
-        guestCount,
-        meats,
-        eventAddress,
-        totalPrice: serverTotal * 100,
-      };
-      await Promise.all([
-        sendBookingNotification(notifData),
-        sendCashPendingConfirmation(notifData),
-      ]);
-
-      return NextResponse.json({
-        url: `${origin}/${locale}/booking/success?booking_id=${booking.id}&zelle=true`,
         bookingId: booking.id,
       });
     }
