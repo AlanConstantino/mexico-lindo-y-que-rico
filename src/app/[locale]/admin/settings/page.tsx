@@ -20,6 +20,10 @@ interface Settings {
   noshow_fee_type: "flat" | "percentage";
   noshow_fee_flat: number;
   noshow_fee_percent: number;
+  zelle_handle: string;
+  venmo_handle: string;
+  cashapp_handle: string;
+  paypal_email: string;
 }
 
 function getToken(): string | null {
@@ -56,6 +60,10 @@ export default function AdminSettingsPage() {
     noshow_fee_type: "flat",
     noshow_fee_flat: 100,
     noshow_fee_percent: 50,
+    zelle_handle: "(562) 746-3998",
+    venmo_handle: "",
+    cashapp_handle: "",
+    paypal_email: "",
   });
 
   useEffect(() => {
@@ -371,6 +379,39 @@ export default function AdminSettingsPage() {
                   </div>
                 )}
                 <p className="text-xs text-cream/40">{t("settings.noshowFeeHint")}</p>
+              </div>
+            </div>
+
+            {/* Payment Method Handles */}
+            <div className="p-4 rounded-xl bg-navy-light/30 border border-cream/5 space-y-4">
+              <h3 className="text-cream font-medium">Payment Method Handles</h3>
+              <div>
+                <label className="block text-sm text-cream/60 mb-1">Zelle Phone/Email</label>
+                <input type="text" value={settings.zelle_handle}
+                  onChange={(e) => setSettings({ ...settings, zelle_handle: e.target.value })}
+                  placeholder="(562) 746-3998"
+                  className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors" />
+              </div>
+              <div>
+                <label className="block text-sm text-cream/60 mb-1">Venmo Handle</label>
+                <input type="text" value={settings.venmo_handle}
+                  onChange={(e) => setSettings({ ...settings, venmo_handle: e.target.value })}
+                  placeholder="@username"
+                  className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors" />
+              </div>
+              <div>
+                <label className="block text-sm text-cream/60 mb-1">Cash App Handle</label>
+                <input type="text" value={settings.cashapp_handle}
+                  onChange={(e) => setSettings({ ...settings, cashapp_handle: e.target.value })}
+                  placeholder="$cashtag"
+                  className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors" />
+              </div>
+              <div>
+                <label className="block text-sm text-cream/60 mb-1">PayPal Email</label>
+                <input type="text" value={settings.paypal_email}
+                  onChange={(e) => setSettings({ ...settings, paypal_email: e.target.value })}
+                  placeholder="email@example.com"
+                  className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors" />
               </div>
             </div>
 

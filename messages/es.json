@@ -260,7 +260,12 @@
     "cancelSubtitle": "No se realizó ningún cargo",
     "cancelDesc": "Su pago fue cancelado. Si desea intentar de nuevo, puede reiniciar el proceso de reserva.",
     "tryAgain": "Intentar de Nuevo",
-    "errorGeneric": "Algo salió mal. Por favor intente de nuevo."
+    "errorGeneric": "Algo salió mal. Por favor intente de nuevo.",
+    "zellePayment": "Zelle",
+    "zelleDescription": "Enviar pago por Zelle",
+    "zelleInstructions": "Envía el pago al (562) 746-3998 por Zelle. Tu reservación será confirmada una vez que verifiquemos tu pago.",
+    "zellePending": "Pago Zelle Pendiente",
+    "payWithZelle": "Pagar con Zelle"
   },
   "admin": {
     "loading": "Cargando...",
@@ -425,5 +430,9 @@
     "successMessage": "Tu evento ha sido reprogramado para {date}.",
     "returnHome": "Volver al Inicio",
     "errorTitle": "Algo Salió Mal"
+  },
+  "paymentMethods": {
+    "title": "Métodos de Pago",
+    "subtitle": "Múltiples opciones de pago para tu conveniencia"
   }
 }

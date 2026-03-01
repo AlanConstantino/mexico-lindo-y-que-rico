@@ -7,6 +7,7 @@ import About from "@/components/About";
 import Menu from "@/components/Menu";
 import Packages from "@/components/Packages";
 import Extras from "@/components/Extras";
+import PaymentMethods from "@/components/PaymentMethods";
 import Gallery from "@/components/Gallery";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
@@ -23,6 +24,7 @@ export default function Home() {
         <Menu />
         <Packages />
         <Extras />
+        <PaymentMethods />
         <Gallery />
         <Contact />
       </main>
