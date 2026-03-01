@@ -1,112 +1,31 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 
 const paymentMethods = [
-  {
-    name: "Visa",
-    svg: (
-      <svg viewBox="0 0 48 32" className="w-12 h-8">
-        <rect width="48" height="32" rx="4" fill="#1A1F71" />
-        <text x="24" y="20" textAnchor="middle" fill="white" fontSize="12" fontWeight="bold" fontFamily="Arial, sans-serif">VISA</text>
-      </svg>
-    ),
-  },
-  {
-    name: "Mastercard",
-    svg: (
-      <svg viewBox="0 0 48 32" className="w-12 h-8">
-        <rect width="48" height="32" rx="4" fill="#252525" />
-        <circle cx="19" cy="16" r="8" fill="#EB001B" />
-        <circle cx="29" cy="16" r="8" fill="#F79E1B" />
-        <path d="M24 10.27a8 8 0 010 11.46 8 8 0 000-11.46z" fill="#FF5F00" />
-      </svg>
-    ),
-  },
-  {
-    name: "Amex",
-    svg: (
-      <svg viewBox="0 0 48 32" className="w-12 h-8">
-        <rect width="48" height="32" rx="4" fill="#006FCF" />
-        <text x="24" y="20" textAnchor="middle" fill="white" fontSize="8" fontWeight="bold" fontFamily="Arial, sans-serif">AMEX</text>
-      </svg>
-    ),
-  },
-  {
-    name: "Apple Pay",
-    svg: (
-      <svg viewBox="0 0 48 32" className="w-12 h-8">
-        <rect width="48" height="32" rx="4" fill="#000000" />
-        <text x="24" y="20" textAnchor="middle" fill="white" fontSize="8" fontWeight="bold" fontFamily="Arial, sans-serif"> Pay</text>
-      </svg>
-    ),
-  },
-  {
-    name: "Google Pay",
-    svg: (
-      <svg viewBox="0 0 48 32" className="w-12 h-8">
-        <rect width="48" height="32" rx="4" fill="#FFFFFF" stroke="#E0E0E0" strokeWidth="0.5" />
-        <text x="24" y="20" textAnchor="middle" fill="#5F6368" fontSize="7" fontWeight="bold" fontFamily="Arial, sans-serif">G Pay</text>
-      </svg>
-    ),
-  },
-  {
-    name: "PayPal",
-    svg: (
-      <svg viewBox="0 0 48 32" className="w-12 h-8">
-        <rect width="48" height="32" rx="4" fill="#003087" />
-        <text x="24" y="20" textAnchor="middle" fill="#009CDE" fontSize="8" fontWeight="bold" fontFamily="Arial, sans-serif">PayPal</text>
-      </svg>
-    ),
-  },
-  {
-    name: "Venmo",
-    svg: (
-      <svg viewBox="0 0 48 32" className="w-12 h-8">
-        <rect width="48" height="32" rx="4" fill="#3D95CE" />
-        <text x="24" y="20" textAnchor="middle" fill="white" fontSize="8" fontWeight="bold" fontFamily="Arial, sans-serif">Venmo</text>
-      </svg>
-    ),
-  },
-  {
-    name: "Zelle",
-    svg: (
-      <svg viewBox="0 0 48 32" className="w-12 h-8">
-        <rect width="48" height="32" rx="4" fill="#6D1ED4" />
-        <text x="24" y="20" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold" fontFamily="Arial, sans-serif">Zelle</text>
-      </svg>
-    ),
-  },
-  {
-    name: "Cash App",
-    svg: (
-      <svg viewBox="0 0 48 32" className="w-12 h-8">
-        <rect width="48" height="32" rx="4" fill="#00D632" />
-        <text x="24" y="20" textAnchor="middle" fill="white" fontSize="7" fontWeight="bold" fontFamily="Arial, sans-serif">Cash App</text>
-      </svg>
-    ),
-  },
-  {
-    name: "Cash",
-    svg: (
-      <svg viewBox="0 0 48 32" className="w-12 h-8">
-        <rect width="48" height="32" rx="4" fill="#2E7D32" />
-        <text x="24" y="21" textAnchor="middle" fill="white" fontSize="16" fontWeight="bold" fontFamily="Arial, sans-serif">$</text>
-      </svg>
-    ),
-  },
+  { name: "Visa", src: "/payment-icons/visa.svg" },
+  { name: "Mastercard", src: "/payment-icons/mastercard.svg" },
+  { name: "American Express", src: "/payment-icons/amex.svg" },
+  { name: "Apple Pay", src: "/payment-icons/apple-pay.svg" },
+  { name: "Google Pay", src: "/payment-icons/google-pay.svg" },
+  { name: "PayPal", src: "/payment-icons/paypal.svg" },
+  { name: "Venmo", src: "/payment-icons/venmo.svg" },
+  { name: "Zelle", src: "/payment-icons/zelle.svg" },
+  { name: "Cash App", src: "/payment-icons/cashapp.svg" },
+  { name: "Cash", src: "/payment-icons/cash.svg" },
 ];
 
 export default function PaymentMethods() {
   const t = useTranslations("paymentMethods");
 
   return (
-    <section className="py-16 bg-charcoal/30">
-      <div className="max-w-5xl mx-auto px-4 text-center">
-        <h2 className="font-heading text-2xl md:text-3xl text-cream mb-2">
+    <section className="py-20 sm:py-28 bg-charcoal/30">
+      <div className="max-w-5xl mx-auto px-6 text-center">
+        <h2 className="font-heading text-3xl md:text-4xl text-cream mb-3">
           {t("title")}
         </h2>
-        <p className="text-cream/50 text-sm mb-8">{t("subtitle")}</p>
+        <p className="text-cream/50 text-base mb-10">{t("subtitle")}</p>
         <div className="flex flex-wrap justify-center items-center gap-4 md:gap-6">
           {paymentMethods.map((method) => (
             <div
@@ -114,7 +33,13 @@ export default function PaymentMethods() {
               className="opacity-80 hover:opacity-100 transition-opacity duration-200"
               title={method.name}
             >
-              {method.svg}
+              <Image
+                src={method.src}
+                alt={method.name}
+                width={90}
+                height={57}
+                className="rounded-lg"
+              />
             </div>
           ))}
         </div>

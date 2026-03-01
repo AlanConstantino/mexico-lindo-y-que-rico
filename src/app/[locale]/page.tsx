@@ -22,9 +22,9 @@ export default function Home() {
         <Hero />
         <About />
         <Menu />
+        <PaymentMethods />
         <Packages />
         <Extras />
-        <PaymentMethods />
         <Gallery />
         <Contact />
       </main>
