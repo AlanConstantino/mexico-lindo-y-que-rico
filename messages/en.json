@@ -260,7 +260,12 @@
     "cancelSubtitle": "No charges were made",
     "cancelDesc": "Your payment was cancelled. If you'd like to try again, you can restart the booking process.",
     "tryAgain": "Try Again",
-    "errorGeneric": "Something went wrong. Please try again."
+    "errorGeneric": "Something went wrong. Please try again.",
+    "zellePayment": "Zelle",
+    "zelleDescription": "Send payment via Zelle",
+    "zelleInstructions": "Send payment to (562) 746-3998 via Zelle. Your booking will be confirmed once we verify your payment.",
+    "zellePending": "Pending Zelle Payment",
+    "payWithZelle": "Pay with Zelle"
   },
   "admin": {
     "loading": "Loading...",
@@ -425,5 +430,9 @@
     "successMessage": "Your event has been rescheduled to {date}. You'll receive a confirmation email shortly.",
     "returnHome": "Return Home",
     "errorTitle": "Something Went Wrong"
+  },
+  "paymentMethods": {
+    "title": "We Accept",
+    "subtitle": "Multiple payment options for your convenience"
   }
 }

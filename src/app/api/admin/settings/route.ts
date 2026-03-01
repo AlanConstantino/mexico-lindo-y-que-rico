@@ -64,6 +64,10 @@ export async function PUT(request: NextRequest) {
       cc_surcharge_percent,
       stripe_fee_percent,
       stripe_fee_flat,
+      zelle_handle,
+      venmo_handle,
+      cashapp_handle,
+      paypal_email,
     } = body;
 
     const cancellationFields = {
@@ -77,6 +81,10 @@ export async function PUT(request: NextRequest) {
       ...(cc_surcharge_percent !== undefined && { cc_surcharge_percent }),
       ...(stripe_fee_percent !== undefined && { stripe_fee_percent }),
       ...(stripe_fee_flat !== undefined && { stripe_fee_flat }),
+      ...(zelle_handle !== undefined && { zelle_handle }),
+      ...(venmo_handle !== undefined && { venmo_handle }),
+      ...(cashapp_handle !== undefined && { cashapp_handle }),
+      ...(paypal_email !== undefined && { paypal_email }),
     };
 
     // Try to update existing row first

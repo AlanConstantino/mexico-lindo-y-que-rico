@@ -13,7 +13,7 @@ interface ReviewStepProps {
   cashDepositPercent: number;
   stripeFeePercent: number;
   stripeFeeFlatCents: number;
-  onPaymentMethodChange: (method: "card" | "cash") => void;
+  onPaymentMethodChange: (method: "card" | "cash" | "zelle") => void;
 }
 
 export default function ReviewStep({
@@ -164,7 +164,7 @@ export default function ReviewStep({
           <div className="text-cream/40 text-xs uppercase tracking-wider mb-4">
             {t("paymentMethod")}
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {/* Pay with Card */}
             <button
               type="button"
@@ -229,6 +229,32 @@ export default function ReviewStep({
                 </div>
               </div>
             </button>
+
+            {/* Pay with Zelle */}
+            <button
+              type="button"
+              onClick={() => onPaymentMethodChange("zelle")}
+              className={`p-4 rounded-xl border-2 text-left transition-all duration-200 ${
+                data.paymentMethod === "zelle"
+                  ? "border-amber bg-amber/5"
+                  : "border-cream/10 hover:border-cream/20"
+              }`}
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none">
+                  <rect width="24" height="24" rx="4" fill="#6D1ED4" />
+                  <text x="12" y="16" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold" fontFamily="Arial, sans-serif">Z</text>
+                </svg>
+                <span className="text-cream font-medium text-sm">{t("payWithZelle")}</span>
+              </div>
+              <div className="space-y-1">
+                <p className="text-cream/50 text-xs">{t("zelleInstructions")}</p>
+                <div className="flex justify-between text-xs">
+                  <span className="text-cream/50">{t("total")}</span>
+                  <span className="text-cream/70">${total.toLocaleString()}</span>
+                </div>
+              </div>
+            </button>
           </div>
         </div>
 
@@ -269,6 +295,11 @@ export default function ReviewStep({
           {data.paymentMethod === "cash" && (
             <div className="text-xs text-cream/40 mt-2">
               {t("cardOnFileSummary")}
+            </div>
+          )}
+          {data.paymentMethod === "zelle" && (
+            <div className="text-xs text-cream/40 mt-2">
+              {t("zelleInstructions")}
             </div>
           )}
         </div>
