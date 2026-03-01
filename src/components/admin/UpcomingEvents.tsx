@@ -26,10 +26,10 @@ export default function UpcomingEvents({
     const now = new Date();
     now.setHours(0, 0, 0, 0);
     return bookings
-      .filter((b) => new Date(b.event_date) >= now && b.status !== "cancelled")
+      .filter((b) => new Date(b.event_date + "T12:00:00") >= now && b.status !== "cancelled")
       .sort(
         (a, b) =>
-          new Date(a.event_date).getTime() - new Date(b.event_date).getTime()
+          new Date(a.event_date + "T12:00:00").getTime() - new Date(b.event_date + "T12:00:00").getTime()
       )
       .slice(0, 7);
   }, [bookings]);
@@ -55,7 +55,7 @@ export default function UpcomingEvents({
       ) : (
         <div className="space-y-1">
           {upcoming.map((event, i) => {
-            const eventDate = new Date(event.event_date);
+            const eventDate = new Date(event.event_date + "T12:00:00");
             const dayName = eventDate.toLocaleDateString("en-US", { weekday: "short" });
             const monthDay = eventDate.toLocaleDateString("en-US", {
               month: "short",

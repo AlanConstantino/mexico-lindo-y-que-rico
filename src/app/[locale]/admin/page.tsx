@@ -227,7 +227,7 @@ export default function AdminPage() {
   // Stats
   const totalBookings = bookings.length;
   const upcomingEvents = bookings.filter(
-    (b) => new Date(b.event_date) >= new Date() && b.status !== "cancelled"
+    (b) => new Date(b.event_date + "T12:00:00") >= new Date() && b.status !== "cancelled"
   ).length;
   const totalRevenue = bookings
     .filter((b) => b.stripe_payment_status === "paid")
@@ -533,7 +533,7 @@ export default function AdminPage() {
                       {/* Desktop row */}
                       <div className="hidden lg:grid lg:grid-cols-[110px_1fr_1fr_70px_90px_95px_90px_110px] gap-3 px-4 py-3 items-center">
                         <span className="text-sm text-cream/80">
-                          {new Date(booking.event_date).toLocaleDateString()}
+                          {new Date(booking.event_date + "T12:00:00").toLocaleDateString()}
                           {booking.event_time && ` · ${formatTime12(booking.event_time)}`}
                         </span>
                         <span className="text-sm text-cream font-medium truncate">
@@ -587,7 +587,7 @@ export default function AdminPage() {
                         </div>
                         <div className="flex items-center justify-between text-sm text-cream/50">
                           <span>
-                            {new Date(booking.event_date).toLocaleDateString()}{booking.event_time ? ` · ${formatTime12(booking.event_time)}` : ""} · {booking.guest_count} {t("table.guests").toLowerCase()}
+                            {new Date(booking.event_date + "T12:00:00").toLocaleDateString()}{booking.event_time ? ` · ${formatTime12(booking.event_time)}` : ""} · {booking.guest_count} {t("table.guests").toLowerCase()}
                           </span>
                           <span className="font-medium text-cream">
                             ${(booking.total_price / 100).toFixed(2)}

@@ -38,7 +38,7 @@ export default function RevenueChart({
     const paid = bookings.filter((b) => b.stripe_payment_status === "paid");
     const map = new Map<string, number>();
     paid.forEach((b) => {
-      const d = new Date(b.event_date);
+      const d = new Date(b.event_date + "T12:00:00");
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
       map.set(key, (map.get(key) || 0) + b.total_price / 100);
     });
