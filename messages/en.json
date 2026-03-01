@@ -328,7 +328,11 @@
     "actions": {
       "confirm": "Mark Confirmed",
       "cancel": "Mark Cancelled",
-      "pending": "Mark Pending"
+      "pending": "Mark Pending",
+      "confirmDialogTitle": "Confirm Booking?",
+      "confirmDialogMessage": "This will send a confirmation email to the customer letting them know their event is confirmed. Are you sure you want to proceed?",
+      "confirmDialogYes": "Yes, Confirm Booking",
+      "confirmDialogCancel": "Go Back"
     },
     "settings": {
       "title": "Settings",

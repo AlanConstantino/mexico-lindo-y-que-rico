@@ -23,7 +23,7 @@ export async function sendBookingNotification(
   booking: BookingNotification
 ): Promise<void> {
   const formattedPrice = `$${(booking.totalPrice / 100).toFixed(2)}`;
-  const formattedDate = new Date(booking.eventDate).toLocaleDateString("en-US", {
+  const formattedDate = new Date(booking.eventDate).toLocaleDateString("es-US", {
     weekday: "long",
     year: "numeric",
     month: "long",
@@ -34,21 +34,21 @@ export async function sendBookingNotification(
     ? booking.extras
         .map((e) => `  • ${e.name} x${e.quantity} — ${e.price}`)
         .join("\n")
-    : "  None";
+    : "  Ninguno";
 
   const textMessage = [
-    `🎉 New Booking Received!`,
+    `🎉 ¡Nueva Reservación Recibida!`,
     ``,
-    `Customer: ${booking.customerName}`,
-    `Email: ${booking.customerEmail}`,
-    `Phone: ${booking.customerPhone}`,
+    `Cliente: ${booking.customerName}`,
+    `Correo: ${booking.customerEmail}`,
+    `Teléfono: ${booking.customerPhone}`,
     ``,
-    `Event Date: ${formattedDate}`,
-    `Event Address: ${booking.eventAddress || "Not provided"}`,
-    `Package: ${booking.serviceType === "2hr" ? "2-Hour" : "3-Hour"} Service`,
-    `Guests: ${booking.guestCount}`,
+    `Fecha del Evento: ${formattedDate}`,
+    `Dirección del Evento: ${booking.eventAddress || "No proporcionada"}`,
+    `Paquete: Servicio de ${booking.serviceType === "2hr" ? "2" : "3"} Horas`,
+    `Invitados: ${booking.guestCount}`,
     ``,
-    `Meats:`,
+    `Carnes:`,
     ...booking.meats.map((m) => `  • ${m}`),
     ``,
     `Extras:`,
@@ -56,27 +56,27 @@ export async function sendBookingNotification(
     ``,
     `Total: ${formattedPrice}`,
     ``,
-    `Booking ID: ${booking.bookingId}`,
+    `ID de Reservación: ${booking.bookingId}`,
   ].join("\n");
 
   const htmlMessage = `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
       <h1 style="color: #E8A935; border-bottom: 2px solid #C45A3C; padding-bottom: 10px;">
-        🎉 New Booking Received!
+        🎉 ¡Nueva Reservación Recibida!
       </h1>
       
-      <h3 style="color: #3B2A1E;">Customer Info</h3>
-      <p><strong>Name:</strong> ${booking.customerName}</p>
-      <p><strong>Email:</strong> <a href="mailto:${booking.customerEmail}">${booking.customerEmail}</a></p>
-      <p><strong>Phone:</strong> <a href="tel:${booking.customerPhone}">${booking.customerPhone}</a></p>
+      <h3 style="color: #3B2A1E;">Info del Cliente</h3>
+      <p><strong>Nombre:</strong> ${booking.customerName}</p>
+      <p><strong>Correo:</strong> <a href="mailto:${booking.customerEmail}">${booking.customerEmail}</a></p>
+      <p><strong>Teléfono:</strong> <a href="tel:${booking.customerPhone}">${booking.customerPhone}</a></p>
       
-      <h3 style="color: #3B2A1E;">Event Details</h3>
-      <p><strong>Date:</strong> ${formattedDate}</p>
-      <p><strong>Address:</strong> ${booking.eventAddress || "Not provided"}</p>
-      <p><strong>Package:</strong> ${booking.serviceType === "2hr" ? "2-Hour" : "3-Hour"} Service</p>
-      <p><strong>Guests:</strong> ${booking.guestCount}</p>
+      <h3 style="color: #3B2A1E;">Detalles del Evento</h3>
+      <p><strong>Fecha:</strong> ${formattedDate}</p>
+      <p><strong>Dirección:</strong> ${booking.eventAddress || "No proporcionada"}</p>
+      <p><strong>Paquete:</strong> Servicio de ${booking.serviceType === "2hr" ? "2" : "3"} Horas</p>
+      <p><strong>Invitados:</strong> ${booking.guestCount}</p>
       
-      <h3 style="color: #3B2A1E;">Meats</h3>
+      <h3 style="color: #3B2A1E;">Carnes</h3>
       <ul>
         ${booking.meats.map((m) => `<li>${m}</li>`).join("")}
       </ul>
@@ -85,15 +85,15 @@ export async function sendBookingNotification(
       ${
         booking.extras?.length
           ? `<ul>${booking.extras.map((e) => `<li>${e.name} x${e.quantity} — ${e.price}</li>`).join("")}</ul>`
-          : "<p>None</p>"
+          : "<p>Ninguno</p>"
       }
       
       <div style="background: #2D2926; color: #FAF5EF; padding: 20px; border-radius: 12px; margin-top: 20px; text-align: center;">
         <p style="font-size: 24px; margin: 0; color: #E8A935; font-weight: bold;">${formattedPrice}</p>
-        <p style="margin: 5px 0 0; color: #FAF5EF99;">Total Amount</p>
+        <p style="margin: 5px 0 0; color: #FAF5EF99;">Monto Total</p>
       </div>
       
-      <p style="color: #999; font-size: 12px; margin-top: 20px;">Booking ID: ${booking.bookingId}</p>
+      <p style="color: #999; font-size: 12px; margin-top: 20px;">ID de Reservación: ${booking.bookingId}</p>
     </div>
   `;
 
@@ -102,7 +102,7 @@ export async function sendBookingNotification(
     await resend.emails.send({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: "constantinoalan98@gmail.com",
-      subject: `New Booking — ${booking.customerName} — ${formattedDate}`,
+      subject: `Nueva Reservación — ${booking.customerName} — ${formattedDate}`,
       text: textMessage,
       html: htmlMessage,
     });
@@ -469,7 +469,7 @@ export async function sendEventReminder(
 export async function sendOwnerReminder(
   data: ReminderData & { ownerEmail: string }
 ): Promise<void> {
-  const formattedDate = new Date(data.eventDate).toLocaleDateString("en-US", {
+  const formattedDate = new Date(data.eventDate).toLocaleDateString("es-US", {
     weekday: "long",
     year: "numeric",
     month: "long",
@@ -479,53 +479,53 @@ export async function sendOwnerReminder(
   const { text: extrasText } = formatExtrasForReminder(data.extras);
 
   const textMessage = [
-    `📋 Upcoming Event Reminder`,
+    `📋 Recordatorio de Evento Próximo`,
     ``,
-    `You have a catering event in ${data.reminderDays} days:`,
+    `Tienes un evento de catering en ${data.reminderDays} días:`,
     ``,
-    `Customer: ${data.customerName}`,
-    `Phone: ${data.customerPhone}`,
-    `Email: ${data.customerEmail}`,
+    `Cliente: ${data.customerName}`,
+    `Teléfono: ${data.customerPhone}`,
+    `Correo: ${data.customerEmail}`,
     ``,
-    `Event Date: ${formattedDate}`,
-    `Address: ${data.eventAddress || "Not provided"}`,
-    `Package: ${data.serviceType === "2hr" ? "2-Hour" : "3-Hour"} Service`,
-    `Guests: ${data.guestCount}`,
+    `Fecha del Evento: ${formattedDate}`,
+    `Dirección: ${data.eventAddress || "No proporcionada"}`,
+    `Paquete: Servicio de ${data.serviceType === "2hr" ? "2" : "3"} Horas`,
+    `Invitados: ${data.guestCount}`,
     ``,
-    `Meats:`,
+    `Carnes:`,
     ...data.meats.map((m) => `  • ${m}`),
     ...(extrasText ? [``, `Extras:`, extrasText] : []),
     ``,
     `Total: ${formattedPrice}`,
-    `Booking ID: ${data.bookingId}`,
+    `ID de Reservación: ${data.bookingId}`,
   ].join("\n");
 
   const htmlMessage = `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
       <h1 style="color: #E8A935; border-bottom: 2px solid #C45A3C; padding-bottom: 10px;">
-        📋 Upcoming Event — ${data.reminderDays} Days Away
+        📋 Evento Próximo — En ${data.reminderDays} Días
       </h1>
 
-      <h3 style="color: #3B2A1E;">Customer</h3>
-      <p><strong>Name:</strong> ${data.customerName}</p>
-      <p><strong>Phone:</strong> <a href="tel:${data.customerPhone}">${data.customerPhone}</a></p>
-      <p><strong>Email:</strong> <a href="mailto:${data.customerEmail}">${data.customerEmail}</a></p>
+      <h3 style="color: #3B2A1E;">Cliente</h3>
+      <p><strong>Nombre:</strong> ${data.customerName}</p>
+      <p><strong>Teléfono:</strong> <a href="tel:${data.customerPhone}">${data.customerPhone}</a></p>
+      <p><strong>Correo:</strong> <a href="mailto:${data.customerEmail}">${data.customerEmail}</a></p>
 
-      <h3 style="color: #3B2A1E;">Event Details</h3>
-      <p><strong>Date:</strong> ${formattedDate}</p>
-      <p><strong>Address:</strong> ${data.eventAddress || "Not provided"}</p>
-      <p><strong>Package:</strong> ${data.serviceType === "2hr" ? "2-Hour" : "3-Hour"} Service</p>
-      <p><strong>Guests:</strong> ${data.guestCount}</p>
+      <h3 style="color: #3B2A1E;">Detalles del Evento</h3>
+      <p><strong>Fecha:</strong> ${formattedDate}</p>
+      <p><strong>Dirección:</strong> ${data.eventAddress || "No proporcionada"}</p>
+      <p><strong>Paquete:</strong> Servicio de ${data.serviceType === "2hr" ? "2" : "3"} Horas</p>
+      <p><strong>Invitados:</strong> ${data.guestCount}</p>
 
-      <h3 style="color: #3B2A1E;">Meats</h3>
+      <h3 style="color: #3B2A1E;">Carnes</h3>
       <ul>${data.meats.map((m) => `<li>${m}</li>`).join("")}</ul>
 
       <div style="background: #2D2926; color: #FAF5EF; padding: 20px; border-radius: 12px; margin-top: 20px; text-align: center;">
         <p style="font-size: 24px; margin: 0; color: #E8A935; font-weight: bold;">${formattedPrice}</p>
-        <p style="margin: 5px 0 0; color: #FAF5EF99;">Total Amount</p>
+        <p style="margin: 5px 0 0; color: #FAF5EF99;">Monto Total</p>
       </div>
 
-      <p style="color: #999; font-size: 12px; margin-top: 20px;">Booking ID: ${data.bookingId}</p>
+      <p style="color: #999; font-size: 12px; margin-top: 20px;">ID de Reservación: ${data.bookingId}</p>
     </div>
   `;
 
@@ -533,7 +533,7 @@ export async function sendOwnerReminder(
     await resend.emails.send({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: data.ownerEmail,
-      subject: `Upcoming Event — ${data.customerName} — ${formattedDate}`,
+      subject: `Evento Próximo — ${data.customerName} — ${formattedDate}`,
       text: textMessage,
       html: htmlMessage,
     });
@@ -709,24 +709,24 @@ export async function sendOwnerCancellationNotice(data: {
   bookingId: string;
   ownerEmail: string;
 }): Promise<void> {
-  const formattedDate = new Date(data.eventDate).toLocaleDateString("en-US", {
+  const formattedDate = new Date(data.eventDate).toLocaleDateString("es-US", {
     weekday: "long", year: "numeric", month: "long", day: "numeric",
   });
   try {
     await resend.emails.send({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: data.ownerEmail,
-      subject: `Booking Cancelled — ${data.customerName} — ${formattedDate}`,
+      subject: `Reservación Cancelada — ${data.customerName} — ${formattedDate}`,
       text: [
-        `❌ Booking Cancelled`,
+        `❌ Reservación Cancelada`,
         ``,
-        `Customer: ${data.customerName}`,
-        `Email: ${data.customerEmail}`,
-        `Phone: ${data.customerPhone}`,
-        `Event Date: ${formattedDate}`,
-        `Cancellation Fee: $${(data.cancellationFee / 100).toFixed(2)}`,
-        `Refund Issued: $${(data.refundAmount / 100).toFixed(2)}`,
-        `Booking ID: ${data.bookingId}`,
+        `Cliente: ${data.customerName}`,
+        `Correo: ${data.customerEmail}`,
+        `Teléfono: ${data.customerPhone}`,
+        `Fecha del Evento: ${formattedDate}`,
+        `Cargo por Cancelación: $${(data.cancellationFee / 100).toFixed(2)}`,
+        `Reembolso Emitido: $${(data.refundAmount / 100).toFixed(2)}`,
+        `ID de Reservación: ${data.bookingId}`,
       ].join("\n"),
     });
   } catch (error) {
@@ -793,23 +793,23 @@ export async function sendOwnerRescheduleNotice(data: {
   ownerEmail: string;
 }): Promise<void> {
   const formatDate = (d: string) =>
-    new Date(d).toLocaleDateString("en-US", {
+    new Date(d).toLocaleDateString("es-US", {
       weekday: "long", year: "numeric", month: "long", day: "numeric",
     });
   try {
     await resend.emails.send({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: data.ownerEmail,
-      subject: `Booking Rescheduled — ${data.customerName} — ${formatDate(data.newDate)}`,
+      subject: `Reservación Reprogramada — ${data.customerName} — ${formatDate(data.newDate)}`,
       text: [
-        `📅 Booking Rescheduled`,
+        `📅 Reservación Reprogramada`,
         ``,
-        `Customer: ${data.customerName}`,
-        `Email: ${data.customerEmail}`,
-        `Phone: ${data.customerPhone}`,
-        `Previous Date: ${formatDate(data.oldDate)}`,
-        `New Date: ${formatDate(data.newDate)}`,
-        `Booking ID: ${data.bookingId}`,
+        `Cliente: ${data.customerName}`,
+        `Correo: ${data.customerEmail}`,
+        `Teléfono: ${data.customerPhone}`,
+        `Fecha Anterior: ${formatDate(data.oldDate)}`,
+        `Nueva Fecha: ${formatDate(data.newDate)}`,
+        `ID de Reservación: ${data.bookingId}`,
       ].join("\n"),
     });
   } catch (error) {
