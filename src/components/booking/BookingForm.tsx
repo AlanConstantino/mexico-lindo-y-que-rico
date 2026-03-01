@@ -14,6 +14,7 @@ import ReviewStep from "./steps/ReviewStep";
 
 export interface BookingData {
   eventDate: string | null;
+  eventTime: string | null; // e.g. "14:00", "15:30"
   serviceType: ServiceType | null;
   guestCount: number | null;
   meats: MeatId[];
@@ -64,6 +65,7 @@ export default function BookingForm() {
 
   const [data, setData] = useState<BookingData>({
     eventDate: null,
+    eventTime: null,
     serviceType: hasPreselection ? preselectedService : null,
     guestCount: hasPreselection ? parseInt(preselectedGuests, 10) : null,
     meats: [],
@@ -83,7 +85,7 @@ export default function BookingForm() {
   const isStepValid = (): boolean => {
     switch (step) {
       case 1:
-        return data.eventDate !== null;
+        return data.eventDate !== null && data.eventTime !== null;
       case 2:
         return data.serviceType !== null && data.guestCount !== null;
       case 3:
@@ -147,6 +149,7 @@ export default function BookingForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           eventDate: data.eventDate,
+          eventTime: data.eventTime,
           serviceType: data.serviceType,
           guestCount: data.guestCount,
           meats: data.meats,

@@ -19,6 +19,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 
 interface CheckoutBody {
   eventDate: string;
+  eventTime?: string | null;
   serviceType: ServiceType;
   guestCount: number;
   meats: MeatId[];
@@ -55,6 +56,7 @@ export async function POST(request: NextRequest) {
 
     const {
       eventDate,
+      eventTime = null,
       serviceType,
       guestCount,
       meats,
@@ -206,6 +208,7 @@ export async function POST(request: NextRequest) {
         .from("bookings")
         .insert({
           event_date: eventDate,
+          event_time: eventTime,
           service_type: serviceType,
           guest_count: guestCount,
           meats,
@@ -240,6 +243,7 @@ export async function POST(request: NextRequest) {
         customerEmail,
         customerPhone,
         eventDate,
+        eventTime: eventTime ?? undefined,
         serviceType,
         guestCount,
         meats,
@@ -267,6 +271,7 @@ export async function POST(request: NextRequest) {
       customer_email: customerEmail,
       metadata: {
         eventDate,
+        ...(eventTime && { eventTime }),
         serviceType,
         guestCount: String(guestCount),
         meats: JSON.stringify(meats),
@@ -284,6 +289,7 @@ export async function POST(request: NextRequest) {
       .from("bookings")
       .insert({
         event_date: eventDate,
+        event_time: eventTime,
         service_type: serviceType,
         guest_count: guestCount,
         meats,

@@ -125,10 +125,25 @@ export default function DateStep({ data, updateData }: DateStepProps) {
     viewYear > today.getFullYear() ||
     (viewYear === today.getFullYear() && viewMonth > today.getMonth());
 
+  // Generate time slots from 8:00 AM to 8:00 PM in 30-min intervals
+  const timeSlots = Array.from({ length: 25 }, (_, i) => {
+    const hour = Math.floor(i / 2) + 8;
+    const min = i % 2 === 0 ? "00" : "30";
+    const value = `${String(hour).padStart(2, "0")}:${min}`;
+    const hour12 = hour % 12 || 12;
+    const ampm = hour >= 12 ? "PM" : "AM";
+    const label = `${hour12}:${min} ${ampm}`;
+    return { value, label };
+  });
+
   const selectedDateFormatted = data.eventDate
     ? new Intl.DateTimeFormat(locale, { dateStyle: "long" }).format(
         new Date(data.eventDate + "T12:00:00")
       )
+    : null;
+
+  const selectedTimeFormatted = data.eventTime
+    ? timeSlots.find((s) => s.value === data.eventTime)?.label ?? data.eventTime
     : null;
 
   // Build day cells
@@ -243,7 +258,47 @@ export default function DateStep({ data, updateData }: DateStepProps) {
         </div>
       </div>
 
-      {/* Selected date display */}
+      {/* Time Picker — only show after date is selected */}
+      {data.eventDate && (
+        <div className="mt-6">
+          <h3 className="font-heading text-xl text-cream mb-1">
+            {t("selectTime")}
+          </h3>
+          <p className="text-cream/40 text-sm mb-4">{t("selectTimeDesc")}</p>
+          <div className="relative">
+            <select
+              value={data.eventTime ?? ""}
+              onChange={(e) =>
+                updateData({ eventTime: e.target.value || null })
+              }
+              className="w-full appearance-none rounded-xl bg-navy-light/30 border border-cream/10 text-cream px-4 py-3 pr-10 text-sm focus:outline-none focus:border-amber/40 transition-colors cursor-pointer"
+            >
+              <option value="" className="bg-navy text-cream/50">
+                {t("selectTime")}
+              </option>
+              {timeSlots.map((slot) => (
+                <option
+                  key={slot.value}
+                  value={slot.value}
+                  className="bg-navy text-cream"
+                >
+                  {slot.label}
+                </option>
+              ))}
+            </select>
+            <svg
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-cream/40 pointer-events-none"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+            </svg>
+          </div>
+        </div>
+      )}
+
+      {/* Selected date & time display */}
       {selectedDateFormatted && (
         <div className="mt-6 flex items-center gap-3 px-4 py-3 rounded-xl bg-amber/5 border border-amber/20">
           <svg
@@ -261,6 +316,7 @@ export default function DateStep({ data, updateData }: DateStepProps) {
           </svg>
           <span className="text-amber text-sm font-medium">
             {selectedDateFormatted}
+            {selectedTimeFormatted && ` · ${selectedTimeFormatted}`}
           </span>
         </div>
       )}
