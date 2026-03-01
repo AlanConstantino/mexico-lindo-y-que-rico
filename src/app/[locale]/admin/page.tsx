@@ -92,6 +92,7 @@ export default function AdminPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [confirmDialogBookingId, setConfirmDialogBookingId] = useState<string | null>(null);
 
   // Check for existing token on mount
   useEffect(() => {
@@ -644,7 +645,7 @@ export default function AdminPage() {
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                updateStatus(booking.id, "confirmed");
+                                setConfirmDialogBookingId(booking.id);
                               }}
                               disabled={updatingId === booking.id}
                               className="px-4 py-1.5 bg-teal/15 text-teal-light text-xs font-medium rounded-lg hover:bg-teal/25 border border-teal/20 transition-colors disabled:opacity-50"
@@ -686,6 +687,38 @@ export default function AdminPage() {
           </div>
         </div>
       </div>
+
+      {/* Confirm Booking Dialog */}
+      {confirmDialogBookingId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setConfirmDialogBookingId(null)}>
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+          <div
+            className="relative bg-charcoal border border-cream/10 rounded-2xl p-6 max-w-md w-full shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-cream text-lg font-bold mb-3">{t("actions.confirmDialogTitle")}</h3>
+            <p className="text-cream/60 text-sm mb-6 leading-relaxed">{t("actions.confirmDialogMessage")}</p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setConfirmDialogBookingId(null)}
+                className="px-4 py-2 text-cream/50 text-sm font-medium rounded-lg hover:bg-cream/5 transition-colors"
+              >
+                {t("actions.confirmDialogCancel")}
+              </button>
+              <button
+                onClick={() => {
+                  updateStatus(confirmDialogBookingId, "confirmed");
+                  setConfirmDialogBookingId(null);
+                }}
+                disabled={updatingId === confirmDialogBookingId}
+                className="px-4 py-2 bg-teal/20 text-teal-light text-sm font-medium rounded-lg hover:bg-teal/30 border border-teal/30 transition-colors disabled:opacity-50"
+              >
+                {t("actions.confirmDialogYes")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

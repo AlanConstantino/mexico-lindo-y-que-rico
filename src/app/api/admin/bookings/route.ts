@@ -80,11 +80,12 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    // Send confirmation email when a cash booking is confirmed by the owner
-    if (status === "confirmed" && data.payment_type === "cash") {
+    // Send confirmation email when a pending booking (cash/zelle) is confirmed by the owner
+    if (status === "confirmed" && (data.payment_type === "cash" || data.payment_type === "zelle")) {
       const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://que.rico.catering";
-      const cancelUrl = data.cancel_token ? `${BASE_URL}/en/booking/cancel/${data.cancel_token}` : undefined;
-      const rescheduleUrl = data.reschedule_token ? `${BASE_URL}/en/booking/reschedule/${data.reschedule_token}` : undefined;
+      const locale = data.locale || "en";
+      const cancelUrl = data.cancel_token ? `${BASE_URL}/${locale}/booking/cancel/${data.cancel_token}` : undefined;
+      const rescheduleUrl = data.reschedule_token ? `${BASE_URL}/${locale}/booking/reschedule/${data.reschedule_token}` : undefined;
 
       await sendCustomerConfirmation({
         bookingId: data.id,
@@ -99,7 +100,7 @@ export async function PATCH(request: NextRequest) {
         totalPrice: data.total_price,
         cancelUrl,
         rescheduleUrl,
-      }).catch((err) => console.error("Failed to send cash confirmation email:", err));
+      }).catch((err) => console.error("Failed to send confirmation email:", err));
     }
 
     return NextResponse.json({ booking: data });

@@ -333,7 +333,11 @@
     "actions": {
       "confirm": "Confirmar",
       "cancel": "Cancelar",
-      "pending": "Marcar Pendiente"
+      "pending": "Marcar Pendiente",
+      "confirmDialogTitle": "¿Confirmar Reservación?",
+      "confirmDialogMessage": "Esto enviará un correo de confirmación al cliente informándole que su evento está confirmado. ¿Estás seguro de que deseas continuar?",
+      "confirmDialogYes": "Sí, Confirmar Reservación",
+      "confirmDialogCancel": "Regresar"
     },
     "settings": {
       "title": "Configuración",
