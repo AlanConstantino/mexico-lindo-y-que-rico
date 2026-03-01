@@ -78,10 +78,16 @@ export async function sendBookingNotification(
 
   const timeDisplay = booking.eventTime ? formatTime(booking.eventTime) : null;
   const isCash = booking.paymentType === "cash";
+  const adminUrl = "https://que.rico.catering/es/admin";
 
   // Payment status text for text email
   const paymentStatusText = isCash
-    ? `⚠️ PAGO: EFECTIVO — Necesitas llamar al cliente para confirmar la reservación.`
+    ? [
+        `⚠️ PAGO: EFECTIVO — Acción Requerida`,
+        `  1. Llama al cliente al ${booking.customerPhone} para confirmar los detalles`,
+        `  2. Coordina el pago — ${formattedPrice} en efectivo el día del evento`,
+        `  3. Entra al panel de admin (${adminUrl}) y haz clic en "Confirmar"`,
+      ].join("\n")
     : `✅ PAGO: TARJETA — Pagado en su totalidad. No necesitas hacer nada.`;
 
   const textMessage = [
@@ -114,11 +120,16 @@ export async function sendBookingNotification(
   const paymentBannerHtml = isCash
     ? `<div style="background: #FFF3CD; border: 2px solid #E8A935; border-radius: 12px; padding: 16px 20px; margin-bottom: 20px;">
         <p style="margin: 0; font-size: 16px; font-weight: bold; color: #856404;">⚠️ Pago en Efectivo — Acción Requerida</p>
-        <p style="margin: 8px 0 0; font-size: 14px; color: #856404;">El cliente eligió pagar en <strong>efectivo</strong>. Necesitas <strong>llamar al cliente</strong> para confirmar la reservación y coordinar el pago el día del evento.</p>
+        <p style="margin: 8px 0 0 0; font-size: 14px; color: #856404;">El cliente eligió pagar en <strong>efectivo</strong>. Sigue estos pasos:</p>
+        <ol style="margin: 12px 0 0; padding-left: 20px; font-size: 14px; color: #856404; line-height: 1.8;">
+          <li><strong>Llama al cliente</strong> al <a href="tel:${booking.customerPhone}" style="color: #856404;">${booking.customerPhone}</a> para confirmar los detalles del evento</li>
+          <li><strong>Coordina el pago</strong> — el monto total de <strong>${formattedPrice}</strong> se paga en efectivo el día del evento</li>
+          <li><strong>Confirma la reservación</strong> — entra al <a href="${adminUrl}" style="color: #856404; font-weight: bold;">panel de administración</a> y haz clic en "Confirmar" para enviarle un correo de confirmación al cliente</li>
+        </ol>
       </div>`
     : `<div style="background: #D4EDDA; border: 2px solid #28A745; border-radius: 12px; padding: 16px 20px; margin-bottom: 20px;">
         <p style="margin: 0; font-size: 16px; font-weight: bold; color: #155724;">✅ Pagado con Tarjeta — Todo Listo</p>
-        <p style="margin: 8px 0 0; font-size: 14px; color: #155724;">El cliente ya pagó en su totalidad con tarjeta. No necesitas hacer seguimiento — solo prepárate para el evento.</p>
+        <p style="margin: 8px 0 0; font-size: 14px; color: #155724;">El cliente ya pagó en su totalidad con tarjeta. No necesitas hacer nada — solo prepárate para el evento. El cliente ya recibió su correo de confirmación.</p>
       </div>`;
 
   const htmlMessage = `
