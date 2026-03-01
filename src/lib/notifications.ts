@@ -816,3 +816,136 @@ export async function sendOwnerRescheduleNotice(data: {
     console.error("❌ Failed to send owner reschedule notice:", error);
   }
 }
+
+// ─── Cash Booking Pending Confirmation ───────────────────────────
+
+export async function sendCashPendingConfirmation(
+  booking: BookingNotification
+): Promise<void> {
+  const formattedDate = new Date(booking.eventDate).toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+  const formattedPrice = `$${(booking.totalPrice / 100).toFixed(2)}`;
+
+  const textMessage = [
+    `🌮 We've Received Your Booking!`,
+    ``,
+    `Hey ${booking.customerName},`,
+    ``,
+    `Thanks for choosing México Lindo Y Que Rico! We've received your booking request and it's currently being reviewed.`,
+    ``,
+    `One of our team members will reach out to you shortly to confirm the details and arrange payment.`,
+    ``,
+    `Event Date: ${formattedDate}`,
+    `Location: ${booking.eventAddress || "Not provided"}`,
+    `Package: ${booking.serviceType === "2hr" ? "2-Hour" : "3-Hour"} Service`,
+    `Guests: ${booking.guestCount}`,
+    `Meats: ${booking.meats.join(", ")}`,
+    `Total: ${formattedPrice} (due in cash on event day)`,
+    ``,
+    `Once we confirm everything, we'll send you a follow-up email confirming the date of your event.`,
+    ``,
+    `Please be on the lookout for our call!`,
+    ``,
+    `Questions? Call us at (562) 235-9361 or (562) 746-3998.`,
+    ``,
+    `— México Lindo Y Que Rico`,
+  ].join("\n");
+
+  const htmlMessage = `
+    <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
+      <!-- Header -->
+      <div style="background: #2D2926; padding: 40px 30px; text-align: center;">
+        <h1 style="color: #E8A935; margin: 0; font-size: 28px;">México Lindo Y Que Rico</h1>
+        <p style="color: #FAF5EF99; margin: 8px 0 0; font-size: 14px;">Aquí la panza es primero.</p>
+      </div>
+
+      <!-- Body -->
+      <div style="padding: 30px;">
+        <h2 style="color: #2D2926; margin: 0 0 8px;">We've received your booking! 🎉</h2>
+        <p style="color: #555; margin: 0 0 24px; font-size: 16px;">
+          Hey ${booking.customerName}, thanks for choosing us! Your booking is currently being reviewed.
+        </p>
+
+        <!-- What's Next -->
+        <div style="background: #E8A93520; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
+          <h3 style="color: #2D2926; margin: 0 0 12px; font-size: 16px;">📋 What happens next?</h3>
+          <ol style="margin: 0; padding-left: 20px; color: #555; font-size: 14px; line-height: 1.8;">
+            <li>One of our team members will <strong>call you shortly</strong> to confirm the details</li>
+            <li>We'll go over your event and arrange payment</li>
+            <li>Once confirmed, you'll receive a <strong>follow-up confirmation email</strong> with everything locked in</li>
+          </ol>
+        </div>
+
+        <!-- Event Details Card -->
+        <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #E8A935;">
+          <h3 style="color: #2D2926; margin: 0 0 16px; font-size: 18px;">📅 Your Event Details</h3>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 6px 0; color: #888; font-size: 14px;">Date</td>
+              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${formattedDate}</td>
+            </tr>
+            <tr>
+              <td style="padding: 6px 0; color: #888; font-size: 14px;">Address</td>
+              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${booking.eventAddress || "Not provided"}</td>
+            </tr>
+            <tr>
+              <td style="padding: 6px 0; color: #888; font-size: 14px;">Package</td>
+              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${booking.serviceType === "2hr" ? "2-Hour" : "3-Hour"} Service</td>
+            </tr>
+            <tr>
+              <td style="padding: 6px 0; color: #888; font-size: 14px;">Guests</td>
+              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${booking.guestCount}</td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Meats Card -->
+        <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #C45A3C;">
+          <h3 style="color: #2D2926; margin: 0 0 12px; font-size: 18px;">🥩 Your Meats</h3>
+          <ul style="margin: 0; padding-left: 20px; color: #2D2926;">
+            ${booking.meats.map((m) => `<li style="padding: 4px 0;">${m}</li>`).join("")}
+          </ul>
+        </div>
+
+        <!-- Total -->
+        <div style="background: #2D2926; color: #FAF5EF; padding: 24px; border-radius: 12px; text-align: center; margin-bottom: 24px;">
+          <p style="margin: 0 0 4px; color: #FAF5EF99; font-size: 14px;">Estimated Total (Cash)</p>
+          <p style="margin: 0; font-size: 32px; font-weight: bold; color: #E8A935;">${formattedPrice}</p>
+          <p style="margin: 8px 0 0; color: #FAF5EF66; font-size: 12px;">Due in cash on event day</p>
+        </div>
+
+        <!-- Contact -->
+        <p style="color: #555; font-size: 14px; text-align: center; margin: 0;">
+          Questions? Call us at
+          <a href="tel:5622359361" style="color: #C45A3C; text-decoration: none; font-weight: 600;">(562) 235-9361</a>
+          or <a href="tel:5627463998" style="color: #C45A3C; text-decoration: none; font-weight: 600;">(562) 746-3998</a>
+        </p>
+      </div>
+
+      <!-- Footer -->
+      <div style="background: #2D2926; padding: 20px 30px; text-align: center;">
+        <p style="margin: 0; color: #FAF5EF66; font-size: 12px;">
+          México Lindo Y Que Rico · Greater Los Angeles · 20+ Years of Flavor
+        </p>
+        <p style="margin: 4px 0 0; color: #FAF5EF44; font-size: 11px;">Booking ID: ${booking.bookingId}</p>
+      </div>
+    </div>
+  `;
+
+  try {
+    await resend.emails.send({
+      from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
+      to: booking.customerEmail,
+      subject: `We've Received Your Booking! 🌮`,
+      text: textMessage,
+      html: htmlMessage,
+    });
+    console.log(`✅ Cash pending confirmation sent to ${booking.customerEmail}`);
+  } catch (error) {
+    console.error("❌ Failed to send cash pending confirmation:", error);
+  }
+}

@@ -352,6 +352,7 @@
       "testCustomerReminder": "Customer: Reminder",
       "testOwnerReminder": "Owner: Reminder",
       "testDayBefore": "Customer: Day Before",
+      "testCashPending": "Customer: Cash Pending",
       "cancellationTitle": "Cancellation Settings",
       "cancellationFeeType": "Cancellation Fee Type",
       "flatRate": "Flat Rate",

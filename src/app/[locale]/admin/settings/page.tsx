@@ -403,6 +403,7 @@ export default function AdminSettingsPage() {
                 { key: "customer_reminder", label: t("settings.testCustomerReminder") },
                 { key: "owner_reminder", label: t("settings.testOwnerReminder") },
                 { key: "day_before", label: t("settings.testDayBefore") },
+                { key: "cash_pending", label: t("settings.testCashPending") },
               ].map((email) => (
                 <TestEmailButton
                   key={email.key}

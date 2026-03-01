@@ -7,6 +7,7 @@ import {
   sendEventReminder,
   sendOwnerReminder,
   sendDayBeforeReminder,
+  sendCashPendingConfirmation,
 } from "@/lib/notifications";
 
 function getToken(request: NextRequest): string | null {
@@ -104,6 +105,10 @@ export async function POST(request: NextRequest) {
         });
         break;
       }
+
+      case "cash_pending":
+        await sendCashPendingConfirmation(sample);
+        break;
 
       default:
         return NextResponse.json({ error: "Unknown email type" }, { status: 400 });

@@ -231,9 +231,9 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Failed to create booking" }, { status: 500 });
       }
 
-      // Notify owner about pending cash booking
-      const { sendBookingNotification } = await import("@/lib/notifications");
-      await sendBookingNotification({
+      // Notify owner + send pending confirmation to customer
+      const { sendBookingNotification, sendCashPendingConfirmation } = await import("@/lib/notifications");
+      const notifData = {
         bookingId: booking.id,
         customerName,
         customerEmail,
@@ -244,7 +244,11 @@ export async function POST(request: NextRequest) {
         meats,
         eventAddress,
         totalPrice: serverTotal * 100,
-      });
+      };
+      await Promise.all([
+        sendBookingNotification(notifData),
+        sendCashPendingConfirmation(notifData),
+      ]);
 
       // Redirect to success page with booking ID instead of Stripe session
       return NextResponse.json({

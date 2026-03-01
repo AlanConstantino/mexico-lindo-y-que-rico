@@ -352,6 +352,7 @@
       "testCustomerReminder": "Cliente: Recordatorio",
       "testOwnerReminder": "Dueño: Recordatorio",
       "testDayBefore": "Cliente: Día Anterior",
+      "testCashPending": "Cliente: Efectivo Pendiente",
       "cancellationTitle": "Configuración de Cancelación",
       "cancellationFeeType": "Tipo de Tarifa de Cancelación",
       "flatRate": "Tarifa Fija",
