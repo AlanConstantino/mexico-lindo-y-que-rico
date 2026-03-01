@@ -82,8 +82,9 @@ export async function POST(request: NextRequest) {
     } else if (booking) {
       // Build cancel/reschedule URLs
       const origin = request.headers.get("origin") || request.headers.get("referer")?.replace(/\/api.*/, "") || "https://que.rico.catering";
-      const cancelUrl = `${origin}/en/booking/cancel/${cancelToken}`;
-      const rescheduleUrl = `${origin}/en/booking/reschedule/${rescheduleToken}`;
+      const bookingLocale = (session.metadata?.locale || booking.locale || "en") as "en" | "es";
+      const cancelUrl = `${origin}/${bookingLocale}/booking/cancel/${cancelToken}`;
+      const rescheduleUrl = `${origin}/${bookingLocale}/booking/reschedule/${rescheduleToken}`;
 
       // Send notification to owner + confirmation to customer
       const notificationData = {
@@ -103,7 +104,7 @@ export async function POST(request: NextRequest) {
 
       await Promise.all([
         sendBookingNotification(notificationData),
-        sendCustomerConfirmation(notificationData),
+        sendCustomerConfirmation(notificationData, bookingLocale),
       ]);
     }
   }

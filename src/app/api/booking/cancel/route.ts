@@ -83,6 +83,8 @@ export async function POST(request: NextRequest) {
       })
       .eq("id", booking.id);
 
+    const bookingLocale = (booking.locale || "en") as "en" | "es";
+
     await Promise.all([
       sendCancellationConfirmation({
         customerName: booking.customer_name,
@@ -91,7 +93,7 @@ export async function POST(request: NextRequest) {
         refundAmount,
         cancellationFee,
         bookingId: booking.id,
-      }),
+      }, bookingLocale),
       sendOwnerCancellationNotice({
         customerName: booking.customer_name,
         customerEmail: booking.customer_email,

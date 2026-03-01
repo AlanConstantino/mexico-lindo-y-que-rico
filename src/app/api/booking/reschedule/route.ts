@@ -75,6 +75,8 @@ export async function POST(request: NextRequest) {
       })
       .eq("id", booking.id);
 
+    const bookingLocale = (booking.locale || "en") as "en" | "es";
+
     await Promise.all([
       sendRescheduleConfirmation({
         customerName: booking.customer_name,
@@ -82,7 +84,7 @@ export async function POST(request: NextRequest) {
         oldDate,
         newDate,
         bookingId: booking.id,
-      }),
+      }, bookingLocale),
       sendOwnerRescheduleNotice({
         customerName: booking.customer_name,
         customerEmail: booking.customer_email,
