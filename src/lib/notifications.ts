@@ -52,6 +52,7 @@ interface BookingNotification {
   eventAddress?: string;
   extras?: { name: string; quantity: number; price: string }[];
   totalPrice: number;
+  paymentType?: string;
   cancelUrl?: string;
   rescheduleUrl?: string;
 }
@@ -76,9 +77,17 @@ export async function sendBookingNotification(
     : "  Ninguno";
 
   const timeDisplay = booking.eventTime ? formatTime(booking.eventTime) : null;
+  const isCash = booking.paymentType === "cash";
+
+  // Payment status text for text email
+  const paymentStatusText = isCash
+    ? `⚠️ PAGO: EFECTIVO — Necesitas llamar al cliente para confirmar la reservación.`
+    : `✅ PAGO: TARJETA — Pagado en su totalidad. No necesitas hacer nada.`;
 
   const textMessage = [
     `🎉 ¡Nueva Reservación Recibida!`,
+    ``,
+    paymentStatusText,
     ``,
     `Cliente: ${booking.customerName}`,
     `Correo: ${booking.customerEmail}`,
@@ -101,11 +110,24 @@ export async function sendBookingNotification(
     `ID de Reservación: ${booking.bookingId}`,
   ].join("\n");
 
+  // Payment status banner for HTML email
+  const paymentBannerHtml = isCash
+    ? `<div style="background: #FFF3CD; border: 2px solid #E8A935; border-radius: 12px; padding: 16px 20px; margin-bottom: 20px;">
+        <p style="margin: 0; font-size: 16px; font-weight: bold; color: #856404;">⚠️ Pago en Efectivo — Acción Requerida</p>
+        <p style="margin: 8px 0 0; font-size: 14px; color: #856404;">El cliente eligió pagar en <strong>efectivo</strong>. Necesitas <strong>llamar al cliente</strong> para confirmar la reservación y coordinar el pago el día del evento.</p>
+      </div>`
+    : `<div style="background: #D4EDDA; border: 2px solid #28A745; border-radius: 12px; padding: 16px 20px; margin-bottom: 20px;">
+        <p style="margin: 0; font-size: 16px; font-weight: bold; color: #155724;">✅ Pagado con Tarjeta — Todo Listo</p>
+        <p style="margin: 8px 0 0; font-size: 14px; color: #155724;">El cliente ya pagó en su totalidad con tarjeta. No necesitas hacer seguimiento — solo prepárate para el evento.</p>
+      </div>`;
+
   const htmlMessage = `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
       <h1 style="color: #E8A935; border-bottom: 2px solid #C45A3C; padding-bottom: 10px;">
         🎉 ¡Nueva Reservación Recibida!
       </h1>
+
+      ${paymentBannerHtml}
       
       <h3 style="color: #3B2A1E;">Info del Cliente</h3>
       <p><strong>Nombre:</strong> ${booking.customerName}</p>
@@ -144,7 +166,7 @@ export async function sendBookingNotification(
     await resend.emails.send({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: "constantinoalan98@gmail.com",
-      subject: `Nueva Reservación — ${booking.customerName} — ${formattedDate}`,
+      subject: `${isCash ? "⚠️" : "✅"} Nueva Reservación — ${booking.customerName} — ${formattedDate} — ${isCash ? "Efectivo (Llamar)" : "Tarjeta (Pagado)"}`,
       text: textMessage,
       html: htmlMessage,
     });

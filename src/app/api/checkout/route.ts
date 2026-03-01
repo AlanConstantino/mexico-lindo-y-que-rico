@@ -250,6 +250,7 @@ export async function POST(request: NextRequest) {
         extras: mapExtrasForEmail(extrasData),
         eventAddress,
         totalPrice: serverTotal * 100,
+        paymentType: "cash",
       };
       await Promise.all([
         sendBookingNotification(notifData),

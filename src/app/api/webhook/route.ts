@@ -100,6 +100,7 @@ export async function POST(request: NextRequest) {
         extras: mapExtrasForEmail(booking.extras as { id: string; quantity: number }[] | undefined),
         eventAddress: booking.event_address,
         totalPrice: booking.total_price,
+        paymentType: booking.payment_type as string || "card",
         cancelUrl,
         rescheduleUrl,
       };
