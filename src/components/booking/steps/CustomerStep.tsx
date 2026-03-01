@@ -96,7 +96,7 @@ export default function CustomerStep({ data, updateData }: CustomerStepProps) {
             className="w-full px-4 py-3 rounded-xl bg-navy-light/50 border border-cream/10 text-cream placeholder:text-cream/20 focus:border-amber/40 focus:outline-none focus:ring-1 focus:ring-amber/20 transition-all text-sm"
           />
           {data.eventAddress && data.eventAddress.trim().length > 0 && (
-            !(/\d/.test(data.eventAddress) && data.eventAddress.includes(",") && /\d{5}/.test(data.eventAddress) && data.eventAddress.trim().length >= 10) ? (
+            !(/\d/.test(data.eventAddress) && /\d{5}/.test(data.eventAddress) && data.eventAddress.trim().length >= 10) ? (
               <p className="text-terracotta/70 text-xs mt-1.5">
                 {t("invalidAddress")}
               </p>
