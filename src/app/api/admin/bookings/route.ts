@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { isValidToken } from "../auth/route";
+import { sendCustomerConfirmation } from "@/lib/notifications";
 
 function getToken(request: NextRequest): string | null {
   const auth = request.headers.get("authorization");
@@ -77,6 +78,28 @@ export async function PATCH(request: NextRequest) {
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    // Send confirmation email when a cash booking is confirmed by the owner
+    if (status === "confirmed" && data.payment_type === "cash") {
+      const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://que.rico.catering";
+      const cancelUrl = data.cancel_token ? `${BASE_URL}/en/booking/cancel/${data.cancel_token}` : undefined;
+      const rescheduleUrl = data.reschedule_token ? `${BASE_URL}/en/booking/reschedule/${data.reschedule_token}` : undefined;
+
+      await sendCustomerConfirmation({
+        bookingId: data.id,
+        customerName: data.customer_name,
+        customerEmail: data.customer_email,
+        customerPhone: data.customer_phone,
+        eventDate: data.event_date,
+        serviceType: data.service_type,
+        guestCount: data.guest_count,
+        meats: data.meats as string[],
+        eventAddress: data.event_address,
+        totalPrice: data.total_price,
+        cancelUrl,
+        rescheduleUrl,
+      }).catch((err) => console.error("Failed to send cash confirmation email:", err));
     }
 
     return NextResponse.json({ booking: data });

@@ -189,48 +189,89 @@ export async function POST(request: NextRequest) {
     const origin =
       request.headers.get("origin") || "http://localhost:3000";
 
-    let session;
+    const extrasData = Object.entries(extras)
+      .filter(([, qty]) => (qty || 0) > 0)
+      .map(([id, qty]) => ({
+        id,
+        quantity: qty,
+        ...(id === "agua" && Object.keys(aguaFlavors).length > 0 && { flavors: aguaFlavors }),
+      }));
 
     if (paymentMethod === "cash") {
-      // Cash: save card on file only (no charge) via Stripe Setup mode
-      session = await stripe.checkout.sessions.create({
-        mode: "setup",
-        success_url: `${origin}/${locale}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${origin}/${locale}/booking/cancel`,
-        customer_email: customerEmail,
-        metadata: {
-          eventDate,
-          serviceType,
-          guestCount: String(guestCount),
-          meats: JSON.stringify(meats),
-          customerName,
-          customerPhone,
-          eventAddress,
-          ...(Object.keys(aguaFlavors).length > 0 && { aguaFlavors: JSON.stringify(aguaFlavors) }),
-          paymentMethod,
-        },
+      // Cash: no Stripe at all. Save booking as Pending, owner confirms manually.
+      const cancelToken = crypto.randomUUID();
+      const rescheduleToken = crypto.randomUUID();
+
+      const { data: booking, error: dbError } = await supabaseAdmin
+        .from("bookings")
+        .insert({
+          event_date: eventDate,
+          service_type: serviceType,
+          guest_count: guestCount,
+          meats,
+          extras: extrasData,
+          customer_name: customerName,
+          customer_email: customerEmail,
+          customer_phone: customerPhone,
+          event_address: eventAddress,
+          total_price: serverTotal * 100,
+          payment_type: "cash",
+          deposit_amount: 0,
+          balance_due: serverTotal * 100,
+          stripe_payment_status: "not_applicable",
+          status: "pending",
+          cancel_token: cancelToken,
+          reschedule_token: rescheduleToken,
+        })
+        .select("id")
+        .single();
+
+      if (dbError) {
+        console.error("Supabase insert error:", dbError);
+        return NextResponse.json({ error: "Failed to create booking" }, { status: 500 });
+      }
+
+      // Notify owner about pending cash booking
+      const { sendBookingNotification } = await import("@/lib/notifications");
+      await sendBookingNotification({
+        bookingId: booking.id,
+        customerName,
+        customerEmail,
+        customerPhone,
+        eventDate,
+        serviceType,
+        guestCount,
+        meats,
+        eventAddress,
+        totalPrice: serverTotal * 100,
       });
-    } else {
-      // Card: normal payment checkout (Stripe auto-enables Apple Pay, Google Pay, etc.)
-      session = await stripe.checkout.sessions.create({
-        line_items: lineItems,
-        mode: "payment",
-        success_url: `${origin}/${locale}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${origin}/${locale}/booking/cancel`,
-        customer_email: customerEmail,
-        metadata: {
-          eventDate,
-          serviceType,
-          guestCount: String(guestCount),
-          meats: JSON.stringify(meats),
-          customerName,
-          customerPhone,
-          eventAddress,
-          ...(Object.keys(aguaFlavors).length > 0 && { aguaFlavors: JSON.stringify(aguaFlavors) }),
-          paymentMethod,
-        },
+
+      // Redirect to success page with booking ID instead of Stripe session
+      return NextResponse.json({
+        url: `${origin}/${locale}/booking/success?booking_id=${booking.id}&cash=true`,
+        bookingId: booking.id,
       });
     }
+
+    // Card payment: normal Stripe checkout
+    const session = await stripe.checkout.sessions.create({
+      line_items: lineItems,
+      mode: "payment",
+      success_url: `${origin}/${locale}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/${locale}/booking/cancel`,
+      customer_email: customerEmail,
+      metadata: {
+        eventDate,
+        serviceType,
+        guestCount: String(guestCount),
+        meats: JSON.stringify(meats),
+        customerName,
+        customerPhone,
+        eventAddress,
+        ...(Object.keys(aguaFlavors).length > 0 && { aguaFlavors: JSON.stringify(aguaFlavors) }),
+        paymentMethod,
+      },
+    });
 
     // Save booking to Supabase
     const { data: booking, error: dbError } = await supabaseAdmin
@@ -239,22 +280,16 @@ export async function POST(request: NextRequest) {
         event_date: eventDate,
         service_type: serviceType,
         guest_count: guestCount,
-        meats: meats,
-        extras: Object.entries(extras)
-          .filter(([, qty]) => (qty || 0) > 0)
-          .map(([id, qty]) => ({
-            id,
-            quantity: qty,
-            ...(id === "agua" && Object.keys(aguaFlavors).length > 0 && { flavors: aguaFlavors }),
-          })),
+        meats,
+        extras: extrasData,
         customer_name: customerName,
         customer_email: customerEmail,
         customer_phone: customerPhone,
         event_address: eventAddress,
         total_price: totalCents,
-        payment_type: paymentMethod,
+        payment_type: "card",
         deposit_amount: 0,
-        balance_due: paymentMethod === "cash" ? totalCents : 0,
+        balance_due: 0,
         stripe_session_id: session.id,
         stripe_payment_status: "unpaid",
         status: "pending",
@@ -264,7 +299,6 @@ export async function POST(request: NextRequest) {
 
     if (dbError) {
       console.error("Supabase insert error:", dbError);
-      // Still return checkout URL — the webhook will handle the rest
     }
 
     return NextResponse.json({
