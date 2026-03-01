@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import { EXTRA_OPTIONS } from "@/lib/pricing";
+import { getTranslations, emailTranslations, type SupportedLocale } from "@/lib/email-translations";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -18,6 +19,8 @@ interface BookingNotification {
   cancelUrl?: string;
   rescheduleUrl?: string;
 }
+
+// ─── Owner Notification (always English) ─────────────────────────
 
 export async function sendBookingNotification(
   booking: BookingNotification
@@ -98,7 +101,6 @@ export async function sendBookingNotification(
   `;
 
   try {
-    // Send email to owner
     await resend.emails.send({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: "constantinoalan98@gmail.com",
@@ -113,16 +115,16 @@ export async function sendBookingNotification(
   }
 }
 
+// ─── Customer Confirmation (i18n) ────────────────────────────────
+
 export async function sendCustomerConfirmation(
-  booking: BookingNotification
+  booking: BookingNotification,
+  locale: SupportedLocale = "en"
 ): Promise<void> {
+  const t = getTranslations(locale);
   const formattedPrice = `$${(booking.totalPrice / 100).toFixed(2)}`;
-  const formattedDate = new Date(booking.eventDate).toLocaleDateString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const formattedDate = emailTranslations.formatDate(booking.eventDate, locale);
+  const svcLabel = emailTranslations.serviceLabel(booking.serviceType, locale);
 
   const extrasSection = booking.extras?.length
     ? booking.extras
@@ -131,32 +133,26 @@ export async function sendCustomerConfirmation(
     : "";
 
   const textMessage = [
-    `Thank you for your booking with México Lindo Y Que Rico! 🌮`,
+    `${t.confirmation.greeting(booking.customerName)}`,
     ``,
-    `Here's your booking summary:`,
+    `${t.confirmation.subtitle}`,
     ``,
-    `Event Date: ${formattedDate}`,
-    `Event Address: ${booking.eventAddress || "Not provided"}`,
-    `Package: ${booking.serviceType === "2hr" ? "2-Hour" : "3-Hour"} Service`,
-    `Guests: ${booking.guestCount}`,
+    `${t.confirmation.date}: ${formattedDate}`,
+    `${t.confirmation.address}: ${booking.eventAddress || t.confirmation.notProvided}`,
+    `${t.confirmation.package}: ${svcLabel}`,
+    `${t.confirmation.guests}: ${booking.guestCount}`,
     ``,
-    `Meats:`,
     ...booking.meats.map((m) => `  • ${m}`),
     ``,
     ...(booking.extras?.length
-      ? [`Extras:`, ...booking.extras.map((e) => `  • ${e.name} x${e.quantity} — ${e.price}`)]
+      ? booking.extras.map((e) => `  • ${e.name} x${e.quantity} — ${e.price}`)
       : []),
     ``,
-    `Total Paid: ${formattedPrice}`,
+    `${t.confirmation.totalPaid}: ${formattedPrice}`,
     ``,
-    `We'll arrive 1 hour before your event begins to set up.`,
+    `${t.confirmation.questionsCall} (562) 235-9361 / (562) 746-3998.`,
     ``,
-    `Questions? Call us at (562) 235-9361 or (562) 746-3998.`,
-    ``,
-    ...(booking.rescheduleUrl ? [`Need to reschedule? ${booking.rescheduleUrl}`] : []),
-    ...(booking.cancelUrl ? [`Need to cancel? ${booking.cancelUrl}`] : []),
-    ``,
-    `¡Gracias! — México Lindo Y Que Rico`,
+    `— México Lindo Y Que Rico`,
   ].join("\n");
 
   const htmlMessage = `
@@ -169,29 +165,29 @@ export async function sendCustomerConfirmation(
 
       <!-- Body -->
       <div style="padding: 30px;">
-        <h2 style="color: #2D2926; margin: 0 0 8px;">¡Gracias, ${booking.customerName}! 🎉</h2>
+        <h2 style="color: #2D2926; margin: 0 0 8px;">${t.confirmation.greeting(booking.customerName)}</h2>
         <p style="color: #555; margin: 0 0 24px; font-size: 16px;">
-          Your booking is confirmed. Here's everything you need to know:
+          ${t.confirmation.subtitle}
         </p>
 
         <!-- Event Details Card -->
         <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #E8A935;">
-          <h3 style="color: #2D2926; margin: 0 0 16px; font-size: 18px;">📅 Event Details</h3>
+          <h3 style="color: #2D2926; margin: 0 0 16px; font-size: 18px;">${t.confirmation.eventDetails}</h3>
           <table style="width: 100%; border-collapse: collapse;">
             <tr>
-              <td style="padding: 6px 0; color: #888; font-size: 14px;">Date</td>
+              <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.date}</td>
               <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${formattedDate}</td>
             </tr>
             <tr>
-              <td style="padding: 6px 0; color: #888; font-size: 14px;">Address</td>
-              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${booking.eventAddress || "Not provided"}</td>
+              <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.address}</td>
+              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${booking.eventAddress || t.confirmation.notProvided}</td>
             </tr>
             <tr>
-              <td style="padding: 6px 0; color: #888; font-size: 14px;">Package</td>
-              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${booking.serviceType === "2hr" ? "2-Hour" : "3-Hour"} Service</td>
+              <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.package}</td>
+              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${svcLabel}</td>
             </tr>
             <tr>
-              <td style="padding: 6px 0; color: #888; font-size: 14px;">Guests</td>
+              <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.guests}</td>
               <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${booking.guestCount}</td>
             </tr>
           </table>
@@ -199,7 +195,7 @@ export async function sendCustomerConfirmation(
 
         <!-- Meats Card -->
         <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #C45A3C;">
-          <h3 style="color: #2D2926; margin: 0 0 12px; font-size: 18px;">🥩 Your Meats</h3>
+          <h3 style="color: #2D2926; margin: 0 0 12px; font-size: 18px;">${t.confirmation.yourMeats}</h3>
           <ul style="margin: 0; padding-left: 20px; color: #2D2926;">
             ${booking.meats.map((m) => `<li style="padding: 4px 0;">${m}</li>`).join("")}
           </ul>
@@ -210,7 +206,7 @@ export async function sendCustomerConfirmation(
             ? `
         <!-- Extras Card -->
         <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #7A8B6F;">
-          <h3 style="color: #2D2926; margin: 0 0 12px; font-size: 18px;">✨ Extras</h3>
+          <h3 style="color: #2D2926; margin: 0 0 12px; font-size: 18px;">${t.confirmation.extras}</h3>
           <ul style="margin: 0; padding-left: 20px; color: #2D2926;">
             ${extrasSection}
           </ul>
@@ -220,32 +216,32 @@ export async function sendCustomerConfirmation(
 
         <!-- Total -->
         <div style="background: #2D2926; color: #FAF5EF; padding: 24px; border-radius: 12px; text-align: center; margin-bottom: 24px;">
-          <p style="margin: 0 0 4px; color: #FAF5EF99; font-size: 14px;">Total Paid</p>
+          <p style="margin: 0 0 4px; color: #FAF5EF99; font-size: 14px;">${t.confirmation.totalPaid}</p>
           <p style="margin: 0; font-size: 32px; font-weight: bold; color: #E8A935;">${formattedPrice}</p>
         </div>
 
         <!-- Setup Note -->
         <div style="background: #E8A93520; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
           <p style="margin: 0; color: #2D2926; font-size: 14px;">
-            ⏰ <strong>Setup:</strong> Our team will arrive 1 hour before your event begins to get everything ready. No action needed on your end!
+            ${t.confirmation.setupNote}
           </p>
         </div>
 
         ${booking.cancelUrl || booking.rescheduleUrl ? `
         <!-- Manage Booking -->
         <div style="background: #f5f0eb; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px; text-align: center;">
-          <p style="margin: 0 0 8px; color: #2D2926; font-size: 13px; font-weight: 600;">Manage Your Booking</p>
+          <p style="margin: 0 0 8px; color: #2D2926; font-size: 13px; font-weight: 600;">${t.confirmation.manageBooking}</p>
           <p style="margin: 0; font-size: 13px;">
-            ${booking.rescheduleUrl ? `<a href="${booking.rescheduleUrl}" style="color: #C45A3C; text-decoration: none; font-weight: 600;">Reschedule</a>` : ""}
+            ${booking.rescheduleUrl ? `<a href="${booking.rescheduleUrl}" style="color: #C45A3C; text-decoration: none; font-weight: 600;">${t.confirmation.reschedule}</a>` : ""}
             ${booking.cancelUrl && booking.rescheduleUrl ? ' &nbsp;·&nbsp; ' : ""}
-            ${booking.cancelUrl ? `<a href="${booking.cancelUrl}" style="color: #888; text-decoration: none;">Cancel Booking</a>` : ""}
+            ${booking.cancelUrl ? `<a href="${booking.cancelUrl}" style="color: #888; text-decoration: none;">${t.confirmation.cancelBooking}</a>` : ""}
           </p>
         </div>
         ` : ""}
 
         <!-- Contact -->
         <p style="color: #555; font-size: 14px; text-align: center; margin: 0;">
-          Questions? Call us at <a href="tel:5622359361" style="color: #C45A3C; text-decoration: none; font-weight: 600;">(562) 235-9361</a>
+          ${t.confirmation.questionsCall} <a href="tel:5622359361" style="color: #C45A3C; text-decoration: none; font-weight: 600;">(562) 235-9361</a>
           or <a href="tel:5627463998" style="color: #C45A3C; text-decoration: none; font-weight: 600;">(562) 746-3998</a>
         </p>
       </div>
@@ -253,7 +249,7 @@ export async function sendCustomerConfirmation(
       <!-- Footer -->
       <div style="background: #2D2926; padding: 20px 30px; text-align: center;">
         <p style="margin: 0; color: #FAF5EF66; font-size: 12px;">
-          México Lindo Y Que Rico · Greater Los Angeles · 20+ Years of Flavor
+          ${t.confirmation.footer}
         </p>
         <p style="margin: 4px 0 0; color: #FAF5EF44; font-size: 11px;">Booking ID: ${booking.bookingId}</p>
       </div>
@@ -264,7 +260,7 @@ export async function sendCustomerConfirmation(
     await resend.emails.send({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: booking.customerEmail,
-      subject: `Booking Confirmed — ${formattedDate} 🌮`,
+      subject: t.confirmation.subject(formattedDate),
       text: textMessage,
       html: htmlMessage,
     });
@@ -329,42 +325,33 @@ function formatExtrasForReminder(
 }
 
 export async function sendEventReminder(
-  data: ReminderData
+  data: ReminderData,
+  locale: SupportedLocale = "en"
 ): Promise<void> {
-  const formattedDate = new Date(data.eventDate).toLocaleDateString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const t = getTranslations(locale);
+  const formattedDate = emailTranslations.formatDate(data.eventDate, locale);
   const formattedPrice = `$${(data.totalPrice / 100).toFixed(2)}`;
+  const svcLabel = emailTranslations.serviceLabel(data.serviceType, locale);
   const { html: extrasHtml, text: extrasText } = formatExtrasForReminder(data.extras);
 
   const textMessage = [
-    `🌮 Reminder: Your Catering Event is Coming Up!`,
+    `${t.reminder.heading(data.reminderDays)}`,
     ``,
-    `Hey ${data.customerName},`,
+    `${t.reminder.subtitle(data.customerName)}`,
     ``,
-    `Just a friendly reminder that your taco catering is in ${data.reminderDays} days!`,
+    `${t.confirmation.date}: ${formattedDate}`,
+    `${t.confirmation.address}: ${data.eventAddress || t.confirmation.notProvided}`,
+    `${t.confirmation.package}: ${svcLabel}`,
+    `${t.confirmation.guests}: ${data.guestCount}`,
     ``,
-    `Event Date: ${formattedDate}`,
-    `Location: ${data.eventAddress || "Not provided"}`,
-    `Package: ${data.serviceType === "2hr" ? "2-Hour" : "3-Hour"} Service`,
-    `Guests: ${data.guestCount}`,
-    ``,
-    `Meats:`,
     ...data.meats.map((m) => `  • ${m}`),
-    ...(extrasText ? [``, `Extras:`, extrasText] : []),
+    ...(extrasText ? [``, extrasText] : []),
     ``,
-    `Total Paid: ${formattedPrice}`,
+    `${t.confirmation.totalPaid}: ${formattedPrice}`,
     ``,
-    `Our team will arrive 1 hour before your event begins to set up.`,
+    `${t.confirmation.questionsCall} (562) 235-9361 / (562) 746-3998.`,
     ``,
-    `Questions or changes? Call us at (562) 235-9361 or (562) 746-3998.`,
-    ...(data.cancelUrl ? [``, `Cancel your booking: ${data.cancelUrl}`] : []),
-    ...(data.rescheduleUrl ? [`Reschedule your booking: ${data.rescheduleUrl}`] : []),
-    ``,
-    `See you soon! — México Lindo Y Que Rico`,
+    `— México Lindo Y Que Rico`,
   ].join("\n");
 
   const htmlMessage = `
@@ -377,29 +364,29 @@ export async function sendEventReminder(
 
       <!-- Body -->
       <div style="padding: 30px;">
-        <h2 style="color: #2D2926; margin: 0 0 8px;">Your event is in ${data.reminderDays} days! 🎉</h2>
+        <h2 style="color: #2D2926; margin: 0 0 8px;">${t.reminder.heading(data.reminderDays)}</h2>
         <p style="color: #555; margin: 0 0 24px; font-size: 16px;">
-          Hey ${data.customerName}, just a friendly reminder about your upcoming taco catering:
+          ${t.reminder.subtitle(data.customerName)}
         </p>
 
         <!-- Event Details Card -->
         <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #E8A935;">
-          <h3 style="color: #2D2926; margin: 0 0 16px; font-size: 18px;">📅 Event Details</h3>
+          <h3 style="color: #2D2926; margin: 0 0 16px; font-size: 18px;">${t.confirmation.eventDetails}</h3>
           <table style="width: 100%; border-collapse: collapse;">
             <tr>
-              <td style="padding: 6px 0; color: #888; font-size: 14px;">Date</td>
+              <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.date}</td>
               <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${formattedDate}</td>
             </tr>
             <tr>
-              <td style="padding: 6px 0; color: #888; font-size: 14px;">Address</td>
-              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${data.eventAddress || "Not provided"}</td>
+              <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.address}</td>
+              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${data.eventAddress || t.confirmation.notProvided}</td>
             </tr>
             <tr>
-              <td style="padding: 6px 0; color: #888; font-size: 14px;">Package</td>
-              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${data.serviceType === "2hr" ? "2-Hour" : "3-Hour"} Service</td>
+              <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.package}</td>
+              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${svcLabel}</td>
             </tr>
             <tr>
-              <td style="padding: 6px 0; color: #888; font-size: 14px;">Guests</td>
+              <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.guests}</td>
               <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${data.guestCount}</td>
             </tr>
           </table>
@@ -407,7 +394,7 @@ export async function sendEventReminder(
 
         <!-- Meats Card -->
         <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #C45A3C;">
-          <h3 style="color: #2D2926; margin: 0 0 12px; font-size: 18px;">🥩 Your Meats</h3>
+          <h3 style="color: #2D2926; margin: 0 0 12px; font-size: 18px;">${t.confirmation.yourMeats}</h3>
           <ul style="margin: 0; padding-left: 20px; color: #2D2926;">
             ${data.meats.map((m) => `<li style="padding: 4px 0;">${m}</li>`).join("")}
           </ul>
@@ -417,26 +404,26 @@ export async function sendEventReminder(
 
         <!-- Total -->
         <div style="background: #2D2926; color: #FAF5EF; padding: 24px; border-radius: 12px; text-align: center; margin-bottom: 24px;">
-          <p style="margin: 0 0 4px; color: #FAF5EF99; font-size: 14px;">Total Paid</p>
+          <p style="margin: 0 0 4px; color: #FAF5EF99; font-size: 14px;">${t.confirmation.totalPaid}</p>
           <p style="margin: 0; font-size: 32px; font-weight: bold; color: #E8A935;">${formattedPrice}</p>
         </div>
 
         <!-- Setup Note -->
         <div style="background: #E8A93520; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
           <p style="margin: 0; color: #2D2926; font-size: 14px;">
-            ⏰ <strong>Setup:</strong> Our team will arrive 1 hour before your event begins to get everything ready. No action needed on your end!
+            ${t.confirmation.setupNote}
           </p>
         </div>
 
         ${data.cancelUrl || data.rescheduleUrl ? `
         <div style="text-align: center; margin-bottom: 24px;">
-          ${data.cancelUrl ? `<a href="${data.cancelUrl}" style="display: inline-block; padding: 12px 24px; background: #C45A3C; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 0 8px 8px 0;">Cancel Booking</a>` : ""}
-          ${data.rescheduleUrl ? `<a href="${data.rescheduleUrl}" style="display: inline-block; padding: 12px 24px; background: #E8A935; color: #2D2926; text-decoration: none; border-radius: 8px; font-weight: 600;">Reschedule</a>` : ""}
+          ${data.cancelUrl ? `<a href="${data.cancelUrl}" style="display: inline-block; padding: 12px 24px; background: #C45A3C; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 0 8px 8px 0;">${t.confirmation.cancelBooking}</a>` : ""}
+          ${data.rescheduleUrl ? `<a href="${data.rescheduleUrl}" style="display: inline-block; padding: 12px 24px; background: #E8A935; color: #2D2926; text-decoration: none; border-radius: 8px; font-weight: 600;">${t.confirmation.reschedule}</a>` : ""}
         </div>` : ""}
 
         <!-- Contact -->
         <p style="color: #555; font-size: 14px; text-align: center; margin: 0;">
-          Questions or need to make changes? Call us at
+          ${t.confirmation.questionsCall}
           <a href="tel:5622359361" style="color: #C45A3C; text-decoration: none; font-weight: 600;">(562) 235-9361</a>
           or <a href="tel:5627463998" style="color: #C45A3C; text-decoration: none; font-weight: 600;">(562) 746-3998</a>
         </p>
@@ -445,7 +432,7 @@ export async function sendEventReminder(
       <!-- Footer -->
       <div style="background: #2D2926; padding: 20px 30px; text-align: center;">
         <p style="margin: 0; color: #FAF5EF66; font-size: 12px;">
-          México Lindo Y Que Rico · Greater Los Angeles · 20+ Years of Flavor
+          ${t.confirmation.footer}
         </p>
         <p style="margin: 4px 0 0; color: #FAF5EF44; font-size: 11px;">Booking ID: ${data.bookingId}</p>
       </div>
@@ -456,7 +443,7 @@ export async function sendEventReminder(
     await resend.emails.send({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: data.customerEmail,
-      subject: `Reminder: Your Catering Event is in ${data.reminderDays} Days! 🌮`,
+      subject: t.reminder.subject(data.reminderDays),
       text: textMessage,
       html: htmlMessage,
     });
@@ -465,6 +452,8 @@ export async function sendEventReminder(
     console.error("❌ Failed to send event reminder:", error);
   }
 }
+
+// ─── Owner Reminder (always English) ─────────────────────────────
 
 export async function sendOwnerReminder(
   data: ReminderData & { ownerEmail: string }
@@ -544,47 +533,37 @@ export async function sendOwnerReminder(
 }
 
 
-// ─── Day-Before Reminder Email ───────────────────────────────────
+// ─── Day-Before Reminder Email (i18n) ────────────────────────────
 
 export async function sendDayBeforeReminder(
-  data: DayBeforeReminderData
+  data: DayBeforeReminderData,
+  locale: SupportedLocale = "en"
 ): Promise<void> {
-  const formattedDate = new Date(data.eventDate).toLocaleDateString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const t = getTranslations(locale);
+  const formattedDate = emailTranslations.formatDate(data.eventDate, locale);
   const formattedPrice = `$${(data.totalPrice / 100).toFixed(2)}`;
   const formattedFee = `$${(data.cancellationFee / 100).toFixed(2)}`;
+  const svcLabel = emailTranslations.serviceLabel(data.serviceType, locale);
   const { html: extrasHtml, text: extrasText } = formatExtrasForReminder(data.extras);
 
   const textMessage = [
-    `🌮 Your Catering Event is TOMORROW!`,
+    `${t.dayBefore.heading}`,
     ``,
-    `Hey ${data.customerName},`,
+    `${t.dayBefore.subtitle(data.customerName)}`,
     ``,
-    `Just a reminder — your taco catering is tomorrow!`,
+    `${t.confirmation.date}: ${formattedDate}`,
+    `${t.confirmation.address}: ${data.eventAddress || t.confirmation.notProvided}`,
+    `${t.confirmation.package}: ${svcLabel}`,
+    `${t.confirmation.guests}: ${data.guestCount}`,
     ``,
-    `Event Date: ${formattedDate}`,
-    `Location: ${data.eventAddress || "Not provided"}`,
-    `Package: ${data.serviceType === "2hr" ? "2-Hour" : "3-Hour"} Service`,
-    `Guests: ${data.guestCount}`,
-    ``,
-    `Meats:`,
     ...data.meats.map((m: string) => `  • ${m}`),
-    ...(extrasText ? [``, `Extras:`, extrasText] : []),
+    ...(extrasText ? [``, extrasText] : []),
     ``,
-    `Total Paid: ${formattedPrice}`,
+    `${t.confirmation.totalPaid}: ${formattedPrice}`,
     ``,
-    `Our team will arrive 1 hour before your event begins to set up.`,
+    `${t.confirmation.questionsCall} (562) 235-9361 / (562) 746-3998.`,
     ``,
-    `Need to cancel? Cancelling at this point will incur a fee of ${formattedFee}.`,
-    `Cancel here: ${data.cancelUrl}`,
-    ``,
-    `To reschedule, please call us at (562) 235-9361 or (562) 746-3998.`,
-    ``,
-    `See you tomorrow! — México Lindo Y Que Rico`,
+    `— México Lindo Y Que Rico`,
   ].join("\n");
 
   const htmlMessage = `
@@ -594,44 +573,44 @@ export async function sendDayBeforeReminder(
         <p style="color: #FAF5EF99; margin: 8px 0 0; font-size: 14px;">Aquí la panza es primero.</p>
       </div>
       <div style="padding: 30px;">
-        <h2 style="color: #2D2926; margin: 0 0 8px;">Your event is TOMORROW! 🎉</h2>
+        <h2 style="color: #2D2926; margin: 0 0 8px;">${t.dayBefore.heading}</h2>
         <p style="color: #555; margin: 0 0 24px; font-size: 16px;">
-          Hey ${data.customerName}, we're excited to cater your event tomorrow!
+          ${t.dayBefore.subtitle(data.customerName)}
         </p>
         <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #E8A935;">
-          <h3 style="color: #2D2926; margin: 0 0 16px; font-size: 18px;">📅 Event Details</h3>
+          <h3 style="color: #2D2926; margin: 0 0 16px; font-size: 18px;">${t.confirmation.eventDetails}</h3>
           <table style="width: 100%; border-collapse: collapse;">
-            <tr><td style="padding: 6px 0; color: #888;">Date</td><td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${formattedDate}</td></tr>
-            <tr><td style="padding: 6px 0; color: #888;">Address</td><td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${data.eventAddress || "Not provided"}</td></tr>
-            <tr><td style="padding: 6px 0; color: #888;">Package</td><td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${data.serviceType === "2hr" ? "2-Hour" : "3-Hour"} Service</td></tr>
-            <tr><td style="padding: 6px 0; color: #888;">Guests</td><td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${data.guestCount}</td></tr>
+            <tr><td style="padding: 6px 0; color: #888;">${t.confirmation.date}</td><td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${formattedDate}</td></tr>
+            <tr><td style="padding: 6px 0; color: #888;">${t.confirmation.address}</td><td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${data.eventAddress || t.confirmation.notProvided}</td></tr>
+            <tr><td style="padding: 6px 0; color: #888;">${t.confirmation.package}</td><td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${svcLabel}</td></tr>
+            <tr><td style="padding: 6px 0; color: #888;">${t.confirmation.guests}</td><td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${data.guestCount}</td></tr>
           </table>
         </div>
         <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #C45A3C;">
-          <h3 style="color: #2D2926; margin: 0 0 12px; font-size: 18px;">🥩 Your Meats</h3>
+          <h3 style="color: #2D2926; margin: 0 0 12px; font-size: 18px;">${t.confirmation.yourMeats}</h3>
           <ul style="margin: 0; padding-left: 20px; color: #2D2926;">
             ${data.meats.map((m: string) => `<li style="padding: 4px 0;">${m}</li>`).join("")}
           </ul>
         </div>
         ${extrasHtml}
         <div style="background: #2D2926; color: #FAF5EF; padding: 24px; border-radius: 12px; text-align: center; margin-bottom: 24px;">
-          <p style="margin: 0 0 4px; color: #FAF5EF99; font-size: 14px;">Total Paid</p>
+          <p style="margin: 0 0 4px; color: #FAF5EF99; font-size: 14px;">${t.confirmation.totalPaid}</p>
           <p style="margin: 0; font-size: 32px; font-weight: bold; color: #E8A935;">${formattedPrice}</p>
         </div>
         <div style="background: #E8A93520; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
-          <p style="margin: 0; color: #2D2926; font-size: 14px;">⏰ <strong>Setup:</strong> Our team will arrive 1 hour before your event begins!</p>
+          <p style="margin: 0; color: #2D2926; font-size: 14px;">${t.dayBefore.setupNote}</p>
         </div>
         <div style="background: #C45A3C15; border: 1px solid #C45A3C30; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
-          <p style="margin: 0 0 8px; color: #C45A3C; font-size: 14px; font-weight: 600;">⚠️ Need to cancel?</p>
-          <p style="margin: 0 0 12px; color: #555; font-size: 13px;">Cancelling at this point will incur a cancellation fee of <strong>${formattedFee}</strong>.</p>
-          <a href="${data.cancelUrl}" style="display: inline-block; padding: 10px 20px; background: #C45A3C; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 13px;">Cancel Booking</a>
+          <p style="margin: 0 0 8px; color: #C45A3C; font-size: 14px; font-weight: 600;">${t.dayBefore.needToCancel}</p>
+          <p style="margin: 0 0 12px; color: #555; font-size: 13px;">${t.dayBefore.cancelWarning(formattedFee)}</p>
+          <a href="${data.cancelUrl}" style="display: inline-block; padding: 10px 20px; background: #C45A3C; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 13px;">${t.confirmation.cancelBooking}</a>
         </div>
         <div style="background: #E8A93520; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
-          <p style="margin: 0; color: #2D2926; font-size: 14px;">📞 <strong>Need to reschedule?</strong> Please call us at <a href="tel:5622359361" style="color: #C45A3C;">(562) 235-9361</a> or <a href="tel:5627463998" style="color: #C45A3C;">(562) 746-3998</a></p>
+          <p style="margin: 0; color: #2D2926; font-size: 14px;">${t.dayBefore.needToReschedule(locale)} <a href="tel:5622359361" style="color: #C45A3C;">(562) 235-9361</a> or <a href="tel:5627463998" style="color: #C45A3C;">(562) 746-3998</a></p>
         </div>
       </div>
       <div style="background: #2D2926; padding: 20px 30px; text-align: center;">
-        <p style="margin: 0; color: #FAF5EF66; font-size: 12px;">México Lindo Y Que Rico · Greater Los Angeles · 20+ Years of Flavor</p>
+        <p style="margin: 0; color: #FAF5EF66; font-size: 12px;">${t.confirmation.footer}</p>
         <p style="margin: 4px 0 0; color: #FAF5EF44; font-size: 11px;">Booking ID: ${data.bookingId}</p>
       </div>
     </div>
@@ -641,7 +620,7 @@ export async function sendDayBeforeReminder(
     await resend.emails.send({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: data.customerEmail,
-      subject: `Tomorrow: Your Catering Event! 🌮`,
+      subject: t.dayBefore.subject(),
       text: textMessage,
       html: htmlMessage,
     });
@@ -651,7 +630,7 @@ export async function sendDayBeforeReminder(
   }
 }
 
-// ─── Cancellation Confirmation Email ─────────────────────────────
+// ─── Cancellation Confirmation Email (i18n) ──────────────────────
 
 export async function sendCancellationConfirmation(data: {
   customerName: string;
@@ -660,10 +639,9 @@ export async function sendCancellationConfirmation(data: {
   refundAmount: number;
   cancellationFee: number;
   bookingId: string;
-}): Promise<void> {
-  const formattedDate = new Date(data.eventDate).toLocaleDateString("en-US", {
-    weekday: "long", year: "numeric", month: "long", day: "numeric",
-  });
+}, locale: SupportedLocale = "en"): Promise<void> {
+  const t = getTranslations(locale);
+  const formattedDate = emailTranslations.formatDate(data.eventDate, locale);
   const formattedRefund = `$${(data.refundAmount / 100).toFixed(2)}`;
   const formattedFee = `$${(data.cancellationFee / 100).toFixed(2)}`;
 
@@ -673,12 +651,12 @@ export async function sendCancellationConfirmation(data: {
         <h1 style="color: #E8A935; margin: 0; font-size: 28px;">México Lindo Y Que Rico</h1>
       </div>
       <div style="padding: 30px;">
-        <h2 style="color: #2D2926; margin: 0 0 8px;">Booking Cancelled</h2>
-        <p style="color: #555; margin: 0 0 24px;">Hey ${data.customerName}, your booking for <strong>${formattedDate}</strong> has been cancelled.</p>
-        ${data.cancellationFee > 0 ? `<p style="color: #555;">Cancellation fee: <strong>${formattedFee}</strong></p>` : ""}
-        <p style="color: #555;">Refund amount: <strong>${formattedRefund}</strong></p>
-        <p style="color: #888; font-size: 13px;">Refunds typically take 5-10 business days to appear on your statement.</p>
-        <p style="color: #555; font-size: 14px; margin-top: 24px;">We hope to serve you in the future! Call us at <a href="tel:5622359361" style="color: #C45A3C;">(562) 235-9361</a> or <a href="tel:5627463998" style="color: #C45A3C;">(562) 746-3998</a>.</p>
+        <h2 style="color: #2D2926; margin: 0 0 8px;">${t.cancellation.heading}</h2>
+        <p style="color: #555; margin: 0 0 24px;">${t.cancellation.message(data.customerName, formattedDate)}</p>
+        ${data.cancellationFee > 0 ? `<p style="color: #555;">${t.cancellation.cancellationFee}: <strong>${formattedFee}</strong></p>` : ""}
+        <p style="color: #555;">${t.cancellation.refundAmount}: <strong>${formattedRefund}</strong></p>
+        <p style="color: #888; font-size: 13px;">${t.cancellation.refundNote}</p>
+        <p style="color: #555; font-size: 14px; margin-top: 24px;">${t.cancellation.hopeToServe} <a href="tel:5622359361" style="color: #C45A3C;">(562) 235-9361</a> or <a href="tel:5627463998" style="color: #C45A3C;">(562) 746-3998</a>.</p>
       </div>
       <div style="background: #2D2926; padding: 20px 30px; text-align: center;">
         <p style="margin: 0; color: #FAF5EF44; font-size: 11px;">Booking ID: ${data.bookingId}</p>
@@ -690,14 +668,16 @@ export async function sendCancellationConfirmation(data: {
     await resend.emails.send({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: data.customerEmail,
-      subject: `Booking Cancelled — ${formattedDate}`,
-      text: `Your booking for ${formattedDate} has been cancelled. Refund: ${formattedRefund}. Fee: ${formattedFee}.`,
+      subject: t.cancellation.subject(formattedDate),
+      text: `${t.cancellation.heading} — ${formattedDate}. ${t.cancellation.refundAmount}: ${formattedRefund}. ${t.cancellation.cancellationFee}: ${formattedFee}.`,
       html: htmlMessage,
     });
   } catch (error) {
     console.error("❌ Failed to send cancellation confirmation:", error);
   }
 }
+
+// ─── Owner Cancellation Notice (always English) ──────────────────
 
 export async function sendOwnerCancellationNotice(data: {
   customerName: string;
@@ -734,7 +714,7 @@ export async function sendOwnerCancellationNotice(data: {
   }
 }
 
-// ─── Reschedule Confirmation Email ───────────────────────────────
+// ─── Reschedule Confirmation Email (i18n) ────────────────────────
 
 export async function sendRescheduleConfirmation(data: {
   customerName: string;
@@ -742,11 +722,10 @@ export async function sendRescheduleConfirmation(data: {
   oldDate: string;
   newDate: string;
   bookingId: string;
-}): Promise<void> {
-  const formatDate = (d: string) =>
-    new Date(d).toLocaleDateString("en-US", {
-      weekday: "long", year: "numeric", month: "long", day: "numeric",
-    });
+}, locale: SupportedLocale = "en"): Promise<void> {
+  const t = getTranslations(locale);
+  const oldFormatted = emailTranslations.formatDate(data.oldDate, locale);
+  const newFormatted = emailTranslations.formatDate(data.newDate, locale);
 
   const htmlMessage = `
     <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
@@ -754,15 +733,15 @@ export async function sendRescheduleConfirmation(data: {
         <h1 style="color: #E8A935; margin: 0; font-size: 28px;">México Lindo Y Que Rico</h1>
       </div>
       <div style="padding: 30px;">
-        <h2 style="color: #2D2926; margin: 0 0 8px;">Booking Rescheduled! 📅</h2>
-        <p style="color: #555; margin: 0 0 24px;">Hey ${data.customerName}, your booking has been rescheduled.</p>
+        <h2 style="color: #2D2926; margin: 0 0 8px;">${t.reschedule.heading}</h2>
+        <p style="color: #555; margin: 0 0 24px;">${t.reschedule.message(data.customerName)}</p>
         <div style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
-          <p style="color: #888; margin: 0 0 4px; font-size: 13px;">Previous date:</p>
-          <p style="color: #C45A3C; margin: 0 0 16px; text-decoration: line-through;">${formatDate(data.oldDate)}</p>
-          <p style="color: #888; margin: 0 0 4px; font-size: 13px;">New date:</p>
-          <p style="color: #2D2926; margin: 0; font-weight: 600; font-size: 18px;">${formatDate(data.newDate)}</p>
+          <p style="color: #888; margin: 0 0 4px; font-size: 13px;">${t.reschedule.previousDate}</p>
+          <p style="color: #C45A3C; margin: 0 0 16px; text-decoration: line-through;">${oldFormatted}</p>
+          <p style="color: #888; margin: 0 0 4px; font-size: 13px;">${t.reschedule.newDate}</p>
+          <p style="color: #2D2926; margin: 0; font-weight: 600; font-size: 18px;">${newFormatted}</p>
         </div>
-        <p style="color: #555; font-size: 14px;">Questions? Call us at <a href="tel:5622359361" style="color: #C45A3C;">(562) 235-9361</a> or <a href="tel:5627463998" style="color: #C45A3C;">(562) 746-3998</a>.</p>
+        <p style="color: #555; font-size: 14px;">${t.reschedule.questionsCall} <a href="tel:5622359361" style="color: #C45A3C;">(562) 235-9361</a> or <a href="tel:5627463998" style="color: #C45A3C;">(562) 746-3998</a>.</p>
       </div>
       <div style="background: #2D2926; padding: 20px 30px; text-align: center;">
         <p style="margin: 0; color: #FAF5EF44; font-size: 11px;">Booking ID: ${data.bookingId}</p>
@@ -774,14 +753,16 @@ export async function sendRescheduleConfirmation(data: {
     await resend.emails.send({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: data.customerEmail,
-      subject: `Booking Rescheduled — ${formatDate(data.newDate)} 🌮`,
-      text: `Your booking has been rescheduled from ${formatDate(data.oldDate)} to ${formatDate(data.newDate)}.`,
+      subject: t.reschedule.subject(newFormatted),
+      text: `${t.reschedule.heading} ${t.reschedule.previousDate} ${oldFormatted} → ${t.reschedule.newDate} ${newFormatted}`,
       html: htmlMessage,
     });
   } catch (error) {
     console.error("❌ Failed to send reschedule confirmation:", error);
   }
 }
+
+// ─── Owner Reschedule Notice (always English) ────────────────────
 
 export async function sendOwnerRescheduleNotice(data: {
   customerName: string;
@@ -817,40 +798,33 @@ export async function sendOwnerRescheduleNotice(data: {
   }
 }
 
-// ─── Cash Booking Pending Confirmation ───────────────────────────
+// ─── Cash Booking Pending Confirmation (i18n) ────────────────────
 
 export async function sendCashPendingConfirmation(
-  booking: BookingNotification
+  booking: BookingNotification,
+  locale: SupportedLocale = "en"
 ): Promise<void> {
-  const formattedDate = new Date(booking.eventDate).toLocaleDateString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const t = getTranslations(locale);
+  const formattedDate = emailTranslations.formatDate(booking.eventDate, locale);
   const formattedPrice = `$${(booking.totalPrice / 100).toFixed(2)}`;
+  const svcLabel = emailTranslations.serviceLabel(booking.serviceType, locale);
 
   const textMessage = [
-    `🌮 We've Received Your Booking!`,
+    `${t.cashPending.heading}`,
     ``,
-    `Hey ${booking.customerName},`,
+    `${t.cashPending.subtitle(booking.customerName)}`,
     ``,
-    `Thanks for choosing México Lindo Y Que Rico! We've received your booking request and it's currently being reviewed.`,
+    `${t.confirmation.date}: ${formattedDate}`,
+    `${t.confirmation.address}: ${booking.eventAddress || t.confirmation.notProvided}`,
+    `${t.confirmation.package}: ${svcLabel}`,
+    `${t.confirmation.guests}: ${booking.guestCount}`,
     ``,
-    `One of our team members will reach out to you shortly to confirm the details and arrange payment.`,
+    ...booking.meats.map((m) => `  • ${m}`),
     ``,
-    `Event Date: ${formattedDate}`,
-    `Location: ${booking.eventAddress || "Not provided"}`,
-    `Package: ${booking.serviceType === "2hr" ? "2-Hour" : "3-Hour"} Service`,
-    `Guests: ${booking.guestCount}`,
-    `Meats: ${booking.meats.join(", ")}`,
-    `Total: ${formattedPrice} (due in cash on event day)`,
+    `${t.cashPending.estimatedTotal}: ${formattedPrice}`,
+    `${t.cashPending.dueCash}`,
     ``,
-    `Once we confirm everything, we'll send you a follow-up email confirming the date of your event.`,
-    ``,
-    `Please be on the lookout for our call!`,
-    ``,
-    `Questions? Call us at (562) 235-9361 or (562) 746-3998.`,
+    `${t.confirmation.questionsCall} (562) 235-9361 / (562) 746-3998.`,
     ``,
     `— México Lindo Y Que Rico`,
   ].join("\n");
@@ -865,39 +839,39 @@ export async function sendCashPendingConfirmation(
 
       <!-- Body -->
       <div style="padding: 30px;">
-        <h2 style="color: #2D2926; margin: 0 0 8px;">We've received your booking! 🎉</h2>
+        <h2 style="color: #2D2926; margin: 0 0 8px;">${t.cashPending.heading}</h2>
         <p style="color: #555; margin: 0 0 24px; font-size: 16px;">
-          Hey ${booking.customerName}, thanks for choosing us! Your booking is currently being reviewed.
+          ${t.cashPending.subtitle(booking.customerName)}
         </p>
 
         <!-- What's Next -->
         <div style="background: #E8A93520; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
-          <h3 style="color: #2D2926; margin: 0 0 12px; font-size: 16px;">📋 What happens next?</h3>
+          <h3 style="color: #2D2926; margin: 0 0 12px; font-size: 16px;">${t.cashPending.whatNext}</h3>
           <ol style="margin: 0; padding-left: 20px; color: #555; font-size: 14px; line-height: 1.8;">
-            <li>One of our team members will <strong>call you shortly</strong> to confirm the details</li>
-            <li>We'll go over your event and arrange payment</li>
-            <li>Once confirmed, you'll receive a <strong>follow-up confirmation email</strong> with everything locked in</li>
+            <li>${t.cashPending.step1}</li>
+            <li>${t.cashPending.step2}</li>
+            <li>${t.cashPending.step3}</li>
           </ol>
         </div>
 
         <!-- Event Details Card -->
         <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #E8A935;">
-          <h3 style="color: #2D2926; margin: 0 0 16px; font-size: 18px;">📅 Your Event Details</h3>
+          <h3 style="color: #2D2926; margin: 0 0 16px; font-size: 18px;">${t.cashPending.yourEventDetails}</h3>
           <table style="width: 100%; border-collapse: collapse;">
             <tr>
-              <td style="padding: 6px 0; color: #888; font-size: 14px;">Date</td>
+              <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.date}</td>
               <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${formattedDate}</td>
             </tr>
             <tr>
-              <td style="padding: 6px 0; color: #888; font-size: 14px;">Address</td>
-              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${booking.eventAddress || "Not provided"}</td>
+              <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.address}</td>
+              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${booking.eventAddress || t.confirmation.notProvided}</td>
             </tr>
             <tr>
-              <td style="padding: 6px 0; color: #888; font-size: 14px;">Package</td>
-              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${booking.serviceType === "2hr" ? "2-Hour" : "3-Hour"} Service</td>
+              <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.package}</td>
+              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${svcLabel}</td>
             </tr>
             <tr>
-              <td style="padding: 6px 0; color: #888; font-size: 14px;">Guests</td>
+              <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.guests}</td>
               <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${booking.guestCount}</td>
             </tr>
           </table>
@@ -905,7 +879,7 @@ export async function sendCashPendingConfirmation(
 
         <!-- Meats Card -->
         <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #C45A3C;">
-          <h3 style="color: #2D2926; margin: 0 0 12px; font-size: 18px;">🥩 Your Meats</h3>
+          <h3 style="color: #2D2926; margin: 0 0 12px; font-size: 18px;">${t.confirmation.yourMeats}</h3>
           <ul style="margin: 0; padding-left: 20px; color: #2D2926;">
             ${booking.meats.map((m) => `<li style="padding: 4px 0;">${m}</li>`).join("")}
           </ul>
@@ -913,14 +887,14 @@ export async function sendCashPendingConfirmation(
 
         <!-- Total -->
         <div style="background: #2D2926; color: #FAF5EF; padding: 24px; border-radius: 12px; text-align: center; margin-bottom: 24px;">
-          <p style="margin: 0 0 4px; color: #FAF5EF99; font-size: 14px;">Estimated Total (Cash)</p>
+          <p style="margin: 0 0 4px; color: #FAF5EF99; font-size: 14px;">${t.cashPending.estimatedTotal}</p>
           <p style="margin: 0; font-size: 32px; font-weight: bold; color: #E8A935;">${formattedPrice}</p>
-          <p style="margin: 8px 0 0; color: #FAF5EF66; font-size: 12px;">Due in cash on event day</p>
+          <p style="margin: 8px 0 0; color: #FAF5EF66; font-size: 12px;">${t.cashPending.dueCash}</p>
         </div>
 
         <!-- Contact -->
         <p style="color: #555; font-size: 14px; text-align: center; margin: 0;">
-          Questions? Call us at
+          ${t.confirmation.questionsCall}
           <a href="tel:5622359361" style="color: #C45A3C; text-decoration: none; font-weight: 600;">(562) 235-9361</a>
           or <a href="tel:5627463998" style="color: #C45A3C; text-decoration: none; font-weight: 600;">(562) 746-3998</a>
         </p>
@@ -929,7 +903,7 @@ export async function sendCashPendingConfirmation(
       <!-- Footer -->
       <div style="background: #2D2926; padding: 20px 30px; text-align: center;">
         <p style="margin: 0; color: #FAF5EF66; font-size: 12px;">
-          México Lindo Y Que Rico · Greater Los Angeles · 20+ Years of Flavor
+          ${t.confirmation.footer}
         </p>
         <p style="margin: 4px 0 0; color: #FAF5EF44; font-size: 11px;">Booking ID: ${booking.bookingId}</p>
       </div>
@@ -940,7 +914,7 @@ export async function sendCashPendingConfirmation(
     await resend.emails.send({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: booking.customerEmail,
-      subject: `We've Received Your Booking! 🌮`,
+      subject: t.cashPending.subject(),
       text: textMessage,
       html: htmlMessage,
     });

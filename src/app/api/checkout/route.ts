@@ -218,6 +218,7 @@ export async function POST(request: NextRequest) {
           payment_type: "cash",
           deposit_amount: 0,
           balance_due: serverTotal * 100,
+          locale,
           stripe_payment_status: "not_applicable",
           status: "pending",
           cancel_token: cancelToken,
@@ -247,7 +248,7 @@ export async function POST(request: NextRequest) {
       };
       await Promise.all([
         sendBookingNotification(notifData),
-        sendCashPendingConfirmation(notifData),
+        sendCashPendingConfirmation(notifData, locale as "en" | "es"),
       ]);
 
       // Redirect to success page with booking ID instead of Stripe session
@@ -274,6 +275,7 @@ export async function POST(request: NextRequest) {
         eventAddress,
         ...(Object.keys(aguaFlavors).length > 0 && { aguaFlavors: JSON.stringify(aguaFlavors) }),
         paymentMethod,
+        locale,
       },
     });
 
@@ -291,6 +293,7 @@ export async function POST(request: NextRequest) {
         customer_phone: customerPhone,
         event_address: eventAddress,
         total_price: totalCents,
+        locale,
         payment_type: "card",
         deposit_amount: 0,
         balance_due: 0,

@@ -49,7 +49,8 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { emailType } = await request.json();
+    const { emailType, locale = "en" } = await request.json();
+    const emailLocale = (locale === "es" ? "es" : "en") as "en" | "es";
 
     // Get notification email from settings
     const { data: settings } = await supabaseAdmin
@@ -67,7 +68,7 @@ export async function POST(request: NextRequest) {
         break;
 
       case "customer_confirmation":
-        await sendCustomerConfirmation(sample);
+        await sendCustomerConfirmation(sample, emailLocale);
         break;
 
       case "customer_reminder": {
@@ -77,7 +78,7 @@ export async function POST(request: NextRequest) {
           reminderDays,
           cancelUrl: sample.cancelUrl,
           rescheduleUrl: sample.rescheduleUrl,
-        });
+        }, emailLocale);
         break;
       }
 
@@ -102,12 +103,12 @@ export async function POST(request: NextRequest) {
           reminderDays: 1,
           cancelUrl: sample.cancelUrl,
           cancellationFee: dayBeforeFee,
-        });
+        }, emailLocale);
         break;
       }
 
       case "cash_pending":
-        await sendCashPendingConfirmation(sample);
+        await sendCashPendingConfirmation(sample, emailLocale);
         break;
 
       default:

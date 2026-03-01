@@ -67,8 +67,9 @@ export async function GET(request: NextRequest) {
             .eq("id", booking.id);
         }
 
-        const cancelUrl = `${BASE_URL}/en/booking/cancel/${cancelToken}`;
-        const rescheduleUrl = `${BASE_URL}/en/booking/reschedule/${rescheduleToken}`;
+        const bookingLocale = (booking.locale || "en") as "en" | "es";
+        const cancelUrl = `${BASE_URL}/${bookingLocale}/booking/cancel/${cancelToken}`;
+        const rescheduleUrl = `${BASE_URL}/${bookingLocale}/booking/reschedule/${rescheduleToken}`;
 
         const reminderData = {
           bookingId: booking.id,
@@ -88,7 +89,7 @@ export async function GET(request: NextRequest) {
         };
 
         await Promise.all([
-          sendEventReminder(reminderData),
+          sendEventReminder(reminderData, bookingLocale),
           sendOwnerReminder({ ...reminderData, ownerEmail }),
         ]);
 
@@ -140,7 +141,8 @@ export async function GET(request: NextRequest) {
           }
         }
 
-        const cancelUrl = `${BASE_URL}/en/booking/cancel/${cancelToken}`;
+        const dayBeforeLocale = (booking.locale || "en") as "en" | "es";
+        const cancelUrl = `${BASE_URL}/${dayBeforeLocale}/booking/cancel/${cancelToken}`;
 
         await sendDayBeforeReminder({
           bookingId: booking.id,
@@ -157,7 +159,7 @@ export async function GET(request: NextRequest) {
           reminderDays: 1,
           cancellationFee,
           cancelUrl,
-        });
+        }, dayBeforeLocale);
 
         await sendOwnerReminder({
           bookingId: booking.id,
