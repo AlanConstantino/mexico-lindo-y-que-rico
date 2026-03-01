@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import type { ServiceType, MeatId, ExtraId, AguaFlavorQuantities } from "@/lib/pricing";
-import { calculateTotal, getBasePrice, getExtrasTotal, calculateSurcharge, calculateDeposit } from "@/lib/pricing";
+import { calculateTotal, getBasePrice, getExtrasTotal, calculateSurcharge, calculateDeposit, calculateProcessingFee } from "@/lib/pricing";
 import DateStep from "./steps/DateStep";
 import PackageStep from "./steps/PackageStep";
 import MeatStep from "./steps/MeatStep";
@@ -342,9 +342,9 @@ export default function BookingForm() {
                 {t("processing")}
               </>
             ) : data.paymentMethod === "cash" ? (
-              `${t("payDeposit")} $${total ? calculateDeposit(total, paymentSettings.cash_deposit_percent) : 0}`
+              t("saveCardAndConfirm")
             ) : (
-              `${t("payWithCard")} $${total ? (total + calculateSurcharge(total, paymentSettings.cc_surcharge_percent)).toLocaleString() : 0}`
+              `${t("payWithCard")} $${total ? (total + calculateSurcharge(total, paymentSettings.cc_surcharge_percent) + calculateProcessingFee(total, paymentSettings.stripe_fee_percent, paymentSettings.stripe_fee_flat)).toLocaleString() : 0}`
             )}
           </button>
         )}

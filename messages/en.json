@@ -183,6 +183,7 @@
     "payWithStripe": "Pay with Stripe",
     "paymentMethod": "Payment Method",
     "payWithCard": "Pay with Card",
+    "saveCardAndConfirm": "Save Card & Confirm Booking",
     "payWithCash": "Pay with Cash",
     "ccSurcharge": "Credit Card Surcharge ({percent}%)",
     "processingFee": "Payment Processing Fee ({percent}% + $0.30)",

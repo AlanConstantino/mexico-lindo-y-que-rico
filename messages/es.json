@@ -183,6 +183,7 @@
     "payWithStripe": "Pagar con Stripe",
     "paymentMethod": "Método de Pago",
     "payWithCard": "Pagar con Tarjeta",
+    "saveCardAndConfirm": "Guardar Tarjeta y Confirmar",
     "payWithCash": "Pagar en Efectivo",
     "ccSurcharge": "Recargo por Tarjeta ({percent}%)",
     "processingFee": "Cargo por Procesamiento ({percent}% + $0.30)",
