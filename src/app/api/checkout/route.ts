@@ -236,7 +236,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Notify owner + send pending confirmation to customer
-      const { sendBookingNotification, sendCashPendingConfirmation } = await import("@/lib/notifications");
+      const { sendBookingNotification, sendCashPendingConfirmation, mapExtrasForEmail } = await import("@/lib/notifications");
       const notifData = {
         bookingId: booking.id,
         customerName,
@@ -247,6 +247,7 @@ export async function POST(request: NextRequest) {
         serviceType,
         guestCount,
         meats,
+        extras: mapExtrasForEmail(extrasData),
         eventAddress,
         totalPrice: serverTotal * 100,
       };

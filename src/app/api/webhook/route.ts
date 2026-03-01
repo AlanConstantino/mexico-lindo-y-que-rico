@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import Stripe from "stripe";
 import { supabaseAdmin } from "@/lib/supabase";
-import { sendBookingNotification, sendCustomerConfirmation } from "@/lib/notifications";
+import { sendBookingNotification, sendCustomerConfirmation, mapExtrasForEmail } from "@/lib/notifications";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2026-01-28.clover",
@@ -97,6 +97,7 @@ export async function POST(request: NextRequest) {
         serviceType: booking.service_type,
         guestCount: booking.guest_count,
         meats: booking.meats as string[],
+        extras: mapExtrasForEmail(booking.extras as { id: string; quantity: number }[] | undefined),
         eventAddress: booking.event_address,
         totalPrice: booking.total_price,
         cancelUrl,

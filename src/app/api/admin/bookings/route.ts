@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { isValidToken } from "../auth/route";
-import { sendCustomerConfirmation } from "@/lib/notifications";
+import { sendCustomerConfirmation, mapExtrasForEmail } from "@/lib/notifications";
 
 function getToken(request: NextRequest): string | null {
   const auth = request.headers.get("authorization");
@@ -96,6 +96,7 @@ export async function PATCH(request: NextRequest) {
         serviceType: data.service_type,
         guestCount: data.guest_count,
         meats: data.meats as string[],
+        extras: mapExtrasForEmail(data.extras as { id: string; quantity: number }[] | undefined),
         eventAddress: data.event_address,
         totalPrice: data.total_price,
         cancelUrl,

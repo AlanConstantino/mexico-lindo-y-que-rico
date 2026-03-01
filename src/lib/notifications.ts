@@ -4,6 +4,24 @@ import { getTranslations, emailTranslations, type SupportedLocale } from "@/lib/
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+/** Map DB extras format to display format for emails */
+export function mapExtrasForEmail(
+  dbExtras?: { id: string; quantity: number; flavors?: Record<string, number> | string[] }[]
+): { name: string; quantity: number; price: string }[] {
+  if (!dbExtras || dbExtras.length === 0) return [];
+  return dbExtras.map((e) => {
+    const option = EXTRA_OPTIONS.find((o) => o.id === e.id);
+    const name = e.id.charAt(0).toUpperCase() + e.id.slice(1);
+    const unitPrice = option?.price ?? 0;
+    const total = option?.perUnit ? unitPrice * e.quantity : unitPrice;
+    return {
+      name,
+      quantity: e.quantity,
+      price: `$${total}`,
+    };
+  });
+}
+
 function formatTime(time: string): string {
   const [h, m] = time.split(':');
   const hour = parseInt(h);
@@ -851,6 +869,9 @@ export async function sendCashPendingConfirmation(
     `${t.confirmation.guests}: ${booking.guestCount}`,
     ``,
     ...booking.meats.map((m) => `  • ${m}`),
+    ...(booking.extras?.length
+      ? [``, `${t.confirmation.extras}:`, ...booking.extras.map((e) => `  • ${e.name} x${e.quantity} — ${e.price}`)]
+      : []),
     ``,
     `${t.cashPending.estimatedTotal}: ${formattedPrice}`,
     `${t.cashPending.dueCash}`,
@@ -915,6 +936,16 @@ export async function sendCashPendingConfirmation(
             ${booking.meats.map((m) => `<li style="padding: 4px 0;">${m}</li>`).join("")}
           </ul>
         </div>
+
+        ${booking.extras?.length ? `
+        <!-- Extras Card -->
+        <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #E8A935;">
+          <h3 style="color: #2D2926; margin: 0 0 12px; font-size: 18px;">${t.confirmation.extras}</h3>
+          <ul style="margin: 0; padding-left: 20px; color: #2D2926;">
+            ${booking.extras.map((e) => `<li style="padding: 4px 0;">${e.name} x${e.quantity} — ${e.price}</li>`).join("")}
+          </ul>
+        </div>
+        ` : ""}
 
         <!-- Total -->
         <div style="background: #2D2926; color: #FAF5EF; padding: 24px; border-radius: 12px; text-align: center; margin-bottom: 24px;">
