@@ -202,6 +202,7 @@
     "selectTimeDesc": "¿A qué hora debemos llegar para comenzar a preparar?",
     "eventTime": "Hora del Evento",
     "timeRequired": "Por favor selecciona una hora para tu evento",
+    "setupArrivalNote": "Nuestro equipo llegará a las {arrivalTime} para preparar todo — esta hora no se cobra.",
     "dateFullyBooked": "Agotado",
     "dateTooSoon": "Se requieren mínimo {days} días de anticipación",
     "prevMonth": "Mes anterior",

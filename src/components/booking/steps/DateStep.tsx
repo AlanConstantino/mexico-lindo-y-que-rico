@@ -295,6 +295,18 @@ export default function DateStep({ data, updateData }: DateStepProps) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
             </svg>
           </div>
+          {data.eventTime && (() => {
+            const [h, m] = data.eventTime.split(":").map(Number);
+            const arrivalHour = h - 1;
+            const arrivalH12 = arrivalHour % 12 || 12;
+            const arrivalAmpm = arrivalHour >= 12 ? "PM" : "AM";
+            const arrivalTime = `${arrivalH12}:${String(m).padStart(2, "0")} ${arrivalAmpm}`;
+            return (
+              <p className="text-cream/40 text-xs italic mt-3">
+                ⏰ {t("setupArrivalNote", { arrivalTime })}
+              </p>
+            );
+          })()}
         </div>
       )}
 

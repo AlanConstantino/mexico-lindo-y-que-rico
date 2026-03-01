@@ -202,6 +202,7 @@
     "selectTimeDesc": "What time should we arrive to start setting up?",
     "eventTime": "Event Time",
     "timeRequired": "Please select a time for your event",
+    "setupArrivalNote": "Our team will arrive at {arrivalTime} to set up — this hour is not charged.",
     "dateFullyBooked": "Fully booked",
     "dateTooSoon": "Minimum {days} days notice required",
     "prevMonth": "Previous month",
