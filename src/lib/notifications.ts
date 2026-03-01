@@ -776,22 +776,101 @@ export async function sendOwnerCancellationNotice(data: {
   const formattedDate = new Date(data.eventDate).toLocaleDateString("es-US", {
     weekday: "long", year: "numeric", month: "long", day: "numeric",
   });
+  const feeFormatted = `$${(data.cancellationFee / 100).toFixed(2)}`;
+  const refundFormatted = `$${(data.refundAmount / 100).toFixed(2)}`;
+
+  const textMessage = [
+    `❌ Reservación Cancelada`,
+    ``,
+    `El cliente ${data.customerName} ha cancelado su evento.`,
+    ``,
+    `Fecha del Evento: ${formattedDate}`,
+    `Cargo por Cancelación: ${feeFormatted}`,
+    `Reembolso Emitido: ${refundFormatted}`,
+    ``,
+    `Cliente: ${data.customerName}`,
+    `Correo: ${data.customerEmail}`,
+    `Teléfono: ${data.customerPhone}`,
+    `ID de Reservación: ${data.bookingId}`,
+  ].join("\n");
+
+  const htmlMessage = `
+    <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
+      <!-- Header -->
+      <div style="background: #2D2926; padding: 40px 30px; text-align: center;">
+        <h1 style="color: #E8A935; margin: 0; font-size: 28px;">México Lindo Y Que Rico</h1>
+        <p style="color: #FAF5EF99; margin: 8px 0 0; font-size: 14px;">Aquí la panza es primero.</p>
+      </div>
+
+      <!-- Body -->
+      <div style="padding: 30px;">
+        <!-- Alert Banner -->
+        <div style="background: #F8D7DA; border: 2px solid #C45A3C; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
+          <p style="margin: 0; font-size: 18px; font-weight: bold; color: #721C24;">❌ Reservación Cancelada</p>
+          <p style="margin: 8px 0 0; font-size: 14px; color: #721C24;">El cliente <strong>${data.customerName}</strong> ha cancelado su evento del <strong>${formattedDate}</strong>.</p>
+        </div>
+
+        <!-- Event Date -->
+        <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; text-align: center;">
+          <p style="margin: 0; font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 1px;">Fecha del Evento (Cancelado)</p>
+          <p style="margin: 8px 0 0; font-size: 18px; color: #C45A3C; font-weight: 600; text-decoration: line-through;">${formattedDate}</p>
+        </div>
+
+        <!-- Financial Summary -->
+        <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #C45A3C;">
+          <h3 style="color: #2D2926; margin: 0 0 16px; font-size: 18px;">Resumen Financiero</h3>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 8px 0; color: #888; font-size: 14px;">Cargo por Cancelación</td>
+              <td style="padding: 8px 0; color: #2D2926; font-weight: bold; text-align: right; font-size: 16px;">${feeFormatted}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; color: #888; font-size: 14px;">Reembolso al Cliente</td>
+              <td style="padding: 8px 0; color: #2D2926; font-weight: bold; text-align: right; font-size: 16px;">${refundFormatted}</td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Customer Info Card -->
+        <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #E8A935;">
+          <h3 style="color: #2D2926; margin: 0 0 16px; font-size: 18px;">Info del Cliente</h3>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 6px 0; color: #888; font-size: 14px;">Nombre</td>
+              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${data.customerName}</td>
+            </tr>
+            <tr>
+              <td style="padding: 6px 0; color: #888; font-size: 14px;">Correo</td>
+              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">
+                <a href="mailto:${data.customerEmail}" style="color: #C45A3C; text-decoration: none;">${data.customerEmail}</a>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 6px 0; color: #888; font-size: 14px;">Teléfono</td>
+              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">
+                <a href="tel:${data.customerPhone}" style="color: #C45A3C; text-decoration: none;">${data.customerPhone}</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <p style="color: #999; font-size: 12px; text-align: center; margin: 0;">ID de Reservación: ${data.bookingId}</p>
+      </div>
+
+      <!-- Footer -->
+      <div style="background: #2D2926; padding: 20px 30px; text-align: center;">
+        <p style="color: #FAF5EF66; font-size: 12px; margin: 0;">México Lindo Y Que Rico · Gran Los Ángeles · 20+ Años de Sabor</p>
+      </div>
+    </div>
+  `;
+
   try {
     await resend.emails.send({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: data.ownerEmail,
-      subject: `Reservación Cancelada — ${data.customerName} — ${formattedDate}`,
-      text: [
-        `❌ Reservación Cancelada`,
-        ``,
-        `Cliente: ${data.customerName}`,
-        `Correo: ${data.customerEmail}`,
-        `Teléfono: ${data.customerPhone}`,
-        `Fecha del Evento: ${formattedDate}`,
-        `Cargo por Cancelación: $${(data.cancellationFee / 100).toFixed(2)}`,
-        `Reembolso Emitido: $${(data.refundAmount / 100).toFixed(2)}`,
-        `ID de Reservación: ${data.bookingId}`,
-      ].join("\n"),
+      subject: `❌ Reservación Cancelada — ${data.customerName} — ${formattedDate}`,
+      text: textMessage,
+      html: htmlMessage,
     });
   } catch (error) {
     console.error("❌ Failed to send owner cancellation notice:", error);
@@ -857,25 +936,108 @@ export async function sendOwnerRescheduleNotice(data: {
   bookingId: string;
   ownerEmail: string;
 }): Promise<void> {
-  const formatDate = (d: string) =>
+  const fmtDate = (d: string) =>
     new Date(d).toLocaleDateString("es-US", {
       weekday: "long", year: "numeric", month: "long", day: "numeric",
     });
+  const oldFormatted = fmtDate(data.oldDate);
+  const newFormatted = fmtDate(data.newDate);
+  const adminUrl = "https://que.rico.catering/es/admin";
+
+  const textMessage = [
+    `📅 Reservación Reprogramada`,
+    ``,
+    `El cliente ${data.customerName} ha reprogramado su evento.`,
+    ``,
+    `Fecha Anterior: ${oldFormatted}`,
+    `Nueva Fecha: ${newFormatted}`,
+    ``,
+    `Cliente: ${data.customerName}`,
+    `Correo: ${data.customerEmail}`,
+    `Teléfono: ${data.customerPhone}`,
+    `ID de Reservación: ${data.bookingId}`,
+    ``,
+    `Panel de Admin: ${adminUrl}`,
+  ].join("\n");
+
+  const htmlMessage = `
+    <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
+      <!-- Header -->
+      <div style="background: #2D2926; padding: 40px 30px; text-align: center;">
+        <h1 style="color: #E8A935; margin: 0; font-size: 28px;">México Lindo Y Que Rico</h1>
+        <p style="color: #FAF5EF99; margin: 8px 0 0; font-size: 14px;">Aquí la panza es primero.</p>
+      </div>
+
+      <!-- Body -->
+      <div style="padding: 30px;">
+        <!-- Alert Banner -->
+        <div style="background: #E8A93520; border: 2px solid #E8A935; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
+          <p style="margin: 0; font-size: 18px; font-weight: bold; color: #856404;">📅 Reservación Reprogramada</p>
+          <p style="margin: 8px 0 0; font-size: 14px; color: #856404;">El cliente <strong>${data.customerName}</strong> ha cambiado la fecha de su evento.</p>
+        </div>
+
+        <!-- Date Change Card -->
+        <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; overflow: hidden;">
+          <div style="display: flex;">
+            <div style="flex: 1; padding: 12px; text-align: center;">
+              <p style="margin: 0; font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 1px;">Fecha Anterior</p>
+              <p style="margin: 8px 0 0; font-size: 16px; color: #C45A3C; font-weight: 600; text-decoration: line-through;">${oldFormatted}</p>
+            </div>
+          </div>
+          <div style="text-align: center; padding: 8px 0;">
+            <span style="font-size: 24px;">↓</span>
+          </div>
+          <div style="flex: 1; padding: 12px; text-align: center;">
+            <p style="margin: 0; font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 1px;">Nueva Fecha</p>
+            <p style="margin: 8px 0 0; font-size: 18px; color: #28A745; font-weight: bold;">${newFormatted}</p>
+          </div>
+        </div>
+
+        <!-- Customer Info Card -->
+        <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #E8A935;">
+          <h3 style="color: #2D2926; margin: 0 0 16px; font-size: 18px;">Info del Cliente</h3>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 6px 0; color: #888; font-size: 14px;">Nombre</td>
+              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${data.customerName}</td>
+            </tr>
+            <tr>
+              <td style="padding: 6px 0; color: #888; font-size: 14px;">Correo</td>
+              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">
+                <a href="mailto:${data.customerEmail}" style="color: #C45A3C; text-decoration: none;">${data.customerEmail}</a>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding: 6px 0; color: #888; font-size: 14px;">Teléfono</td>
+              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">
+                <a href="tel:${data.customerPhone}" style="color: #C45A3C; text-decoration: none;">${data.customerPhone}</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Admin Button -->
+        <div style="text-align: center; margin-bottom: 20px;">
+          <a href="${adminUrl}" style="display: inline-block; background: #2D2926; color: #E8A935; font-weight: bold; font-size: 14px; padding: 14px 28px; border-radius: 10px; text-decoration: none;">Ver en Panel de Administración →</a>
+        </div>
+
+        <p style="color: #999; font-size: 12px; text-align: center; margin: 0;">ID de Reservación: ${data.bookingId}</p>
+      </div>
+
+      <!-- Footer -->
+      <div style="background: #2D2926; padding: 20px 30px; text-align: center;">
+        <p style="color: #FAF5EF66; font-size: 12px; margin: 0;">México Lindo Y Que Rico · Gran Los Ángeles · 20+ Años de Sabor</p>
+      </div>
+    </div>
+  `;
+
   try {
     await resend.emails.send({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: data.ownerEmail,
-      subject: `Reservación Reprogramada — ${data.customerName} — ${formatDate(data.newDate)}`,
-      text: [
-        `📅 Reservación Reprogramada`,
-        ``,
-        `Cliente: ${data.customerName}`,
-        `Correo: ${data.customerEmail}`,
-        `Teléfono: ${data.customerPhone}`,
-        `Fecha Anterior: ${formatDate(data.oldDate)}`,
-        `Nueva Fecha: ${formatDate(data.newDate)}`,
-        `ID de Reservación: ${data.bookingId}`,
-      ].join("\n"),
+      subject: `📅 Reservación Reprogramada — ${data.customerName} — ${newFormatted}`,
+      text: textMessage,
+      html: htmlMessage,
     });
   } catch (error) {
     console.error("❌ Failed to send owner reschedule notice:", error);
