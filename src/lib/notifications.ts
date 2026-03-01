@@ -124,8 +124,11 @@ export async function sendBookingNotification(
         <ol style="margin: 12px 0 0; padding-left: 20px; font-size: 14px; color: #856404; line-height: 1.8;">
           <li><strong>Llama al cliente</strong> al <a href="tel:${booking.customerPhone}" style="color: #856404;">${booking.customerPhone}</a> para confirmar los detalles del evento</li>
           <li><strong>Coordina el pago</strong> — el monto total de <strong>${formattedPrice}</strong> se paga en efectivo el día del evento</li>
-          <li><strong>Confirma la reservación</strong> — entra al <a href="${adminUrl}" style="color: #856404; font-weight: bold;">panel de administración</a> y haz clic en "Confirmar" para enviarle un correo de confirmación al cliente</li>
+          <li><strong>Confirma la reservación</strong> — entra al panel de administración y haz clic en "Confirmar" para enviarle un correo de confirmación al cliente</li>
         </ol>
+        <div style="margin-top: 14px; text-align: center;">
+          <a href="${adminUrl}" style="display: inline-block; background: #856404; color: #fff; font-weight: bold; font-size: 14px; padding: 12px 24px; border-radius: 8px; text-decoration: none;">Ir al Panel de Administración →</a>
+        </div>
       </div>`
     : `<div style="background: #D4EDDA; border: 2px solid #28A745; border-radius: 12px; padding: 16px 20px; margin-bottom: 20px;">
         <p style="margin: 0; font-size: 16px; font-weight: bold; color: #155724;">✅ Pagado con Tarjeta — Todo Listo</p>
