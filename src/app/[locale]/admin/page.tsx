@@ -9,9 +9,18 @@ import PopularMeatsChart from "@/components/admin/charts/PopularMeatsChart";
 import GuestDistributionChart from "@/components/admin/charts/GuestDistributionChart";
 import UpcomingEvents from "@/components/admin/UpcomingEvents";
 
+function formatTime12(time: string): string {
+  const [h, m] = time.split(':');
+  const hour = parseInt(h);
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+  const hour12 = hour % 12 || 12;
+  return `${hour12}:${m} ${ampm}`;
+}
+
 interface Booking {
   id: string;
   event_date: string;
+  event_time: string | null;
   customer_name: string;
   customer_email: string;
   customer_phone: string;
@@ -525,6 +534,7 @@ export default function AdminPage() {
                       <div className="hidden lg:grid lg:grid-cols-[110px_1fr_1fr_70px_90px_95px_90px_110px] gap-3 px-4 py-3 items-center">
                         <span className="text-sm text-cream/80">
                           {new Date(booking.event_date).toLocaleDateString()}
+                          {booking.event_time && ` · ${formatTime12(booking.event_time)}`}
                         </span>
                         <span className="text-sm text-cream font-medium truncate">
                           {booking.customer_name}
@@ -577,7 +587,7 @@ export default function AdminPage() {
                         </div>
                         <div className="flex items-center justify-between text-sm text-cream/50">
                           <span>
-                            {new Date(booking.event_date).toLocaleDateString()} · {booking.guest_count} {t("table.guests").toLowerCase()}
+                            {new Date(booking.event_date).toLocaleDateString()}{booking.event_time ? ` · ${formatTime12(booking.event_time)}` : ""} · {booking.guest_count} {t("table.guests").toLowerCase()}
                           </span>
                           <span className="font-medium text-cream">
                             ${(booking.total_price / 100).toFixed(2)}

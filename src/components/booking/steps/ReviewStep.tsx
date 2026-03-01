@@ -38,6 +38,16 @@ export default function ReviewStep({
       )
     : "";
 
+  const formattedTime = data.eventTime
+    ? (() => {
+        const [h, m] = data.eventTime.split(':');
+        const hour = parseInt(h);
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+        const hour12 = hour % 12 || 12;
+        return `${hour12}:${m} ${ampm}`;
+      })()
+    : null;
+
   const serviceLabel =
     data.serviceType === "2hr" ? t("twoHourService") : t("threeHourService");
 
@@ -64,7 +74,9 @@ export default function ReviewStep({
           <div className="text-cream/40 text-xs uppercase tracking-wider mb-1">
             {t("eventDate")}
           </div>
-          <div className="text-cream font-medium">{formattedDate}</div>
+          <div className="text-cream font-medium">
+            {formattedDate}{formattedTime ? ` · ${formattedTime}` : ""}
+          </div>
         </div>
 
         {/* Package */}

@@ -93,6 +93,7 @@ export async function POST(request: NextRequest) {
         customerEmail: booking.customer_email,
         customerPhone: booking.customer_phone,
         eventDate: booking.event_date,
+        eventTime: (booking.event_time as string | null) ?? (session.metadata?.eventTime as string | undefined) ?? undefined,
         serviceType: booking.service_type,
         guestCount: booking.guest_count,
         meats: booking.meats as string[],

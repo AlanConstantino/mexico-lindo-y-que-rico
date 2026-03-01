@@ -4,12 +4,30 @@ import { getTranslations, emailTranslations, type SupportedLocale } from "@/lib/
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+function formatTime(time: string): string {
+  const [h, m] = time.split(':');
+  const hour = parseInt(h);
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+  const hour12 = hour % 12 || 12;
+  return `${hour12}:${m} ${ampm}`;
+}
+
+function formatSetupTime(eventTime: string): string {
+  const [h, m] = eventTime.split(':');
+  let hour = parseInt(h) - 1;
+  if (hour < 0) hour = 0;
+  const ampm = hour >= 12 ? 'PM' : 'AM';
+  const hour12 = hour % 12 || 12;
+  return `${hour12}:${m} ${ampm}`;
+}
+
 interface BookingNotification {
   bookingId: string;
   customerName: string;
   customerEmail: string;
   customerPhone: string;
   eventDate: string;
+  eventTime?: string;
   serviceType: string;
   guestCount: number;
   meats: string[];
@@ -39,6 +57,8 @@ export async function sendBookingNotification(
         .join("\n")
     : "  Ninguno";
 
+  const timeDisplay = booking.eventTime ? formatTime(booking.eventTime) : null;
+
   const textMessage = [
     `🎉 ¡Nueva Reservación Recibida!`,
     ``,
@@ -47,6 +67,7 @@ export async function sendBookingNotification(
     `Teléfono: ${booking.customerPhone}`,
     ``,
     `Fecha del Evento: ${formattedDate}`,
+    ...(timeDisplay ? [`Hora del Evento: ${timeDisplay}`] : []),
     `Dirección del Evento: ${booking.eventAddress || "No proporcionada"}`,
     `Paquete: Servicio de ${booking.serviceType === "2hr" ? "2" : "3"} Horas`,
     `Invitados: ${booking.guestCount}`,
@@ -75,6 +96,7 @@ export async function sendBookingNotification(
       
       <h3 style="color: #3B2A1E;">Detalles del Evento</h3>
       <p><strong>Fecha:</strong> ${formattedDate}</p>
+      ${timeDisplay ? `<p><strong>Hora:</strong> ${timeDisplay}</p>` : ""}
       <p><strong>Dirección:</strong> ${booking.eventAddress || "No proporcionada"}</p>
       <p><strong>Paquete:</strong> Servicio de ${booking.serviceType === "2hr" ? "2" : "3"} Horas</p>
       <p><strong>Invitados:</strong> ${booking.guestCount}</p>
@@ -125,6 +147,7 @@ export async function sendCustomerConfirmation(
   const formattedPrice = `$${(booking.totalPrice / 100).toFixed(2)}`;
   const formattedDate = emailTranslations.formatDate(booking.eventDate, locale);
   const svcLabel = emailTranslations.serviceLabel(booking.serviceType, locale);
+  const custTimeDisplay = booking.eventTime ? formatTime(booking.eventTime) : null;
 
   const extrasSection = booking.extras?.length
     ? booking.extras
@@ -138,6 +161,7 @@ export async function sendCustomerConfirmation(
     `${t.confirmation.subtitle}`,
     ``,
     `${t.confirmation.date}: ${formattedDate}`,
+    ...(custTimeDisplay ? [`Event Time: ${custTimeDisplay}`] : []),
     `${t.confirmation.address}: ${booking.eventAddress || t.confirmation.notProvided}`,
     `${t.confirmation.package}: ${svcLabel}`,
     `${t.confirmation.guests}: ${booking.guestCount}`,
@@ -176,7 +200,7 @@ export async function sendCustomerConfirmation(
           <table style="width: 100%; border-collapse: collapse;">
             <tr>
               <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.date}</td>
-              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${formattedDate}</td>
+              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${formattedDate}${custTimeDisplay ? ` · ${custTimeDisplay}` : ""}</td>
             </tr>
             <tr>
               <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.address}</td>
@@ -279,6 +303,7 @@ interface ReminderData {
   customerEmail: string;
   customerPhone: string;
   eventDate: string;
+  eventTime?: string;
   serviceType: string;
   guestCount: number;
   meats: string[];
@@ -333,13 +358,14 @@ export async function sendEventReminder(
   const formattedPrice = `$${(data.totalPrice / 100).toFixed(2)}`;
   const svcLabel = emailTranslations.serviceLabel(data.serviceType, locale);
   const { html: extrasHtml, text: extrasText } = formatExtrasForReminder(data.extras);
+  const reminderTimeDisplay = data.eventTime ? formatTime(data.eventTime) : null;
 
   const textMessage = [
     `${t.reminder.heading(data.reminderDays)}`,
     ``,
     `${t.reminder.subtitle(data.customerName)}`,
     ``,
-    `${t.confirmation.date}: ${formattedDate}`,
+    `${t.confirmation.date}: ${formattedDate}${reminderTimeDisplay ? ` · ${reminderTimeDisplay}` : ""}`,
     `${t.confirmation.address}: ${data.eventAddress || t.confirmation.notProvided}`,
     `${t.confirmation.package}: ${svcLabel}`,
     `${t.confirmation.guests}: ${data.guestCount}`,
@@ -375,7 +401,7 @@ export async function sendEventReminder(
           <table style="width: 100%; border-collapse: collapse;">
             <tr>
               <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.date}</td>
-              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${formattedDate}</td>
+              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${formattedDate}${reminderTimeDisplay ? ` · ${reminderTimeDisplay}` : ""}</td>
             </tr>
             <tr>
               <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.address}</td>
@@ -466,6 +492,7 @@ export async function sendOwnerReminder(
   });
   const formattedPrice = `$${(data.totalPrice / 100).toFixed(2)}`;
   const { text: extrasText } = formatExtrasForReminder(data.extras);
+  const ownerTimeDisplay = data.eventTime ? formatTime(data.eventTime) : null;
 
   const textMessage = [
     `📋 Recordatorio de Evento Próximo`,
@@ -477,6 +504,7 @@ export async function sendOwnerReminder(
     `Correo: ${data.customerEmail}`,
     ``,
     `Fecha del Evento: ${formattedDate}`,
+    ...(ownerTimeDisplay ? [`Hora del Evento: ${ownerTimeDisplay}`] : []),
     `Dirección: ${data.eventAddress || "No proporcionada"}`,
     `Paquete: Servicio de ${data.serviceType === "2hr" ? "2" : "3"} Horas`,
     `Invitados: ${data.guestCount}`,
@@ -502,6 +530,7 @@ export async function sendOwnerReminder(
 
       <h3 style="color: #3B2A1E;">Detalles del Evento</h3>
       <p><strong>Fecha:</strong> ${formattedDate}</p>
+      ${ownerTimeDisplay ? `<p><strong>Hora:</strong> ${ownerTimeDisplay}</p>` : ""}
       <p><strong>Dirección:</strong> ${data.eventAddress || "No proporcionada"}</p>
       <p><strong>Paquete:</strong> Servicio de ${data.serviceType === "2hr" ? "2" : "3"} Horas</p>
       <p><strong>Invitados:</strong> ${data.guestCount}</p>
@@ -545,13 +574,14 @@ export async function sendDayBeforeReminder(
   const formattedFee = `$${(data.cancellationFee / 100).toFixed(2)}`;
   const svcLabel = emailTranslations.serviceLabel(data.serviceType, locale);
   const { html: extrasHtml, text: extrasText } = formatExtrasForReminder(data.extras);
+  const dayBeforeTimeDisplay = data.eventTime ? formatTime(data.eventTime) : null;
 
   const textMessage = [
     `${t.dayBefore.heading}`,
     ``,
     `${t.dayBefore.subtitle(data.customerName)}`,
     ``,
-    `${t.confirmation.date}: ${formattedDate}`,
+    `${t.confirmation.date}: ${formattedDate}${dayBeforeTimeDisplay ? ` · ${dayBeforeTimeDisplay}` : ""}`,
     `${t.confirmation.address}: ${data.eventAddress || t.confirmation.notProvided}`,
     `${t.confirmation.package}: ${svcLabel}`,
     `${t.confirmation.guests}: ${data.guestCount}`,
@@ -580,7 +610,7 @@ export async function sendDayBeforeReminder(
         <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #E8A935;">
           <h3 style="color: #2D2926; margin: 0 0 16px; font-size: 18px;">${t.confirmation.eventDetails}</h3>
           <table style="width: 100%; border-collapse: collapse;">
-            <tr><td style="padding: 6px 0; color: #888;">${t.confirmation.date}</td><td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${formattedDate}</td></tr>
+            <tr><td style="padding: 6px 0; color: #888;">${t.confirmation.date}</td><td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${formattedDate}${dayBeforeTimeDisplay ? ` · ${dayBeforeTimeDisplay}` : ""}</td></tr>
             <tr><td style="padding: 6px 0; color: #888;">${t.confirmation.address}</td><td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${data.eventAddress || t.confirmation.notProvided}</td></tr>
             <tr><td style="padding: 6px 0; color: #888;">${t.confirmation.package}</td><td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${svcLabel}</td></tr>
             <tr><td style="padding: 6px 0; color: #888;">${t.confirmation.guests}</td><td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${data.guestCount}</td></tr>
@@ -808,13 +838,14 @@ export async function sendCashPendingConfirmation(
   const formattedDate = emailTranslations.formatDate(booking.eventDate, locale);
   const formattedPrice = `$${(booking.totalPrice / 100).toFixed(2)}`;
   const svcLabel = emailTranslations.serviceLabel(booking.serviceType, locale);
+  const cashTimeDisplay = booking.eventTime ? formatTime(booking.eventTime) : null;
 
   const textMessage = [
     `${t.cashPending.heading}`,
     ``,
     `${t.cashPending.subtitle(booking.customerName)}`,
     ``,
-    `${t.confirmation.date}: ${formattedDate}`,
+    `${t.confirmation.date}: ${formattedDate}${cashTimeDisplay ? ` · ${cashTimeDisplay}` : ""}`,
     `${t.confirmation.address}: ${booking.eventAddress || t.confirmation.notProvided}`,
     `${t.confirmation.package}: ${svcLabel}`,
     `${t.confirmation.guests}: ${booking.guestCount}`,
@@ -860,7 +891,7 @@ export async function sendCashPendingConfirmation(
           <table style="width: 100%; border-collapse: collapse;">
             <tr>
               <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.date}</td>
-              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${formattedDate}</td>
+              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${formattedDate}${cashTimeDisplay ? ` · ${cashTimeDisplay}` : ""}</td>
             </tr>
             <tr>
               <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.address}</td>
