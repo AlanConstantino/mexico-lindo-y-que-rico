@@ -391,7 +391,9 @@
       "stripeFeePercentLabel": "Cargo de Stripe (%)",
       "stripeFeeFlatLabel": "Cargo Fijo de Stripe (¢)",
       "stripeFeeHint": "Cargo de procesamiento de Stripe (predeterminado: 2.9% + 30¢). Ajusta si tu tarifa de Stripe es diferente.",
-      "feeType": "Tipo de Cargo"
+      "feeType": "Tipo de Cargo",
+      "testEmailRecipient": "Enviar correos de prueba a",
+      "testEmailPlaceholder": "Ingresa correo electrónico (dejar vacío para usar correo de notificaciones)"
     }
   },
   "metadata": {

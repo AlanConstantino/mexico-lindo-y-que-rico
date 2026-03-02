@@ -391,7 +391,9 @@
       "stripeFeePercentLabel": "Stripe Processing Fee (%)",
       "stripeFeeFlatLabel": "Stripe Flat Fee (¢)",
       "stripeFeeHint": "Stripe's processing fee (default: 2.9% + 30¢). Adjust if your Stripe rate is different.",
-      "feeType": "Fee Type"
+      "feeType": "Fee Type",
+      "testEmailRecipient": "Send test emails to",
+      "testEmailPlaceholder": "Enter email address (leave empty to use notification email)"
     }
   },
   "metadata": {

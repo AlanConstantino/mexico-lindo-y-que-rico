@@ -389,30 +389,7 @@ export default function AdminSettingsPage() {
           </form>
 
           {/* Test Emails Section */}
-          <div className="mt-10 pt-8 border-t border-cream/10">
-            <h2 className="font-heading text-amber text-xl mb-4">
-              {t("settings.testEmails")}
-            </h2>
-            <p className="text-cream/40 text-sm mb-6">
-              {t("settings.testEmailsHint")}
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {[
-                { key: "owner_booking", label: t("settings.testOwnerBooking") },
-                { key: "customer_confirmation", label: t("settings.testCustomerConfirmation") },
-                { key: "customer_reminder", label: t("settings.testCustomerReminder") },
-                { key: "owner_reminder", label: t("settings.testOwnerReminder") },
-                { key: "day_before", label: t("settings.testDayBefore") },
-                { key: "cash_pending", label: t("settings.testCashPending") },
-              ].map((email) => (
-                <TestEmailButton
-                  key={email.key}
-                  emailType={email.key}
-                  label={email.label}
-                />
-              ))}
-            </div>
-          </div>
+          <TestEmailsSection t={t} />
           </>
         )}
       </div>
@@ -420,7 +397,54 @@ export default function AdminSettingsPage() {
   );
 }
 
-function TestEmailButton({ emailType, label }: { emailType: string; label: string }) {
+function TestEmailsSection({ t }: { t: (key: string) => string }) {
+  const [testEmail, setTestEmail] = useState("");
+
+  const emailTypes = [
+    { key: "owner_booking", label: t("settings.testOwnerBooking") },
+    { key: "customer_confirmation", label: t("settings.testCustomerConfirmation") },
+    { key: "customer_reminder", label: t("settings.testCustomerReminder") },
+    { key: "owner_reminder", label: t("settings.testOwnerReminder") },
+    { key: "day_before", label: t("settings.testDayBefore") },
+    { key: "cash_pending", label: t("settings.testCashPending") },
+  ];
+
+  return (
+    <div className="mt-10 pt-8 border-t border-cream/10">
+      <h2 className="font-heading text-amber text-xl mb-4">
+        {t("settings.testEmails")}
+      </h2>
+      <p className="text-cream/40 text-sm mb-4">
+        {t("settings.testEmailsHint")}
+      </p>
+
+      {/* Recipient email input */}
+      <div className="mb-6">
+        <label className="block text-sm text-cream/70 mb-1.5">{t("settings.testEmailRecipient")}</label>
+        <input
+          type="email"
+          value={testEmail}
+          onChange={(e) => setTestEmail(e.target.value)}
+          placeholder={t("settings.testEmailPlaceholder")}
+          className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors placeholder:text-cream/25"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {emailTypes.map((email) => (
+          <TestEmailButton
+            key={email.key}
+            emailType={email.key}
+            label={email.label}
+            recipientEmail={testEmail}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TestEmailButton({ emailType, label, recipientEmail }: { emailType: string; label: string; recipientEmail: string }) {
   const [sending, setSending] = useState(false);
   const [result, setResult] = useState<"success" | "error" | null>(null);
 
@@ -437,7 +461,10 @@ function TestEmailButton({ emailType, label }: { emailType: string; label: strin
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ emailType }),
+        body: JSON.stringify({
+          emailType,
+          ...(recipientEmail.trim() && { recipientEmail: recipientEmail.trim() }),
+        }),
       });
       setResult(res.ok ? "success" : "error");
     } catch {

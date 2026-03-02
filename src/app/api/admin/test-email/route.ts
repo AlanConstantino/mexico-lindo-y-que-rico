@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { emailType, locale = "en" } = await request.json();
+    const { emailType, locale = "en", recipientEmail } = await request.json();
     const emailLocale = (locale === "es" ? "es" : "en") as "en" | "es";
 
     // Get notification email from settings
@@ -59,8 +59,10 @@ export async function POST(request: NextRequest) {
       .single();
 
     const notificationEmail = settings?.notification_email || "constantinoalan98@gmail.com";
+    // Use custom recipient if provided, otherwise fall back to notification email
+    const targetEmail = recipientEmail?.trim() || notificationEmail;
     const reminderDays = settings?.reminder_days ?? 5;
-    const sample = getSampleBooking(notificationEmail);
+    const sample = getSampleBooking(targetEmail);
 
     switch (emailType) {
       case "owner_booking":
@@ -87,7 +89,7 @@ export async function POST(request: NextRequest) {
           ...sample,
           extras: sample.extras as unknown as { id: string; quantity: number; flavors?: string[] }[],
           reminderDays,
-          ownerEmail: notificationEmail,
+          ownerEmail: targetEmail,
         });
         break;
 
@@ -115,7 +117,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Unknown email type" }, { status: 400 });
     }
 
-    return NextResponse.json({ success: true, sentTo: notificationEmail, emailType });
+    return NextResponse.json({ success: true, sentTo: targetEmail, emailType });
   } catch (err) {
     console.error("❌ Test email error:", err);
     return NextResponse.json({ error: "Failed to send test email" }, { status: 500 });
