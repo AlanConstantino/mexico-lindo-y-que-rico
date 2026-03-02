@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
       const rescheduleUrl = `${origin}/${bookingLocale}/booking/reschedule/${rescheduleToken}`;
 
       // Send notification to owner + confirmation to customer
-      const notificationData = {
+      const baseData = {
         bookingId: booking.id,
         customerName: booking.customer_name,
         customerEmail: booking.customer_email,
@@ -97,17 +97,17 @@ export async function POST(request: NextRequest) {
         serviceType: booking.service_type,
         guestCount: booking.guest_count,
         meats: booking.meats as string[],
-        extras: mapExtrasForEmail(booking.extras as { id: string; quantity: number }[] | undefined),
         eventAddress: booking.event_address,
         totalPrice: booking.total_price,
         paymentType: booking.payment_type as string || "card",
         cancelUrl,
         rescheduleUrl,
       };
+      const dbExtras = booking.extras as { id: string; quantity: number; flavors?: Record<string, number> }[] | undefined;
 
       await Promise.all([
-        sendBookingNotification(notificationData),
-        sendCustomerConfirmation(notificationData, bookingLocale),
+        sendBookingNotification({ ...baseData, extras: mapExtrasForEmail(dbExtras, "es") }),
+        sendCustomerConfirmation({ ...baseData, extras: mapExtrasForEmail(dbExtras, bookingLocale) }, bookingLocale),
       ]);
     }
   }

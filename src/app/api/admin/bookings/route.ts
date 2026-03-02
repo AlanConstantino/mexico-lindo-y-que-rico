@@ -96,7 +96,7 @@ export async function PATCH(request: NextRequest) {
         serviceType: data.service_type,
         guestCount: data.guest_count,
         meats: data.meats as string[],
-        extras: mapExtrasForEmail(data.extras as { id: string; quantity: number }[] | undefined),
+        extras: mapExtrasForEmail(data.extras as { id: string; quantity: number; flavors?: Record<string, number> }[] | undefined, locale as "en" | "es"),
         eventAddress: data.event_address,
         totalPrice: data.total_price,
         cancelUrl,

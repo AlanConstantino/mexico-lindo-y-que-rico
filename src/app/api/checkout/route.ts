@@ -240,7 +240,7 @@ export async function POST(request: NextRequest) {
 
       // Notify owner + send pending confirmation to customer
       const { sendBookingNotification, sendCashPendingConfirmation, mapExtrasForEmail } = await import("@/lib/notifications");
-      const notifData = {
+      const baseNotifData = {
         bookingId: booking.id,
         customerName,
         customerEmail,
@@ -250,14 +250,13 @@ export async function POST(request: NextRequest) {
         serviceType,
         guestCount,
         meats,
-        extras: mapExtrasForEmail(extrasData),
         eventAddress,
         totalPrice: serverTotal * 100,
         paymentType: "cash",
       };
       await Promise.all([
-        sendBookingNotification(notifData),
-        sendCashPendingConfirmation(notifData, locale as "en" | "es"),
+        sendBookingNotification({ ...baseNotifData, extras: mapExtrasForEmail(extrasData, "es") }),
+        sendCashPendingConfirmation({ ...baseNotifData, extras: mapExtrasForEmail(extrasData, locale as "en" | "es") }, locale as "en" | "es"),
       ]);
 
       // Redirect to success page with booking ID instead of Stripe session
