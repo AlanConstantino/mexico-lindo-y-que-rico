@@ -5,19 +5,64 @@ import { getTranslations, emailTranslations, type SupportedLocale } from "@/lib/
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 /** Map DB extras format to display format for emails */
+// Display names for extras in emails (not locale-dependent — used in both EN/ES owner emails)
+const EXTRA_DISPLAY_NAMES: Record<string, { en: string; es: string }> = {
+  rice: { en: "Rice", es: "Arroz" },
+  beans: { en: "Beans", es: "Frijoles" },
+  quesadillas: { en: "Quesadillas (Flour Tortilla)", es: "Quesadillas (Tortilla de Harina)" },
+  jalapenos: { en: "Jalapeños & Grilled Onions", es: "Jalapeños y Cebollas Asadas" },
+  guacamole: { en: "Fresh Guacamole & Chips", es: "Guacamole Fresco y Totopos" },
+  salsa: { en: "Fresh Salsa & Chips", es: "Salsa Fresca y Totopos" },
+  agua: { en: "Agua Fresca", es: "Agua Fresca" },
+  salad: { en: "Salad", es: "Ensalada" },
+  burgers: { en: "Cheeseburgers", es: "Hamburguesas con Queso" },
+  hotdogs: { en: "Hot Dogs", es: "Hot Dogs" },
+};
+
+const FLAVOR_DISPLAY_NAMES: Record<string, { en: string; es: string }> = {
+  horchata: { en: "Horchata", es: "Horchata" },
+  jamaica: { en: "Jamaica", es: "Jamaica" },
+  tamarindo: { en: "Tamarindo", es: "Tamarindo" },
+  limon: { en: "Limón", es: "Limón" },
+  pina: { en: "Piña", es: "Piña" },
+};
+
+export interface EmailExtra {
+  name: string;
+  quantity: number;
+  price: string;
+  flavors?: { name: string; quantity: number }[];
+}
+
 export function mapExtrasForEmail(
-  dbExtras?: { id: string; quantity: number; flavors?: Record<string, number> | string[] }[]
-): { name: string; quantity: number; price: string }[] {
+  dbExtras?: { id: string; quantity: number; flavors?: Record<string, number> | string[] }[],
+  locale: "en" | "es" = "en"
+): EmailExtra[] {
   if (!dbExtras || dbExtras.length === 0) return [];
   return dbExtras.map((e) => {
     const option = EXTRA_OPTIONS.find((o) => o.id === e.id);
-    const name = e.id.charAt(0).toUpperCase() + e.id.slice(1);
+    const displayNames = EXTRA_DISPLAY_NAMES[e.id];
+    const name = displayNames ? displayNames[locale] : (e.id.charAt(0).toUpperCase() + e.id.slice(1));
     const unitPrice = option?.price ?? 0;
-    const total = option?.perUnit ? unitPrice * e.quantity : unitPrice;
+    const total = option?.perUnit ? unitPrice * e.quantity : unitPrice * e.quantity;
+    
+    // Parse agua flavors
+    let flavors: { name: string; quantity: number }[] | undefined;
+    if (e.id === "agua" && e.flavors && typeof e.flavors === "object" && !Array.isArray(e.flavors)) {
+      const flavorRecord = e.flavors as Record<string, number>;
+      flavors = Object.entries(flavorRecord)
+        .filter(([, qty]) => (qty || 0) > 0)
+        .map(([flavorId, qty]) => ({
+          name: FLAVOR_DISPLAY_NAMES[flavorId]?.[locale] || flavorId,
+          quantity: qty,
+        }));
+    }
+
     return {
       name,
       quantity: e.quantity,
       price: `$${total}`,
+      flavors: flavors?.length ? flavors : undefined,
     };
   });
 }
@@ -50,7 +95,7 @@ interface BookingNotification {
   guestCount: number;
   meats: string[];
   eventAddress?: string;
-  extras?: { name: string; quantity: number; price: string }[];
+  extras?: EmailExtra[];
   totalPrice: number;
   paymentType?: string;
   cancelUrl?: string;
@@ -72,7 +117,13 @@ export async function sendBookingNotification(
 
   const extrasText = booking.extras?.length
     ? booking.extras
-        .map((e) => `  • ${e.name} x${e.quantity} — ${e.price}`)
+        .flatMap((e) => {
+          const lines = [`  • ${e.name} x${e.quantity} — ${e.price}`];
+          if (e.flavors?.length) {
+            lines.push(`    ↳ ${e.flavors.map((f) => `${f.name} ×${f.quantity}`).join(", ")}`);
+          }
+          return lines;
+        })
         .join("\n")
     : "  Ninguno";
 
@@ -163,7 +214,13 @@ export async function sendBookingNotification(
       <h3 style="color: #3B2A1E;">Extras</h3>
       ${
         booking.extras?.length
-          ? `<ul>${booking.extras.map((e) => `<li>${e.name} x${e.quantity} — ${e.price}</li>`).join("")}</ul>`
+          ? `<ul>${booking.extras.map((e) => {
+              let line = `<li>${e.name} x${e.quantity} — ${e.price}`;
+              if (e.flavors?.length) {
+                line += `<br/><span style="color: #888; font-size: 13px; padding-left: 8px;">↳ ${e.flavors.map((f) => `${f.name} ×${f.quantity}`).join(", ")}</span>`;
+              }
+              return line + `</li>`;
+            }).join("")}</ul>`
           : "<p>Ninguno</p>"
       }
       
@@ -205,7 +262,14 @@ export async function sendCustomerConfirmation(
 
   const extrasSection = booking.extras?.length
     ? booking.extras
-        .map((e) => `<li style="padding: 4px 0;">${e.name} x${e.quantity} — ${e.price}</li>`)
+        .map((e) => {
+          let line = `<li style="padding: 4px 0;">${e.name} x${e.quantity} — ${e.price}`;
+          if (e.flavors?.length) {
+            line += `<br/><span style="color: #888; font-size: 13px; padding-left: 8px;">↳ ${e.flavors.map((f) => `${f.name} ×${f.quantity}`).join(", ")}</span>`;
+          }
+          line += `</li>`;
+          return line;
+        })
         .join("")
     : "";
 
@@ -223,7 +287,13 @@ export async function sendCustomerConfirmation(
     ...booking.meats.map((m) => `  • ${m}`),
     ``,
     ...(booking.extras?.length
-      ? booking.extras.map((e) => `  • ${e.name} x${e.quantity} — ${e.price}`)
+      ? booking.extras.flatMap((e) => {
+          const lines = [`  • ${e.name} x${e.quantity} — ${e.price}`];
+          if (e.flavors?.length) {
+            lines.push(`    ↳ ${e.flavors.map((f) => `${f.name} ×${f.quantity}`).join(", ")}`);
+          }
+          return lines;
+        })
       : []),
     ``,
     `${t.confirmation.totalPaid}: ${formattedPrice}`,
@@ -291,6 +361,14 @@ export async function sendCustomerConfirmation(
         </div>`
             : ""
         }
+
+        <!-- What's Included -->
+        <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #E8A935;">
+          <h3 style="color: #2D2926; margin: 0 0 12px; font-size: 18px;">${t.confirmation.whatsIncluded}</h3>
+          <ul style="margin: 0; padding-left: 20px; color: #555;">
+            ${(t.confirmation.includedItems as unknown as string[]).map((item: string) => `<li style="padding: 3px 0; font-size: 14px;">${item}</li>`).join("")}
+          </ul>
+        </div>
 
         <!-- Total -->
         <div style="background: #2D2926; color: #FAF5EF; padding: 24px; border-radius: 12px; text-align: center; margin-bottom: 24px;">
@@ -1068,7 +1146,13 @@ export async function sendCashPendingConfirmation(
     ``,
     ...booking.meats.map((m) => `  • ${m}`),
     ...(booking.extras?.length
-      ? [``, `${t.confirmation.extras}:`, ...booking.extras.map((e) => `  • ${e.name} x${e.quantity} — ${e.price}`)]
+      ? [``, `${t.confirmation.extras}:`, ...booking.extras.flatMap((e) => {
+          const lines = [`  • ${e.name} x${e.quantity} — ${e.price}`];
+          if (e.flavors?.length) {
+            lines.push(`    ↳ ${e.flavors.map((f) => `${f.name} ×${f.quantity}`).join(", ")}`);
+          }
+          return lines;
+        })]
       : []),
     ``,
     `${t.cashPending.estimatedTotal}: ${formattedPrice}`,
@@ -1140,7 +1224,13 @@ export async function sendCashPendingConfirmation(
         <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #E8A935;">
           <h3 style="color: #2D2926; margin: 0 0 12px; font-size: 18px;">${t.confirmation.extras}</h3>
           <ul style="margin: 0; padding-left: 20px; color: #2D2926;">
-            ${booking.extras.map((e) => `<li style="padding: 4px 0;">${e.name} x${e.quantity} — ${e.price}</li>`).join("")}
+            ${booking.extras.map((e) => {
+              let line = `<li style="padding: 4px 0;">${e.name} x${e.quantity} — ${e.price}`;
+              if (e.flavors?.length) {
+                line += `<br/><span style="color: #888; font-size: 13px; padding-left: 8px;">↳ ${e.flavors.map((f) => `${f.name} ×${f.quantity}`).join(", ")}</span>`;
+              }
+              return line + `</li>`;
+            }).join("")}
           </ul>
         </div>
         ` : ""}
