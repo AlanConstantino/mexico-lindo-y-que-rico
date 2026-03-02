@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import { isValidToken } from "../auth/route";
-import { sendCustomerConfirmation, mapExtrasForEmail } from "@/lib/notifications";
+import { sendCustomerConfirmation, sendOwnerInitiatedCancellation, mapExtrasForEmail } from "@/lib/notifications";
 
 function getToken(request: NextRequest): string | null {
   const auth = request.headers.get("authorization");
@@ -104,11 +104,51 @@ export async function PATCH(request: NextRequest) {
       }).catch((err) => console.error("Failed to send confirmation email:", err));
     }
 
+    // Send cancellation email when owner cancels a booking
+    if (status === "cancelled") {
+      const locale = (data.locale || "en") as "en" | "es";
+      await sendOwnerInitiatedCancellation({
+        customerName: data.customer_name,
+        customerEmail: data.customer_email,
+        eventDate: data.event_date,
+        bookingId: data.id,
+        bookingNumber: data.booking_number,
+      }, locale).catch((err) => console.error("Failed to send cancellation email:", err));
+    }
+
     return NextResponse.json({ booking: data });
   } catch {
     return NextResponse.json(
       { error: "Invalid request" },
       { status: 400 }
     );
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  const token = getToken(request);
+  if (!token || !isValidToken(token)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const { id } = await request.json();
+
+    if (!id) {
+      return NextResponse.json({ error: "Missing booking id" }, { status: 400 });
+    }
+
+    const { error } = await supabaseAdmin
+      .from("bookings")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 }

@@ -79,6 +79,14 @@ export const emailTranslations = {
       refundNote: "Refunds typically take 5-10 business days to appear on your statement.",
       hopeToServe: "We hope to serve you in the future! Call us at",
     },
+    ownerCancellation: {
+      subject: (date: string) => `Your Booking for ${date} Has Been Cancelled`,
+      heading: "Event Cancelled",
+      message: (name: string, date: string) =>
+        `Hi ${name}, we're sorry to let you know that your catering booking for <strong>${date}</strong> has been cancelled.`,
+      reason: "If you have any questions or would like to rebook, please don't hesitate to reach out to us at",
+      apology: "We apologize for any inconvenience and hope to serve you in the future!",
+    },
     reschedule: {
       subject: (date: string) => `Booking Rescheduled — ${date} 🌮`,
       heading: "Booking Rescheduled! 📅",
@@ -146,6 +154,14 @@ export const emailTranslations = {
       refundAmount: "Monto del reembolso",
       refundNote: "Los reembolsos generalmente tardan de 5 a 10 días hábiles en aparecer en tu estado de cuenta.",
       hopeToServe: "¡Esperamos atenderte en el futuro! Llámanos al",
+    },
+    ownerCancellation: {
+      subject: (date: string) => `Tu Reservación para el ${date} Ha Sido Cancelada`,
+      heading: "Evento Cancelado",
+      message: (name: string, date: string) =>
+        `Hola ${name}, lamentamos informarte que tu reservación de catering para el <strong>${date}</strong> ha sido cancelada.`,
+      reason: "Si tienes alguna pregunta o deseas reservar nuevamente, no dudes en comunicarte con nosotros al",
+      apology: "¡Nos disculpamos por cualquier inconveniente y esperamos atenderte en el futuro!",
     },
     reschedule: {
       subject: (date: string) => `Reservación Reprogramada — ${date} 🌮`,
