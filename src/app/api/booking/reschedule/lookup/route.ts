@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
 
   const { data: booking, error } = await supabaseAdmin
     .from("bookings")
-    .select("id, customer_name, event_date, service_type, guest_count, total_price, status")
+    .select("id, customer_name, event_date, event_time, service_type, guest_count, total_price, status")
     .eq("reschedule_token", token)
     .single();
 

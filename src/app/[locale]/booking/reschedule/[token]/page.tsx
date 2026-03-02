@@ -9,6 +9,7 @@ interface BookingData {
   id: string;
   customer_name: string;
   event_date: string;
+  event_time: string | null;
   service_type: string;
   guest_count: number;
   total_price: number;
@@ -21,8 +22,28 @@ interface AvailabilityData {
   bookedDates: Record<string, number>;
 }
 
+// Generate time slots from 8:00 AM to 8:00 PM in 30-min intervals
+const TIME_SLOTS = Array.from({ length: 25 }, (_, i) => {
+  const hour = Math.floor(i / 2) + 8;
+  const min = i % 2 === 0 ? "00" : "30";
+  const value = `${String(hour).padStart(2, "0")}:${min}`;
+  const hour12 = hour % 12 || 12;
+  const ampm = hour >= 12 ? "PM" : "AM";
+  const label = `${hour12}:${min} ${ampm}`;
+  return { value, label };
+});
+
+function formatTime12(time: string): string {
+  const [h, m] = time.split(":");
+  const hour = parseInt(h);
+  const ampm = hour >= 12 ? "PM" : "AM";
+  const hour12 = hour % 12 || 12;
+  return `${hour12}:${m} ${ampm}`;
+}
+
 export default function RescheduleBookingPage() {
   const t = useTranslations("reschedule");
+  const tBooking = useTranslations("booking");
   const params = useParams();
   const token = params.token as string;
 
@@ -32,6 +53,7 @@ export default function RescheduleBookingPage() {
   const [rescheduling, setRescheduling] = useState(false);
   const [success, setSuccess] = useState(false);
   const [newDate, setNewDate] = useState("");
+  const [newTime, setNewTime] = useState<string | null>(null);
   const [newDateFormatted, setNewDateFormatted] = useState("");
 
   const today = new Date();
@@ -54,6 +76,10 @@ export default function RescheduleBookingPage() {
         }
         const data = await res.json();
         setBooking(data.booking);
+        // Pre-fill with existing time if available
+        if (data.booking?.event_time) {
+          setNewTime(data.booking.event_time);
+        }
       } catch {
         setError(t("invalidLink"));
       } finally {
@@ -77,14 +103,14 @@ export default function RescheduleBookingPage() {
   }, [fetchAvailability]);
 
   const handleReschedule = async () => {
-    if (!newDate) return;
+    if (!newDate || !newTime) return;
     setRescheduling(true);
     setError("");
     try {
       const res = await fetch("/api/booking/reschedule", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, newDate }),
+        body: JSON.stringify({ token, newDate, newTime }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -92,11 +118,10 @@ export default function RescheduleBookingPage() {
         return;
       }
       setSuccess(true);
-      setNewDateFormatted(
-        new Date(newDate).toLocaleDateString("en-US", {
-          weekday: "long", year: "numeric", month: "long", day: "numeric",
-        })
-      );
+      const formatted = new Date(newDate + "T12:00:00").toLocaleDateString("en-US", {
+        weekday: "long", year: "numeric", month: "long", day: "numeric",
+      });
+      setNewDateFormatted(`${formatted} · ${formatTime12(newTime)}`);
     } catch {
       setError(t("rescheduleError"));
     } finally {
@@ -121,6 +146,10 @@ export default function RescheduleBookingPage() {
     if (count >= availability.maxEventsPerDay) return false;
     return true;
   };
+
+  const canGoPrev =
+    viewYear > today.getFullYear() ||
+    (viewYear === today.getFullYear() && viewMonth > today.getMonth());
 
   if (loading) {
     return (
@@ -165,9 +194,10 @@ export default function RescheduleBookingPage() {
 
   if (!booking) return null;
 
-  const currentFormattedDate = new Date(booking.event_date).toLocaleDateString("en-US", {
+  const currentFormattedDate = new Date(booking.event_date + "T12:00:00").toLocaleDateString("en-US", {
     weekday: "long", year: "numeric", month: "long", day: "numeric",
   });
+  const currentFormattedTime = booking.event_time ? formatTime12(booking.event_time) : null;
 
   const prevMonth = () => {
     if (viewMonth === 0) { setViewMonth(11); setViewYear(viewYear - 1); }
@@ -185,15 +215,26 @@ export default function RescheduleBookingPage() {
         <h1 className="font-heading text-3xl text-cream mb-2 text-center">{t("title")}</h1>
         <p className="text-cream/50 text-center mb-8">{t("subtitle")}</p>
 
+        {/* Current booking info */}
         <div className="bg-navy-light border border-cream/10 rounded-xl p-6 mb-6">
           <h3 className="text-amber font-semibold mb-2">{t("currentDate")}</h3>
-          <p className="text-cream">{currentFormattedDate}</p>
+          <p className="text-cream">
+            {currentFormattedDate}
+            {currentFormattedTime && ` · ${currentFormattedTime}`}
+          </p>
         </div>
 
+        {/* Calendar */}
         <div className="bg-navy-light border border-cream/10 rounded-xl p-6 mb-6">
           <h3 className="text-amber font-semibold mb-4">{t("selectNewDate")}</h3>
           <div className="flex items-center justify-between mb-4">
-            <button onClick={prevMonth} className="text-cream/50 hover:text-cream p-2">←</button>
+            <button
+              onClick={prevMonth}
+              disabled={!canGoPrev}
+              className="text-cream/50 hover:text-cream p-2 disabled:opacity-20 disabled:cursor-not-allowed"
+            >
+              ←
+            </button>
             <span className="text-cream font-medium">{monthName}</span>
             <button onClick={nextMonth} className="text-cream/50 hover:text-cream p-2">→</button>
           </div>
@@ -225,6 +266,64 @@ export default function RescheduleBookingPage() {
           </div>
         </div>
 
+        {/* Time Picker — show after date is selected */}
+        {newDate && (
+          <div className="bg-navy-light border border-cream/10 rounded-xl p-6 mb-6">
+            <h3 className="text-amber font-semibold mb-1">{tBooking("selectTime")}</h3>
+            <p className="text-cream/40 text-sm mb-4">{tBooking("selectTimeDesc")}</p>
+            <div className="relative">
+              <select
+                value={newTime ?? ""}
+                onChange={(e) => setNewTime(e.target.value || null)}
+                className="w-full appearance-none rounded-xl bg-navy border border-cream/10 text-cream px-4 py-3 pr-10 text-sm focus:outline-none focus:border-amber/40 transition-colors cursor-pointer"
+              >
+                <option value="" className="bg-navy text-cream/50">
+                  {tBooking("selectTime")}
+                </option>
+                {TIME_SLOTS.map((slot) => (
+                  <option key={slot.value} value={slot.value} className="bg-navy text-cream">
+                    {slot.label}
+                  </option>
+                ))}
+              </select>
+              <svg
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-cream/40 pointer-events-none"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+              </svg>
+            </div>
+            {newTime && (() => {
+              const [h, m] = newTime.split(":").map(Number);
+              const arrivalHour = h - 1;
+              const arrivalH12 = arrivalHour % 12 || 12;
+              const arrivalAmpm = arrivalHour >= 12 ? "PM" : "AM";
+              const arrivalTime = `${arrivalH12}:${String(m).padStart(2, "0")} ${arrivalAmpm}`;
+              return (
+                <p className="text-cream/40 text-xs italic mt-3">
+                  ⏰ {tBooking("setupArrivalNote", { arrivalTime })}
+                </p>
+              );
+            })()}
+          </div>
+        )}
+
+        {/* Selected date & time summary */}
+        {newDate && newTime && (
+          <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-amber/5 border border-amber/20 mb-6">
+            <svg className="w-5 h-5 text-amber flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
+                d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+            </svg>
+            <span className="text-amber text-sm font-medium">
+              {new Date(newDate + "T12:00:00").toLocaleDateString("en-US", {
+                weekday: "long", year: "numeric", month: "long", day: "numeric",
+              })}
+              {` · ${formatTime12(newTime)}`}
+            </span>
+          </div>
+        )}
+
         {error && <p className="text-terracotta text-sm mb-4">{error}</p>}
 
         <div className="flex gap-3">
@@ -233,7 +332,7 @@ export default function RescheduleBookingPage() {
           </Link>
           <button
             onClick={handleReschedule}
-            disabled={!newDate || rescheduling}
+            disabled={!newDate || !newTime || rescheduling}
             className="flex-1 py-3 bg-amber text-navy font-semibold rounded-full hover:bg-amber-light transition-all duration-300 disabled:opacity-50 text-sm"
           >
             {rescheduling ? t("rescheduling") : t("confirmReschedule")}

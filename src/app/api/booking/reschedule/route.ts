@@ -7,7 +7,7 @@ import {
 
 export async function POST(request: NextRequest) {
   try {
-    const { token, newDate } = await request.json();
+    const { token, newDate, newTime } = await request.json();
 
     if (!token || !newDate) {
       return NextResponse.json({ error: "Token and new date are required" }, { status: 400 });
@@ -15,6 +15,10 @@ export async function POST(request: NextRequest) {
 
     if (!/^\d{4}-\d{2}-\d{2}$/.test(newDate)) {
       return NextResponse.json({ error: "Invalid date format" }, { status: 400 });
+    }
+
+    if (newTime && !/^\d{2}:\d{2}$/.test(newTime)) {
+      return NextResponse.json({ error: "Invalid time format" }, { status: 400 });
     }
 
     const { data: booking, error: lookupErr } = await supabaseAdmin
@@ -64,25 +68,34 @@ export async function POST(request: NextRequest) {
     const newCancelToken = crypto.randomUUID();
     const newRescheduleToken = crypto.randomUUID();
 
+    const updatePayload: Record<string, unknown> = {
+      event_date: newDate,
+      reminder_sent: false,
+      day_before_reminder_sent: false,
+      cancel_token: newCancelToken,
+      reschedule_token: newRescheduleToken,
+    };
+    if (newTime !== undefined) {
+      updatePayload.event_time = newTime;
+    }
+
     await supabaseAdmin
       .from("bookings")
-      .update({
-        event_date: newDate,
-        reminder_sent: false,
-        day_before_reminder_sent: false,
-        cancel_token: newCancelToken,
-        reschedule_token: newRescheduleToken,
-      })
+      .update(updatePayload)
       .eq("id", booking.id);
 
     const bookingLocale = (booking.locale || "en") as "en" | "es";
+
+    const oldTime = booking.event_time as string | null;
 
     await Promise.all([
       sendRescheduleConfirmation({
         customerName: booking.customer_name,
         customerEmail: booking.customer_email,
         oldDate,
+        oldTime,
         newDate,
+        newTime: newTime || oldTime,
         bookingId: booking.id,
       }, bookingLocale),
       sendOwnerRescheduleNotice({
@@ -90,13 +103,15 @@ export async function POST(request: NextRequest) {
         customerEmail: booking.customer_email,
         customerPhone: booking.customer_phone,
         oldDate,
+        oldTime,
         newDate,
+        newTime: newTime || oldTime,
         bookingId: booking.id,
         ownerEmail,
       }),
     ]);
 
-    return NextResponse.json({ success: true, newDate });
+    return NextResponse.json({ success: true, newDate, newTime });
   } catch (err) {
     console.error("❌ Reschedule error:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
