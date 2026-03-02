@@ -8,6 +8,7 @@ import {
   sendOwnerReminder,
   sendDayBeforeReminder,
   sendCashPendingConfirmation,
+  mapExtrasForEmail,
 } from "@/lib/notifications";
 
 function getToken(request: NextRequest): string | null {
@@ -16,29 +17,64 @@ function getToken(request: NextRequest): string | null {
   return null;
 }
 
-// Sample booking data for test emails
-function getSampleBooking(notificationEmail: string) {
+// Randomized sample data for realistic test emails
+function getSampleBooking(targetEmail: string) {
+  const firstNames = ["María", "Carlos", "Jessica", "Roberto", "Ana", "David", "Sofia", "Miguel"];
+  const lastNames = ["García", "Rodriguez", "Martinez", "Lopez", "Hernandez", "Rivera", "Torres", "Ramirez"];
+  const streets = ["123 Sunset Blvd", "456 Whittier Blvd", "789 Atlantic Ave", "321 Pacific Coast Hwy", "555 Olvera St", "1200 Spring St"];
+  const cities = ["Los Angeles, CA 90001", "Whittier, CA 90602", "Long Beach, CA 90802", "Downey, CA 90241", "Montebello, CA 90640"];
+  const meatOptions = ["Carne Asada", "Al Pastor", "Pollo", "Chorizo", "Carnitas", "Birria"];
+  const serviceTypes = ["2hr", "3hr"];
+  const guestCounts = [50, 75, 100, 120, 150, 200];
+  const times = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"];
+
+  const pick = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
+  const shuffle = <T,>(arr: T[]) => [...arr].sort(() => Math.random() - 0.5);
+
+  // Random future date 7-30 days out
   const futureDate = new Date();
-  futureDate.setDate(futureDate.getDate() + 14);
+  futureDate.setDate(futureDate.getDate() + 7 + Math.floor(Math.random() * 23));
   const dateStr = futureDate.toISOString().split("T")[0];
 
+  const firstName = pick(firstNames);
+  const lastName = pick(lastNames);
+  const customerName = `${firstName} ${lastName}`;
+  const phone = `(${562 + Math.floor(Math.random() * 100)}) ${String(Math.floor(Math.random() * 900) + 100)}-${String(Math.floor(Math.random() * 9000) + 1000)}`;
+  const selectedMeats = shuffle(meatOptions).slice(0, 4);
+  const serviceType = pick(serviceTypes);
+  const guestCount = pick(guestCounts);
+  const eventTime = pick(times);
+
+  // Random extras in DB format (for reminder emails)
+  const dbExtras = [
+    { id: "rice", quantity: 1 },
+    { id: "beans", quantity: 1 },
+    { id: "agua", quantity: 3, flavors: { horchata: 1, jamaica: 1, tamarindo: 1 } },
+  ];
+
+  // Base price calculation (rough)
+  const basePrice = serviceType === "2hr"
+    ? (guestCount <= 100 ? 495 : guestCount <= 200 ? 795 : 995)
+    : (guestCount <= 100 ? 695 : guestCount <= 200 ? 995 : 1295);
+  const extrasPrice = 40 + 40 + 75; // rice + beans + 3 aguas
+  const totalPrice = (basePrice + extrasPrice) * 100; // in cents
+
   return {
-    bookingId: "test-00000000-0000-0000-0000-000000000000",
-    customerName: "Test Customer",
-    customerEmail: notificationEmail,
-    customerPhone: "(555) 123-4567",
+    bookingId: `test-${crypto.randomUUID().slice(0, 8)}`,
+    customerName,
+    customerEmail: targetEmail,
+    customerPhone: phone,
     eventDate: dateStr,
-    serviceType: "3hr",
-    guestCount: 100,
-    meats: ["Carne Asada", "Al Pastor", "Pollo", "Chorizo"],
-    eventAddress: "123 Test Street, Los Angeles, CA 90001",
-    extras: [
-      { name: "Rice", quantity: 1, price: "$40" },
-      { name: "Agua Fresca", quantity: 3, price: "$75" },
-    ],
-    totalPrice: 81000, // $810.00 in cents
+    eventTime,
+    serviceType,
+    guestCount,
+    meats: selectedMeats,
+    eventAddress: `${pick(streets)}, ${pick(cities)}`,
+    totalPrice,
     cancelUrl: "https://que.rico.catering/en/booking/cancel/test-token",
     rescheduleUrl: "https://que.rico.catering/en/booking/reschedule/test-token",
+    // DB-format extras for reminder functions
+    dbExtras,
   };
 }
 
@@ -59,35 +95,43 @@ export async function POST(request: NextRequest) {
       .single();
 
     const notificationEmail = settings?.notification_email || "constantinoalan98@gmail.com";
-    // Use custom recipient if provided, otherwise fall back to notification email
     const targetEmail = recipientEmail?.trim() || notificationEmail;
     const reminderDays = settings?.reminder_days ?? 5;
     const sample = getSampleBooking(targetEmail);
 
+    // Mapped extras for confirmation/notification emails (display format)
+    const emailExtras = mapExtrasForEmail(sample.dbExtras as { id: string; quantity: number; flavors?: Record<string, number> }[], emailLocale);
+    const ownerExtras = mapExtrasForEmail(sample.dbExtras as { id: string; quantity: number; flavors?: Record<string, number> }[], "es");
+
     switch (emailType) {
       case "owner_booking":
-        await sendBookingNotification(sample);
+        await sendBookingNotification({
+          ...sample,
+          extras: ownerExtras,
+          paymentType: Math.random() > 0.5 ? "card" : "cash",
+          overrideRecipient: targetEmail,
+        });
         break;
 
       case "customer_confirmation":
-        await sendCustomerConfirmation(sample, emailLocale);
-        break;
-
-      case "customer_reminder": {
-        await sendEventReminder({
+        await sendCustomerConfirmation({
           ...sample,
-          extras: sample.extras as unknown as { id: string; quantity: number; flavors?: string[] }[],
-          reminderDays,
-          cancelUrl: sample.cancelUrl,
-          rescheduleUrl: sample.rescheduleUrl,
+          extras: emailExtras,
         }, emailLocale);
         break;
-      }
+
+      case "customer_reminder":
+        await sendEventReminder({
+          ...sample,
+          extras: sample.dbExtras,
+          reminderDays,
+        }, emailLocale);
+        break;
 
       case "owner_reminder":
         await sendOwnerReminder({
           ...sample,
-          extras: sample.extras as unknown as { id: string; quantity: number; flavors?: string[] }[],
+          extras: sample.dbExtras,
           reminderDays,
           ownerEmail: targetEmail,
         });
@@ -101,7 +145,7 @@ export async function POST(request: NextRequest) {
 
         await sendDayBeforeReminder({
           ...sample,
-          extras: sample.extras as unknown as { id: string; quantity: number; flavors?: string[] }[],
+          extras: sample.dbExtras,
           reminderDays: 1,
           cancelUrl: sample.cancelUrl,
           cancellationFee: dayBeforeFee,
@@ -110,7 +154,11 @@ export async function POST(request: NextRequest) {
       }
 
       case "cash_pending":
-        await sendCashPendingConfirmation(sample, emailLocale);
+        await sendCashPendingConfirmation({
+          ...sample,
+          extras: emailExtras,
+          paymentType: "cash",
+        }, emailLocale);
         break;
 
       default:

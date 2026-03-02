@@ -98,6 +98,7 @@ interface BookingNotification {
   extras?: EmailExtra[];
   totalPrice: number;
   paymentType?: string;
+  overrideRecipient?: string;
   cancelUrl?: string;
   rescheduleUrl?: string;
 }
@@ -236,7 +237,7 @@ export async function sendBookingNotification(
   try {
     await resend.emails.send({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
-      to: "constantinoalan98@gmail.com",
+      to: booking.overrideRecipient || "constantinoalan98@gmail.com",
       subject: `${isCash ? "⚠️" : "✅"} Nueva Reservación — ${booking.customerName} — ${formattedDate} — ${isCash ? "Efectivo (Llamar)" : "Tarjeta (Pagado)"}`,
       text: textMessage,
       html: htmlMessage,
@@ -440,7 +441,7 @@ interface ReminderData {
   guestCount: number;
   meats: string[];
   eventAddress?: string;
-  extras?: { id: string; quantity: number; flavors?: string[] }[];
+  extras?: { id: string; quantity: number; flavors?: Record<string, number> | string[] }[];
   totalPrice: number;
   reminderDays: number;
   cancelUrl?: string;
@@ -453,7 +454,7 @@ interface DayBeforeReminderData extends ReminderData {
 }
 
 function formatExtrasForReminder(
-  extras?: { id: string; quantity: number; flavors?: string[] }[]
+  extras?: { id: string; quantity: number; flavors?: Record<string, number> | string[] }[]
 ): { html: string; text: string } {
   if (!extras || extras.length === 0) return { html: "", text: "" };
 
@@ -461,10 +462,15 @@ function formatExtrasForReminder(
     const option = EXTRA_OPTIONS.find((o) => o.id === e.id);
     const name = e.id.charAt(0).toUpperCase() + e.id.slice(1);
     const price = option ? `$${(e.quantity * option.price).toLocaleString()}` : "";
-    const flavorNote =
-      e.id === "agua" && e.flavors?.length
-        ? ` (${e.flavors.join(", ")})`
-        : "";
+    let flavorNote = "";
+    if (e.id === "agua" && e.flavors) {
+      if (Array.isArray(e.flavors)) {
+        if (e.flavors.length > 0) flavorNote = ` (${e.flavors.join(", ")})`;
+      } else {
+        const entries = Object.entries(e.flavors).filter(([, q]) => q > 0);
+        if (entries.length > 0) flavorNote = ` (${entries.map(([f, q]) => `${f} ×${q}`).join(", ")})`;
+      }
+    }
     return { name: `${name}${flavorNote}`, qty: e.quantity, price };
   });
 
