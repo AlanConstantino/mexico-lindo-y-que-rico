@@ -270,7 +270,10 @@
     "zelleDescription": "Enviar pago por Zelle",
     "zelleInstructions": "Envía el pago al (562) 746-3998 por Zelle. Tu reservación será confirmada una vez que verifiquemos tu pago.",
     "zellePending": "Pago Zelle Pendiente",
-    "payWithZelle": "Pagar con Zelle"
+    "payWithZelle": "Pagar con Zelle",
+    "submitCashBooking": "Enviar Reserva",
+    "spotsLeft": "{count} lugar(es) disponible(s)",
+    "legendPartiallyBooked": "Parcialmente reservado"
   },
   "admin": {
     "loading": "Cargando...",

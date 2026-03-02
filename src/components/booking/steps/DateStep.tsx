@@ -235,12 +235,22 @@ export default function DateStep({ data, updateData }: DateStepProps) {
             const disabled = isDateDisabled(day);
             const fullyBooked = isDateFullyBooked(day);
 
+            const bookingCount = availability.bookedDates[dateStr] || 0;
+            const spotsLeft = availability.maxEventsPerDay - bookingCount;
+
             return (
               <button
                 key={day}
                 onClick={() => handleSelectDate(day)}
                 disabled={disabled}
-                className={`aspect-square rounded-lg flex items-center justify-center text-sm transition-all duration-200 relative ${
+                title={
+                  fullyBooked
+                    ? t("dateFullyBooked")
+                    : bookingCount > 0
+                      ? t("spotsLeft", { count: spotsLeft })
+                      : undefined
+                }
+                className={`aspect-square rounded-lg flex flex-col items-center justify-center text-sm transition-all duration-200 relative ${
                   isSelected
                     ? "bg-amber text-navy font-bold shadow-lg shadow-amber/20"
                     : disabled
@@ -249,12 +259,31 @@ export default function DateStep({ data, updateData }: DateStepProps) {
                 }`}
               >
                 {day}
+                {!isSelected && !disabled && bookingCount > 0 && !fullyBooked && (
+                  <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 flex gap-0.5">
+                    {Array.from({ length: bookingCount }).map((_, dotIdx) => (
+                      <span key={dotIdx} className="w-1 h-1 rounded-full bg-amber/50" />
+                    ))}
+                  </span>
+                )}
                 {fullyBooked && !isSelected && (
                   <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-terracotta/60" />
                 )}
               </button>
             );
           })}
+        </div>
+      </div>
+
+      {/* Calendar legend */}
+      <div className="flex items-center gap-4 mt-3 px-2 text-[10px] text-cream/30">
+        <div className="flex items-center gap-1.5">
+          <span className="w-1 h-1 rounded-full bg-amber/50" />
+          <span>{t("legendPartiallyBooked")}</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="w-1 h-1 rounded-full bg-terracotta/60" />
+          <span>{t("dateFullyBooked")}</span>
         </div>
       </div>
 
