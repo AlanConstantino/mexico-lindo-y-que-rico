@@ -8,6 +8,7 @@ export default function BookingSuccessPage() {
   const t = useTranslations("booking");
   const searchParams = useSearchParams();
   const isCash = searchParams.get("cash") === "true";
+  const bookingRef = searchParams.get("ref");
 
   return (
     <div className="min-h-screen bg-navy flex items-center justify-center px-6">
@@ -35,6 +36,19 @@ export default function BookingSuccessPage() {
         <p className="text-amber text-sm mb-4">
           {isCash ? t("cashSuccessSubtitle") : t("successSubtitle")}
         </p>
+
+        {/* Booking reference number */}
+        {bookingRef && (
+          <div className="mb-6 px-5 py-4 rounded-xl bg-navy-light/40 border border-cream/10 inline-block">
+            <p className="text-cream/40 text-xs uppercase tracking-wider mb-1">
+              {t("successBookingId")}
+            </p>
+            <p className="font-heading text-2xl text-amber tracking-wide">
+              {bookingRef}
+            </p>
+          </div>
+        )}
+
         <p className="text-cream/40 text-sm mb-10 leading-relaxed">
           {isCash ? t("cashSuccessDesc") : t("successDesc")}
         </p>

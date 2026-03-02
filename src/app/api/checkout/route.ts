@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
-import { supabaseAdmin } from "@/lib/supabase";
+import { supabaseAdmin, generateBookingNumber } from "@/lib/supabase";
 import {
   calculateTotal,
   getBasePrice,
@@ -204,6 +204,8 @@ export async function POST(request: NextRequest) {
       const cancelToken = crypto.randomUUID();
       const rescheduleToken = crypto.randomUUID();
 
+      const bookingNumber = generateBookingNumber(eventDate);
+
       const { data: booking, error: dbError } = await supabaseAdmin
         .from("bookings")
         .insert({
@@ -226,8 +228,9 @@ export async function POST(request: NextRequest) {
           status: "pending",
           cancel_token: cancelToken,
           reschedule_token: rescheduleToken,
+          booking_number: bookingNumber,
         })
-        .select("id")
+        .select("id, booking_number")
         .single();
 
       if (dbError) {
@@ -259,16 +262,17 @@ export async function POST(request: NextRequest) {
 
       // Redirect to success page with booking ID instead of Stripe session
       return NextResponse.json({
-        url: `${origin}/${locale}/booking/success?booking_id=${booking.id}&cash=true`,
+        url: `${origin}/${locale}/booking/success?booking_id=${booking.id}&ref=${booking.booking_number}&cash=true`,
         bookingId: booking.id,
       });
     }
 
     // Card payment: normal Stripe checkout
+    const cardBookingNumber = generateBookingNumber(eventDate);
     const session = await stripe.checkout.sessions.create({
       line_items: lineItems,
       mode: "payment",
-      success_url: `${origin}/${locale}/booking/success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${origin}/${locale}/booking/success?session_id={CHECKOUT_SESSION_ID}&ref=${cardBookingNumber}`,
       cancel_url: `${origin}/${locale}/booking/cancel`,
       customer_email: customerEmail,
       metadata: {
@@ -308,8 +312,9 @@ export async function POST(request: NextRequest) {
         stripe_session_id: session.id,
         stripe_payment_status: "unpaid",
         status: "pending",
+        booking_number: cardBookingNumber,
       })
-      .select("id")
+      .select("id, booking_number")
       .single();
 
     if (dbError) {

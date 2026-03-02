@@ -270,7 +270,10 @@
     "zelleDescription": "Send payment via Zelle",
     "zelleInstructions": "Send payment to (562) 746-3998 via Zelle. Your booking will be confirmed once we verify your payment.",
     "zellePending": "Pending Zelle Payment",
-    "payWithZelle": "Pay with Zelle"
+    "payWithZelle": "Pay with Zelle",
+    "submitCashBooking": "Submit Booking",
+    "spotsLeft": "{count} spot(s) remaining",
+    "legendPartiallyBooked": "Partially booked"
   },
   "admin": {
     "loading": "Loading...",

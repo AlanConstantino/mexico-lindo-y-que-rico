@@ -345,7 +345,7 @@ export default function BookingForm() {
                 {t("processing")}
               </>
             ) : data.paymentMethod === "cash" ? (
-              t("saveCardAndConfirm")
+              t("submitCashBooking")
             ) : (
               `${t("payWithCard")} $${total ? (total + calculateSurcharge(total, paymentSettings.cc_surcharge_percent) + calculateProcessingFee(total, paymentSettings.stripe_fee_percent, paymentSettings.stripe_fee_flat)).toLocaleString() : 0}`
             )}

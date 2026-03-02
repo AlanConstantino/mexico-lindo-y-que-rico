@@ -32,6 +32,7 @@ interface Booking {
   stripe_payment_status: string;
   status: string;
   created_at: string;
+  booking_number: string | null;
 }
 
 function getToken(): string | null {
@@ -242,7 +243,8 @@ export default function AdminPage() {
     return bookings.filter(
       (b) =>
         b.customer_name.toLowerCase().includes(q) ||
-        b.customer_email.toLowerCase().includes(q)
+        b.customer_email.toLowerCase().includes(q) ||
+        (b.booking_number && b.booking_number.toLowerCase().includes(q))
     );
   }, [bookings, searchQuery]);
 
@@ -599,6 +601,12 @@ export default function AdminPage() {
                     {/* Expanded details card */}
                     {expandedId === booking.id && (
                       <div className="mx-2 mb-2 bg-navy rounded-xl border border-cream/8 p-5 space-y-4">
+                        {booking.booking_number && (
+                          <div className="mb-2 px-3 py-2 rounded-lg bg-amber/5 border border-amber/15 inline-block">
+                            <span className="text-cream/40 text-[10px] uppercase tracking-wider font-medium mr-2">Ref:</span>
+                            <span className="text-amber font-mono text-sm font-medium">{booking.booking_number}</span>
+                          </div>
+                        )}
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                           <div>
                             <span className="text-cream/40 text-[11px] uppercase tracking-wider font-medium block mb-1">
