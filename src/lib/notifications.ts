@@ -961,12 +961,16 @@ export async function sendRescheduleConfirmation(data: {
   customerName: string;
   customerEmail: string;
   oldDate: string;
+  oldTime?: string | null;
   newDate: string;
+  newTime?: string | null;
   bookingId: string;
 }, locale: SupportedLocale = "en"): Promise<void> {
   const t = getTranslations(locale);
   const oldFormatted = emailTranslations.formatDate(data.oldDate, locale);
   const newFormatted = emailTranslations.formatDate(data.newDate, locale);
+  const oldTimeDisplay = data.oldTime ? formatTime(data.oldTime) : null;
+  const newTimeDisplay = data.newTime ? formatTime(data.newTime) : null;
 
   const htmlMessage = `
     <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
@@ -978,9 +982,9 @@ export async function sendRescheduleConfirmation(data: {
         <p style="color: #555; margin: 0 0 24px;">${t.reschedule.message(data.customerName)}</p>
         <div style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
           <p style="color: #888; margin: 0 0 4px; font-size: 13px;">${t.reschedule.previousDate}</p>
-          <p style="color: #C45A3C; margin: 0 0 16px; text-decoration: line-through;">${oldFormatted}</p>
+          <p style="color: #C45A3C; margin: 0 0 16px; text-decoration: line-through;">${oldFormatted}${oldTimeDisplay ? ` · ${oldTimeDisplay}` : ""}</p>
           <p style="color: #888; margin: 0 0 4px; font-size: 13px;">${t.reschedule.newDate}</p>
-          <p style="color: #2D2926; margin: 0; font-weight: 600; font-size: 18px;">${newFormatted}</p>
+          <p style="color: #2D2926; margin: 0; font-weight: 600; font-size: 18px;">${newFormatted}${newTimeDisplay ? ` · ${newTimeDisplay}` : ""}</p>
         </div>
         <p style="color: #555; font-size: 14px;">${t.reschedule.questionsCall} <a href="tel:5622359361" style="color: #C45A3C;">(562) 235-9361</a> or <a href="tel:5627463998" style="color: #C45A3C;">(562) 746-3998</a>.</p>
       </div>
@@ -1010,7 +1014,9 @@ export async function sendOwnerRescheduleNotice(data: {
   customerEmail: string;
   customerPhone: string;
   oldDate: string;
+  oldTime?: string | null;
   newDate: string;
+  newTime?: string | null;
   bookingId: string;
   ownerEmail: string;
 }): Promise<void> {
@@ -1020,6 +1026,8 @@ export async function sendOwnerRescheduleNotice(data: {
     });
   const oldFormatted = fmtDate(data.oldDate);
   const newFormatted = fmtDate(data.newDate);
+  const oldTimeDisplay = data.oldTime ? formatTime(data.oldTime) : null;
+  const newTimeDisplay = data.newTime ? formatTime(data.newTime) : null;
   const adminUrl = "https://que.rico.catering/es/admin";
 
   const textMessage = [
@@ -1027,8 +1035,8 @@ export async function sendOwnerRescheduleNotice(data: {
     ``,
     `El cliente ${data.customerName} ha reprogramado su evento.`,
     ``,
-    `Fecha Anterior: ${oldFormatted}`,
-    `Nueva Fecha: ${newFormatted}`,
+    `Fecha Anterior: ${oldFormatted}${oldTimeDisplay ? ` · ${oldTimeDisplay}` : ""}`,
+    `Nueva Fecha: ${newFormatted}${newTimeDisplay ? ` · ${newTimeDisplay}` : ""}`,
     ``,
     `Cliente: ${data.customerName}`,
     `Correo: ${data.customerEmail}`,
@@ -1059,7 +1067,7 @@ export async function sendOwnerRescheduleNotice(data: {
           <div style="display: flex;">
             <div style="flex: 1; padding: 12px; text-align: center;">
               <p style="margin: 0; font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 1px;">Fecha Anterior</p>
-              <p style="margin: 8px 0 0; font-size: 16px; color: #C45A3C; font-weight: 600; text-decoration: line-through;">${oldFormatted}</p>
+              <p style="margin: 8px 0 0; font-size: 16px; color: #C45A3C; font-weight: 600; text-decoration: line-through;">${oldFormatted}${oldTimeDisplay ? ` · ${oldTimeDisplay}` : ""}</p>
             </div>
           </div>
           <div style="text-align: center; padding: 8px 0;">
@@ -1067,7 +1075,7 @@ export async function sendOwnerRescheduleNotice(data: {
           </div>
           <div style="flex: 1; padding: 12px; text-align: center;">
             <p style="margin: 0; font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 1px;">Nueva Fecha</p>
-            <p style="margin: 8px 0 0; font-size: 18px; color: #28A745; font-weight: bold;">${newFormatted}</p>
+            <p style="margin: 8px 0 0; font-size: 18px; color: #28A745; font-weight: bold;">${newFormatted}${newTimeDisplay ? ` · ${newTimeDisplay}` : ""}</p>
           </div>
         </div>
 
