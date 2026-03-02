@@ -260,7 +260,7 @@ export default function BookingForm() {
         <div className="mb-6 flex items-center justify-between px-4 py-3 rounded-xl bg-navy-light/30 border border-cream/5">
           <span className="text-cream/40 text-sm">{t("total")}</span>
           <span className="font-heading text-2xl text-amber">
-            ${total.toLocaleString()}
+            ${total.toFixed(2)}
           </span>
         </div>
       )}
@@ -347,7 +347,7 @@ export default function BookingForm() {
             ) : data.paymentMethod === "cash" ? (
               t("submitCashBooking")
             ) : (
-              `${t("payWithCard")} $${total ? (total + calculateSurcharge(total, paymentSettings.cc_surcharge_percent) + calculateProcessingFee(total, paymentSettings.stripe_fee_percent, paymentSettings.stripe_fee_flat)).toLocaleString() : 0}`
+              `${t("payWithCard")} $${total ? (total + calculateSurcharge(total, paymentSettings.cc_surcharge_percent) + calculateProcessingFee(total, paymentSettings.stripe_fee_percent, paymentSettings.stripe_fee_flat)).toFixed(2) : "0.00"}`
             )}
           </button>
         )}

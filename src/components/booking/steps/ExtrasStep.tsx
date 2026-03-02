@@ -135,7 +135,7 @@ export default function ExtrasStep({ data, updateData }: ExtrasStepProps) {
               {/* Line total */}
               {hasQty && (
                 <div className="text-amber text-sm font-medium ml-3 w-16 text-right">
-                  ${(qty * extra.price).toLocaleString()}
+                  ${(qty * extra.price).toFixed(2)}
                 </div>
               )}
             </div>

@@ -125,7 +125,7 @@ export default function ReviewStep({
                         </span>
                       </span>
                       <span className="text-cream/50">
-                        ${(qty * extra.price).toLocaleString()}
+                        ${(qty * extra.price).toFixed(2)}
                       </span>
                     </div>
                     {extra.id === "agua" && Object.keys(data.aguaFlavors).length > 0 && (
@@ -196,12 +196,12 @@ export default function ReviewStep({
               <div className="space-y-1">
                 <div className="flex justify-between text-xs">
                   <span className="text-cream/50">{t("subtotal")}</span>
-                  <span className="text-cream/70">${total.toLocaleString()}</span>
+                  <span className="text-cream/70">${total.toFixed(2)}</span>
                 </div>
                 {surcharge > 0 && (
                   <div className="flex justify-between text-xs">
                     <span className="text-cream/50">{t("ccSurcharge", { percent: ccSurchargePercent })}</span>
-                    <span className="text-cream/70">${surcharge.toLocaleString()}</span>
+                    <span className="text-cream/70">${surcharge.toFixed(2)}</span>
                   </div>
                 )}
                 {processingFee > 0 && (
@@ -212,7 +212,7 @@ export default function ReviewStep({
                 )}
                 <div className="flex justify-between text-sm font-medium pt-1 border-t border-cream/5">
                   <span className="text-cream">{t("total")}</span>
-                  <span className="text-amber">${cardTotal.toLocaleString()}</span>
+                  <span className="text-amber">${cardTotal.toFixed(2)}</span>
                 </div>
               </div>
             </button>
@@ -237,7 +237,7 @@ export default function ReviewStep({
                 <p className="text-cream/50 text-xs">{t("cardOnFileNote")}</p>
                 <div className="flex justify-between text-xs">
                   <span className="text-cream/50">{t("cashDueOnEventDay")}</span>
-                  <span className="text-cream/70">${total.toLocaleString()}</span>
+                  <span className="text-cream/70">${total.toFixed(2)}</span>
                 </div>
               </div>
             </button>
@@ -249,20 +249,20 @@ export default function ReviewStep({
         <div className="p-5 rounded-xl bg-gradient-to-b from-amber/5 to-transparent border border-amber/10">
           <div className="flex justify-between text-sm mb-2">
             <span className="text-cream/50">{t("basePrice")}</span>
-            <span className="text-cream">${basePrice.toLocaleString()}</span>
+            <span className="text-cream">${basePrice.toFixed(2)}</span>
           </div>
           {extrasTotal > 0 && (
             <div className="flex justify-between text-sm mb-2">
               <span className="text-cream/50">{t("extrasTotal")}</span>
               <span className="text-cream">
-                ${extrasTotal.toLocaleString()}
+                ${extrasTotal.toFixed(2)}
               </span>
             </div>
           )}
           {data.paymentMethod === "card" && surcharge > 0 && (
             <div className="flex justify-between text-sm mb-2">
               <span className="text-cream/50">{t("ccSurcharge", { percent: ccSurchargePercent })}</span>
-              <span className="text-cream">${surcharge.toLocaleString()}</span>
+              <span className="text-cream">${surcharge.toFixed(2)}</span>
             </div>
           )}
           {data.paymentMethod === "card" && processingFee > 0 && (
@@ -276,7 +276,7 @@ export default function ReviewStep({
               {t("total")}
             </span>
             <span className="font-heading text-2xl text-amber">
-              ${data.paymentMethod === "card" ? cardTotal.toLocaleString() : total.toLocaleString()}
+              ${data.paymentMethod === "card" ? cardTotal.toFixed(2) : total.toFixed(2)}
             </span>
           </div>
           {data.paymentMethod === "cash" && (
