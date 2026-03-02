@@ -342,7 +342,14 @@
       "confirmDialogTitle": "¿Confirmar Reservación?",
       "confirmDialogMessage": "Esto enviará un correo de confirmación al cliente informándole que su evento está confirmado. ¿Estás seguro de que deseas continuar?",
       "confirmDialogYes": "Sí, Confirmar Reservación",
-      "confirmDialogCancel": "Regresar"
+      "confirmDialogCancel": "Regresar",
+      "cancelDialogTitle": "¿Cancelar Reservación?",
+      "cancelDialogMessage": "Esto cancelará la reservación y enviará un correo de cancelación al cliente. ¿Estás seguro de que deseas continuar?",
+      "cancelDialogYes": "Sí, Cancelar Reservación",
+      "delete": "Eliminar",
+      "deleteDialogTitle": "¿Eliminar Reservación Permanentemente?",
+      "deleteDialogMessage": "Esto eliminará permanentemente la reservación de la base de datos. Esta acción no se puede deshacer.",
+      "deleteDialogYes": "Sí, Eliminar Para Siempre"
     },
     "settings": {
       "title": "Configuración",
