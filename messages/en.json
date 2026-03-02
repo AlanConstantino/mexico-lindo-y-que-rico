@@ -342,7 +342,14 @@
       "confirmDialogTitle": "Confirm Booking?",
       "confirmDialogMessage": "This will send a confirmation email to the customer letting them know their event is confirmed. Are you sure you want to proceed?",
       "confirmDialogYes": "Yes, Confirm Booking",
-      "confirmDialogCancel": "Go Back"
+      "confirmDialogCancel": "Go Back",
+      "cancelDialogTitle": "Cancel Booking?",
+      "cancelDialogMessage": "This will cancel the booking and send a cancellation email to the customer. Are you sure you want to proceed?",
+      "cancelDialogYes": "Yes, Cancel Booking",
+      "delete": "Delete",
+      "deleteDialogTitle": "Permanently Delete Booking?",
+      "deleteDialogMessage": "This will permanently remove the booking from the database. This action cannot be undone.",
+      "deleteDialogYes": "Yes, Delete Forever"
     },
     "settings": {
       "title": "Settings",

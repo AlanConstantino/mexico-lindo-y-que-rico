@@ -1183,3 +1183,46 @@ export async function sendCashPendingConfirmation(
     console.error("❌ Failed to send cash pending confirmation:", error);
   }
 }
+
+// ─── Owner-Initiated Cancellation Email to Customer (i18n) ───────
+
+export async function sendOwnerInitiatedCancellation(data: {
+  customerName: string;
+  customerEmail: string;
+  eventDate: string;
+  bookingId: string;
+  bookingNumber?: string | null;
+}, locale: SupportedLocale = "en"): Promise<void> {
+  const t = getTranslations(locale);
+  const formattedDate = emailTranslations.formatDate(data.eventDate, locale);
+
+  const htmlMessage = `
+    <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
+      <div style="background: #2D2926; padding: 40px 30px; text-align: center;">
+        <h1 style="color: #E8A935; margin: 0; font-size: 28px;">México Lindo Y Que Rico</h1>
+      </div>
+      <div style="padding: 30px;">
+        <h2 style="color: #C45A3C; margin: 0 0 8px;">❌ ${t.ownerCancellation.heading}</h2>
+        <p style="color: #555; margin: 0 0 24px; line-height: 1.6;">${t.ownerCancellation.message(data.customerName, formattedDate)}</p>
+        <p style="color: #555; line-height: 1.6;">${t.ownerCancellation.reason} <a href="tel:5622359361" style="color: #C45A3C;">(562) 235-9361</a> or <a href="tel:5627463998" style="color: #C45A3C;">(562) 746-3998</a>.</p>
+        <p style="color: #555; line-height: 1.6;">${t.ownerCancellation.apology}</p>
+      </div>
+      <div style="background: #2D2926; padding: 20px 30px; text-align: center;">
+        <p style="margin: 0; color: #FAF5EF44; font-size: 11px;">${data.bookingNumber ? `Ref: ${data.bookingNumber} · ` : ""}Booking ID: ${data.bookingId}</p>
+      </div>
+    </div>
+  `;
+
+  try {
+    await resend.emails.send({
+      from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
+      to: data.customerEmail,
+      subject: t.ownerCancellation.subject(formattedDate),
+      text: `${t.ownerCancellation.heading} — ${formattedDate}. ${t.ownerCancellation.reason} (562) 235-9361 or (562) 746-3998.`,
+      html: htmlMessage,
+    });
+    console.log(`✅ Owner-initiated cancellation email sent to ${data.customerEmail}`);
+  } catch (error) {
+    console.error("❌ Failed to send owner-initiated cancellation email:", error);
+  }
+}

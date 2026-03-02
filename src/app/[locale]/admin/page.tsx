@@ -102,6 +102,9 @@ export default function AdminPage() {
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [confirmDialogBookingId, setConfirmDialogBookingId] = useState<string | null>(null);
+  const [cancelDialogBookingId, setCancelDialogBookingId] = useState<string | null>(null);
+  const [deleteDialogBookingId, setDeleteDialogBookingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   // Check for existing token on mount
   useEffect(() => {
@@ -198,6 +201,30 @@ export default function AdminPage() {
       console.error("Failed to update status");
     } finally {
       setUpdatingId(null);
+    }
+  };
+
+  const deleteBooking = async (id: string) => {
+    const token = getToken();
+    if (!token) return;
+    setDeletingId(id);
+    try {
+      const res = await fetch("/api/admin/bookings", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ id }),
+      });
+      if (res.ok) {
+        setBookings((prev) => prev.filter((b) => b.id !== id));
+        setExpandedId(null);
+      }
+    } catch {
+      console.error("Failed to delete booking");
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -667,12 +694,24 @@ export default function AdminPage() {
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                updateStatus(booking.id, "cancelled");
+                                setCancelDialogBookingId(booking.id);
                               }}
                               disabled={updatingId === booking.id}
                               className="px-4 py-1.5 bg-terracotta/15 text-terracotta-light text-xs font-medium rounded-lg hover:bg-terracotta/25 border border-terracotta/20 transition-colors disabled:opacity-50"
                             >
                               {t("actions.cancel")}
+                            </button>
+                          )}
+                          {booking.status === "cancelled" && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setDeleteDialogBookingId(booking.id);
+                              }}
+                              disabled={deletingId === booking.id}
+                              className="px-4 py-1.5 bg-red-500/15 text-red-400 text-xs font-medium rounded-lg hover:bg-red-500/25 border border-red-500/20 transition-colors disabled:opacity-50"
+                            >
+                              {t("actions.delete")}
                             </button>
                           )}
                           {booking.status !== "pending" && (
@@ -724,6 +763,70 @@ export default function AdminPage() {
                 className="px-4 py-2 bg-teal/20 text-teal-light text-sm font-medium rounded-lg hover:bg-teal/30 border border-teal/30 transition-colors disabled:opacity-50"
               >
                 {t("actions.confirmDialogYes")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cancel Booking Dialog */}
+      {cancelDialogBookingId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setCancelDialogBookingId(null)}>
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+          <div
+            className="relative bg-charcoal border border-cream/10 rounded-2xl p-6 max-w-md w-full shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-cream text-lg font-bold mb-3">{t("actions.cancelDialogTitle")}</h3>
+            <p className="text-cream/60 text-sm mb-6 leading-relaxed">{t("actions.cancelDialogMessage")}</p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setCancelDialogBookingId(null)}
+                className="px-4 py-2 text-cream/50 text-sm font-medium rounded-lg hover:bg-cream/5 transition-colors"
+              >
+                {t("actions.confirmDialogCancel")}
+              </button>
+              <button
+                onClick={() => {
+                  updateStatus(cancelDialogBookingId, "cancelled");
+                  setCancelDialogBookingId(null);
+                }}
+                disabled={updatingId === cancelDialogBookingId}
+                className="px-4 py-2 bg-terracotta/20 text-terracotta-light text-sm font-medium rounded-lg hover:bg-terracotta/30 border border-terracotta/30 transition-colors disabled:opacity-50"
+              >
+                {t("actions.cancelDialogYes")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Booking Dialog */}
+      {deleteDialogBookingId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setDeleteDialogBookingId(null)}>
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+          <div
+            className="relative bg-charcoal border border-cream/10 rounded-2xl p-6 max-w-md w-full shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-red-400 text-lg font-bold mb-3">{t("actions.deleteDialogTitle")}</h3>
+            <p className="text-cream/60 text-sm mb-6 leading-relaxed">{t("actions.deleteDialogMessage")}</p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setDeleteDialogBookingId(null)}
+                className="px-4 py-2 text-cream/50 text-sm font-medium rounded-lg hover:bg-cream/5 transition-colors"
+              >
+                {t("actions.confirmDialogCancel")}
+              </button>
+              <button
+                onClick={() => {
+                  deleteBooking(deleteDialogBookingId);
+                  setDeleteDialogBookingId(null);
+                }}
+                disabled={deletingId === deleteDialogBookingId}
+                className="px-4 py-2 bg-red-500/20 text-red-400 text-sm font-medium rounded-lg hover:bg-red-500/30 border border-red-500/30 transition-colors disabled:opacity-50"
+              >
+                {t("actions.deleteDialogYes")}
               </button>
             </div>
           </div>
