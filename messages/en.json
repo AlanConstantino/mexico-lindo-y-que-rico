@@ -126,7 +126,9 @@
       },
       "salad": "Salad",
       "burgers": "Cheeseburgers",
-      "hotdogs": "Hot Dogs"
+      "hotdogs": "Hot Dogs",
+      "extraTime": "Extra Time",
+      "extraTimeNote": "Add extra hours to your service package"
     },
     "prices": {
       "each4": "$4 each",
@@ -267,7 +269,8 @@
     "errorGeneric": "Something went wrong. Please try again.",
     "submitCashBooking": "Submit Booking",
     "spotsLeft": "{count} spot(s) remaining",
-    "legendPartiallyBooked": "Partially booked"
+    "legendPartiallyBooked": "Partially booked",
+    "perHour": "per hour"
   },
   "admin": {
     "loading": "Loading...",

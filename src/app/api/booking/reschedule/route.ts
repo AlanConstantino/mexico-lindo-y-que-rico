@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
 
     const maxEventsPerDay = settings?.max_events_per_day ?? 3;
     const minNoticeDays = settings?.min_notice_days ?? 3;
-    const ownerEmail = settings?.notification_email ?? "constantinoalan98@gmail.com";
+    const ownerEmail = settings?.notification_email ?? "mx.lindo.y.que.rico.catering@gmail.com";
 
     const newEventDate = new Date(newDate + "T00:00:00");
     const now = new Date();

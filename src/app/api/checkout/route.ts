@@ -48,6 +48,7 @@ const EXTRA_NAMES: Record<ExtraId, string> = {
   salad: "Salad",
   burgers: "Cheeseburgers",
   hotdogs: "Hot Dogs",
+  extraTime: "Extra Time (per hour)",
 };
 
 export async function POST(request: NextRequest) {

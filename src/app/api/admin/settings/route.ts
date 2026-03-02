@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
           max_events_per_day: 3,
           min_notice_days: 7,
           reminder_days: 5,
-          notification_email: "constantinoalan98@gmail.com",
+          notification_email: "mx.lindo.y.que.rico.catering@gmail.com",
           notification_phone: "562-688-7250",
         },
       });

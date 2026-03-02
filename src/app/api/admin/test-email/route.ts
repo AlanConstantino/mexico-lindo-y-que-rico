@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
       .select("notification_email, reminder_days, cancellation_fee_type, cancellation_fee_flat, cancellation_fee_percent")
       .single();
 
-    const notificationEmail = settings?.notification_email || "constantinoalan98@gmail.com";
+    const notificationEmail = settings?.notification_email || "mx.lindo.y.que.rico.catering@gmail.com";
     const targetEmail = recipientEmail?.trim() || notificationEmail;
     const reminderDays = settings?.reminder_days ?? 5;
     const sample = getSampleBooking(targetEmail);

@@ -126,7 +126,9 @@
       },
       "salad": "Ensalada",
       "burgers": "Hamburguesas con Queso",
-      "hotdogs": "Hot Dogs"
+      "hotdogs": "Hot Dogs",
+      "extraTime": "Tiempo Extra",
+      "extraTimeNote": "Agrega horas adicionales a tu paquete de servicio"
     },
     "prices": {
       "each4": "$4 c/u",
@@ -267,7 +269,8 @@
     "errorGeneric": "Algo salió mal. Por favor intente de nuevo.",
     "submitCashBooking": "Enviar Reserva",
     "spotsLeft": "{count} lugar(es) disponible(s)",
-    "legendPartiallyBooked": "Parcialmente reservado"
+    "legendPartiallyBooked": "Parcialmente reservado",
+    "perHour": "por hora"
   },
   "admin": {
     "loading": "Cargando...",

@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     const freeCancellationDays = settings?.free_cancellation_days ?? 3;
-    const ownerEmail = settings?.notification_email ?? "constantinoalan98@gmail.com";
+    const ownerEmail = settings?.notification_email ?? "mx.lindo.y.que.rico.catering@gmail.com";
 
     const eventDate = new Date(booking.event_date + "T00:00:00");
     const now = new Date();

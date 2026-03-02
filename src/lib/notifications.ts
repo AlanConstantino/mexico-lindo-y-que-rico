@@ -17,6 +17,7 @@ const EXTRA_DISPLAY_NAMES: Record<string, { en: string; es: string }> = {
   salad: { en: "Salad", es: "Ensalada" },
   burgers: { en: "Cheeseburgers", es: "Hamburguesas con Queso" },
   hotdogs: { en: "Hot Dogs", es: "Hot Dogs" },
+  extraTime: { en: "Extra Time", es: "Tiempo Extra" },
 };
 
 const FLAVOR_DISPLAY_NAMES: Record<string, { en: string; es: string }> = {
@@ -44,7 +45,7 @@ export function mapExtrasForEmail(
     const displayNames = EXTRA_DISPLAY_NAMES[e.id];
     const name = displayNames ? displayNames[locale] : (e.id.charAt(0).toUpperCase() + e.id.slice(1));
     const unitPrice = option?.price ?? 0;
-    const total = option?.perUnit ? unitPrice * e.quantity : unitPrice * e.quantity;
+    const total = unitPrice * e.quantity;
     
     // Parse agua flavors
     let flavors: { name: string; quantity: number }[] | undefined;
@@ -237,7 +238,7 @@ export async function sendBookingNotification(
   try {
     await resend.emails.send({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
-      to: booking.overrideRecipient || "constantinoalan98@gmail.com",
+      to: booking.overrideRecipient || "mx.lindo.y.que.rico.catering@gmail.com",
       subject: `${isCash ? "⚠️" : "✅"} Nueva Reservación — ${booking.customerName} — ${formattedDate} — ${isCash ? "Efectivo (Llamar)" : "Tarjeta (Pagado)"}`,
       text: textMessage,
       html: htmlMessage,

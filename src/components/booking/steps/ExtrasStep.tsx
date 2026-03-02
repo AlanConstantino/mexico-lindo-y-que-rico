@@ -82,8 +82,11 @@ export default function ExtrasStep({ data, updateData }: ExtrasStepProps) {
                 </div>
                 <div className="text-cream/30 text-xs mt-0.5">
                   ${extra.price}
-                  {extra.perUnit ? ` ${t("each")}` : ` · ${t("servesNote")}`}
+                  {extra.id === "extraTime" ? ` ${t("perHour")}` : extra.perUnit ? ` ${t("each")}` : ` · ${t("servesNote")}`}
                 </div>
+                {extra.id === "extraTime" && (
+                  <div className="text-cream/20 text-[10px] mt-0.5">{tExtras("extraTimeNote")}</div>
+                )}
               </div>
 
               {/* Quantity controls */}
