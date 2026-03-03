@@ -144,7 +144,13 @@
     "fullSpread": "El Servicio Completo",
     "fullSpreadSub": "Todo lo que sus invitados necesitan",
     "eventsCatered": "Eventos Servidos",
-    "eventsCateredSub": "En toda el área de Los Ángeles"
+    "eventsCateredSub": "En toda el área de Los Ángeles",
+    "planchaMeats": "Directo de la Plancha",
+    "planchaMeatsSub": "Carnes asadas a la perfección",
+    "riceSetup": "La Preparación",
+    "riceSetupSub": "Arroz, guarniciones y todo listo",
+    "tableSpread": "Buen Provecho",
+    "tableSpreadSub": "Sabores auténticos en cada mesa"
   },
   "contact": {
     "label": "Contáctenos",

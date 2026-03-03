@@ -144,7 +144,13 @@
     "fullSpread": "The Full Spread",
     "fullSpreadSub": "Everything your guests need",
     "eventsCatered": "Events Catered",
-    "eventsCateredSub": "Across the Greater LA Area"
+    "eventsCateredSub": "Across the Greater LA Area",
+    "planchaMeats": "Fresh Off the Plancha",
+    "planchaMeatsSub": "Meats grilled to perfection",
+    "riceSetup": "The Setup",
+    "riceSetupSub": "Rice, sides & everything ready to go",
+    "tableSpread": "Buen Provecho",
+    "tableSpreadSub": "Authentic flavors at every table"
   },
   "contact": {
     "label": "Get In Touch",
