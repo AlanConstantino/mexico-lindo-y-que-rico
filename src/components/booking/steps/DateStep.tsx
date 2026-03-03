@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import type { BookingData } from "../BookingForm";
 
@@ -15,6 +15,16 @@ interface AvailabilityData {
   bookedDates: Record<string, number>;
 }
 
+const defaultAvailability: AvailabilityData = {
+  maxEventsPerDay: 3,
+  minNoticeDays: 3,
+  bookedDates: {},
+};
+
+function monthKey(year: number, month: number) {
+  return `${year}-${String(month + 1).padStart(2, "0")}`;
+}
+
 export default function DateStep({ data, updateData }: DateStepProps) {
   const t = useTranslations("booking");
   const locale = useLocale();
@@ -23,32 +33,79 @@ export default function DateStep({ data, updateData }: DateStepProps) {
 
   const [viewYear, setViewYear] = useState(today.getFullYear());
   const [viewMonth, setViewMonth] = useState(today.getMonth());
-  const [availability, setAvailability] = useState<AvailabilityData>({
-    maxEventsPerDay: 3,
-    minNoticeDays: 3,
-    bookedDates: {},
-  });
   const [loading, setLoading] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
 
-  const fetchAvailability = useCallback(async (year: number, month: number) => {
-    setLoading(true);
-    try {
-      const monthStr = `${year}-${String(month + 1).padStart(2, "0")}`;
-      const res = await fetch(`/api/availability?month=${monthStr}`);
-      if (res.ok) {
-        const result = await res.json();
-        setAvailability(result);
+  // Cache of availability data keyed by "YYYY-MM"
+  const cacheRef = useRef<Record<string, AvailabilityData>>({});
+
+  const availability =
+    cacheRef.current[monthKey(viewYear, viewMonth)] ?? defaultAvailability;
+
+  const fetchMonth = useCallback(
+    async (year: number, month: number): Promise<AvailabilityData | null> => {
+      const key = monthKey(year, month);
+      if (cacheRef.current[key]) return cacheRef.current[key];
+      try {
+        const res = await fetch(`/api/availability?month=${key}`);
+        if (res.ok) {
+          const result: AvailabilityData = await res.json();
+          cacheRef.current[key] = result;
+          return result;
+        }
+      } catch {
+        // Keep defaults on error
       }
-    } catch {
-      // Keep defaults on error
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+      return null;
+    },
+    []
+  );
+
+  // Prefetch adjacent months (next month always, prev month if not in the past)
+  const prefetchAdjacent = useCallback(
+    (year: number, month: number) => {
+      // Next month
+      const nextMonth = month === 11 ? 0 : month + 1;
+      const nextYear = month === 11 ? year + 1 : year;
+      fetchMonth(nextYear, nextMonth);
+
+      // Previous month (only if not in the past)
+      const prevMonth = month === 0 ? 11 : month - 1;
+      const prevYear = month === 0 ? year - 1 : year;
+      const isPast =
+        prevYear < today.getFullYear() ||
+        (prevYear === today.getFullYear() && prevMonth < today.getMonth());
+      if (!isPast) {
+        fetchMonth(prevYear, prevMonth);
+      }
+    },
+    [fetchMonth, today]
+  );
 
   useEffect(() => {
-    fetchAvailability(viewYear, viewMonth);
-  }, [viewYear, viewMonth, fetchAvailability]);
+    const key = monthKey(viewYear, viewMonth);
+    const cached = cacheRef.current[key];
+
+    if (cached) {
+      // Already cached — no spinner needed, just prefetch adjacent
+      prefetchAdjacent(viewYear, viewMonth);
+      return;
+    }
+
+    // Not cached — show spinner only for initial load
+    const showSpinner = initialLoad;
+    if (showSpinner) setLoading(true);
+
+    fetchMonth(viewYear, viewMonth).then(() => {
+      if (showSpinner) {
+        setLoading(false);
+        setInitialLoad(false);
+      }
+      // Force re-render to pick up new cache entry
+      setViewYear((y) => y);
+      prefetchAdjacent(viewYear, viewMonth);
+    });
+  }, [viewYear, viewMonth, fetchMonth, prefetchAdjacent, initialLoad]);
 
   const monthName = new Intl.DateTimeFormat(locale, { month: "long" }).format(
     new Date(viewYear, viewMonth)
@@ -57,12 +114,6 @@ export default function DateStep({ data, updateData }: DateStepProps) {
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
   const firstDayOfWeek = new Date(viewYear, viewMonth, 1).getDay();
 
-  const dayNames = Array.from({ length: 7 }, (_, i) =>
-    new Intl.DateTimeFormat(locale, { weekday: "short" }).format(
-      new Date(2024, 0, i) // Jan 2024 starts on Monday, but we need Sun=0
-      // Actually Jan 7 2024 is Sunday
-    )
-  );
   // Use a known Sunday as start: Jan 7, 2024
   const dayHeaders = Array.from({ length: 7 }, (_, i) =>
     new Intl.DateTimeFormat(locale, { weekday: "short" }).format(
