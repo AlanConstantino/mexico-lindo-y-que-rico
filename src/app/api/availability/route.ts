@@ -45,17 +45,31 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({
-      maxEventsPerDay: settings?.max_events_per_day ?? 3,
-      minNoticeDays: settings?.min_notice_days ?? 3,
-      bookedDates,
-    });
+    return NextResponse.json(
+      {
+        maxEventsPerDay: settings?.max_events_per_day ?? 3,
+        minNoticeDays: settings?.min_notice_days ?? 3,
+        bookedDates,
+      },
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+        },
+      }
+    );
   } catch {
     // Return defaults if Supabase is not set up yet
-    return NextResponse.json({
-      maxEventsPerDay: 3,
-      minNoticeDays: 3,
-      bookedDates: {},
-    });
+    return NextResponse.json(
+      {
+        maxEventsPerDay: 3,
+        minNoticeDays: 3,
+        bookedDates: {},
+      },
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+        },
+      }
+    );
   }
 }
