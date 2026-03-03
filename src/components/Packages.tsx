@@ -75,7 +75,7 @@ function PricingCard({
 
         <Link
           href={`/booking?service=${serviceType}&guests=${guests}`}
-          className={`block w-full py-2 sm:py-3 rounded-full font-medium text-xs sm:text-sm tracking-wide transition-all duration-500 hover:scale-105 active:scale-95 ${
+          className={`block w-full px-4 py-3 sm:py-3.5 rounded-full font-medium text-sm tracking-wide transition-all duration-500 hover:scale-105 active:scale-95 ${
             featured
               ? "bg-amber text-navy hover:bg-amber-light hover:shadow-lg hover:shadow-amber/20"
               : "border border-amber/30 text-amber hover:border-amber hover:bg-amber/5"
