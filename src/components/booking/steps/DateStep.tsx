@@ -342,14 +342,16 @@ export default function DateStep({ data, updateData }: DateStepProps) {
             {t("selectTime")}
           </h3>
           <p className="text-cream/40 text-sm mb-4">{t("selectTimeDesc")}</p>
-          <input
-            type="time"
-            value={data.eventTime ?? ""}
-            onChange={(e) =>
-              updateData({ eventTime: e.target.value || null })
-            }
-            className="w-full rounded-xl bg-navy-light/30 border border-cream/10 text-cream px-4 py-3 text-sm focus:outline-none focus:border-amber/40 transition-colors cursor-pointer [color-scheme:dark]"
-          />
+          <div className="overflow-hidden rounded-xl">
+            <input
+              type="time"
+              value={data.eventTime ?? ""}
+              onChange={(e) =>
+                updateData({ eventTime: e.target.value || null })
+              }
+              className="w-full max-w-full rounded-xl bg-navy-light/30 border border-cream/10 text-cream px-4 py-3 text-sm focus:outline-none focus:border-amber/40 transition-colors cursor-pointer [color-scheme:dark] box-border"
+            />
+          </div>
           {data.eventTime && (() => {
             const [h, m] = data.eventTime.split(":").map(Number);
             const arrivalHour = h - 1;
