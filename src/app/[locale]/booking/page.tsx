@@ -27,7 +27,7 @@ export default async function BookingPage() {
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link
             href="/"
-            className="flex items-center gap-2 sm:gap-3 font-heading text-2xl text-cream hover:text-amber transition-colors duration-300"
+            className="flex items-center gap-2 sm:gap-3 font-heading text-cream hover:text-amber transition-colors duration-300 text-sm sm:text-2xl leading-tight min-w-0"
           >
             <Image
               src="/images/logo.png"
@@ -36,7 +36,7 @@ export default async function BookingPage() {
               height={40}
               className="rounded-lg w-8 h-8 sm:w-10 sm:h-10 object-cover"
             />
-            <span>México Lindo <span className="text-amber">Y Que Rico</span></span>
+            <span>México Lindo<br /><span className="text-amber">Y Que Rico</span></span>
           </Link>
           <Link
             href="/"
