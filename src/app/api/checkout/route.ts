@@ -25,6 +25,7 @@ interface CheckoutBody {
   meats: MeatId[];
   extras: Partial<Record<ExtraId, number>>;
   aguaFlavors?: Record<string, number>;
+  extraMeatSelections?: Record<string, number>;
   customerName: string;
   customerEmail: string;
   customerPhone: string;
@@ -68,6 +69,7 @@ export async function POST(request: NextRequest) {
       customerPhone,
       eventAddress,
       aguaFlavors = {},
+      extraMeatSelections = {},
       paymentMethod = "card",
       ccSurchargePercent = 10,
       cashDepositPercent = 50,
@@ -150,6 +152,10 @@ export async function POST(request: NextRequest) {
         if (extra.id === "agua" && flavorEntries.length > 0) {
           productData.description = `Flavors: ${flavorEntries.map(([f, q]) => `${f} ×${q}`).join(", ")}`;
         }
+        const meatEntries = Object.entries(extraMeatSelections).filter(([, q]) => (q || 0) > 0);
+        if (extra.id === "extraMeat" && meatEntries.length > 0) {
+          productData.description = `Meats: ${meatEntries.map(([m, q]) => `${m} ×${q}`).join(", ")}`;
+        }
         lineItems.push({
           price_data: {
             currency: "usd",
@@ -199,6 +205,7 @@ export async function POST(request: NextRequest) {
         id,
         quantity: qty,
         ...(id === "agua" && Object.keys(aguaFlavors).length > 0 && { flavors: aguaFlavors }),
+        ...(id === "extraMeat" && Object.keys(extraMeatSelections).length > 0 && { meatSelections: extraMeatSelections }),
       }));
 
     if (paymentMethod === "cash") {
@@ -286,6 +293,7 @@ export async function POST(request: NextRequest) {
         customerPhone,
         eventAddress,
         ...(Object.keys(aguaFlavors).length > 0 && { aguaFlavors: JSON.stringify(aguaFlavors) }),
+        ...(Object.keys(extraMeatSelections).length > 0 && { extraMeatSelections: JSON.stringify(extraMeatSelections) }),
         paymentMethod,
         locale,
       },

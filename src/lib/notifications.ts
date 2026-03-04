@@ -21,6 +21,17 @@ const EXTRA_DISPLAY_NAMES: Record<string, { en: string; es: string }> = {
   extraMeat: { en: "Extra Meat", es: "Carne Extra" },
 };
 
+const MEAT_DISPLAY_NAMES: Record<string, { en: string; es: string }> = {
+  asada: { en: "Asada", es: "Asada" },
+  pastor: { en: "Pastor", es: "Pastor" },
+  chicken: { en: "Chicken", es: "Pollo" },
+  chorizo: { en: "Chorizo", es: "Chorizo" },
+  fish: { en: "Fish Fillet", es: "Filete de Pescado" },
+  shrimp: { en: "Shrimp Fajitas", es: "Fajitas de Camarón" },
+  veggies: { en: "Veggies", es: "Vegetales" },
+  alambres: { en: "Alambres", es: "Alambres" },
+};
+
 const FLAVOR_DISPLAY_NAMES: Record<string, { en: string; es: string }> = {
   horchata: { en: "Horchata", es: "Horchata" },
   jamaica: { en: "Jamaica", es: "Jamaica" },
@@ -37,7 +48,7 @@ export interface EmailExtra {
 }
 
 export function mapExtrasForEmail(
-  dbExtras?: { id: string; quantity: number; flavors?: Record<string, number> | string[] }[],
+  dbExtras?: { id: string; quantity: number; flavors?: Record<string, number> | string[]; meatSelections?: Record<string, number> }[],
   locale: "en" | "es" = "en"
 ): EmailExtra[] {
   if (!dbExtras || dbExtras.length === 0) return [];
@@ -58,6 +69,20 @@ export function mapExtrasForEmail(
           name: FLAVOR_DISPLAY_NAMES[flavorId]?.[locale] || flavorId,
           quantity: qty,
         }));
+    }
+
+    // Parse extra meat selections
+    if (e.id === "extraMeat" && e.meatSelections && typeof e.meatSelections === "object") {
+      const meatRecord = e.meatSelections as Record<string, number>;
+      const meatFlavors = Object.entries(meatRecord)
+        .filter(([, qty]) => (qty || 0) > 0)
+        .map(([meatId, qty]) => ({
+          name: MEAT_DISPLAY_NAMES[meatId]?.[locale] || meatId,
+          quantity: qty,
+        }));
+      if (meatFlavors.length > 0) {
+        flavors = meatFlavors;
+      }
     }
 
     return {
@@ -458,7 +483,7 @@ interface DayBeforeReminderData extends ReminderData {
 }
 
 function formatExtrasForReminder(
-  extras?: { id: string; quantity: number; flavors?: Record<string, number> | string[] }[]
+  extras?: { id: string; quantity: number; flavors?: Record<string, number> | string[]; meatSelections?: Record<string, number> }[]
 ): { html: string; text: string } {
   if (!extras || extras.length === 0) return { html: "", text: "" };
 
@@ -474,6 +499,10 @@ function formatExtrasForReminder(
         const entries = Object.entries(e.flavors).filter(([, q]) => q > 0);
         if (entries.length > 0) flavorNote = ` (${entries.map(([f, q]) => `${f} ×${q}`).join(", ")})`;
       }
+    }
+    if (e.id === "extraMeat" && e.meatSelections && typeof e.meatSelections === "object") {
+      const entries = Object.entries(e.meatSelections).filter(([, q]) => q > 0);
+      if (entries.length > 0) flavorNote = ` (${entries.map(([m, q]) => `${m} ×${q}`).join(", ")})`;
     }
     return { name: `${name}${flavorNote}`, qty: e.quantity, price };
   });

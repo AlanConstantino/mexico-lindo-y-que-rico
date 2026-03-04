@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
-import type { ServiceType, MeatId, ExtraId, AguaFlavorQuantities } from "@/lib/pricing";
+import type { ServiceType, MeatId, ExtraId, AguaFlavorQuantities, ExtraMeatQuantities } from "@/lib/pricing";
 import { calculateTotal, getBasePrice, getExtrasTotal, calculateSurcharge, calculateDeposit, calculateProcessingFee } from "@/lib/pricing";
 import DateStep from "./steps/DateStep";
 import PackageStep from "./steps/PackageStep";
@@ -20,6 +20,7 @@ export interface BookingData {
   meats: MeatId[];
   extras: Partial<Record<ExtraId, number>>;
   aguaFlavors: AguaFlavorQuantities;
+  extraMeatSelections: ExtraMeatQuantities;
   customerName: string;
   customerEmail: string;
   customerPhone: string;
@@ -71,6 +72,7 @@ export default function BookingForm() {
     meats: [],
     extras: {},
     aguaFlavors: {},
+    extraMeatSelections: {},
     customerName: "",
     customerEmail: "",
     customerPhone: "",
@@ -96,6 +98,11 @@ export default function BookingForm() {
         if (aguaQty > 0) {
           const flavorSum = Object.values(data.aguaFlavors).reduce<number>((sum, n) => sum + (n || 0), 0);
           if (flavorSum !== aguaQty) return false;
+        }
+        const extraMeatQty = data.extras.extraMeat || 0;
+        if (extraMeatQty > 0) {
+          const meatSum = Object.values(data.extraMeatSelections).reduce<number>((sum, n) => sum + (n || 0), 0);
+          if (meatSum !== extraMeatQty) return false;
         }
         return true;
       }
@@ -155,6 +162,7 @@ export default function BookingForm() {
           meats: data.meats,
           extras: data.extras,
           aguaFlavors: data.aguaFlavors,
+          extraMeatSelections: data.extraMeatSelections,
           customerName: data.customerName,
           customerEmail: data.customerEmail,
           customerPhone: data.customerPhone,

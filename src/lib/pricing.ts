@@ -27,6 +27,8 @@ export const AGUA_FLAVORS: AguaFlavor[] = [
 
 export type AguaFlavorQuantities = Partial<Record<AguaFlavor, number>>;
 
+export type ExtraMeatQuantities = Partial<Record<MeatId, number>>;
+
 export type ExtraId =
   | "rice"
   | "beans"
