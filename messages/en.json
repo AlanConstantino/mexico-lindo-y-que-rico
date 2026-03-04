@@ -132,7 +132,9 @@
       "burgers": "Cheeseburgers",
       "hotdogs": "Hot Dogs",
       "extraTime": "Extra Time",
-      "extraTimeNote": "Add extra hours to your service package"
+      "extraTimeNote": "Add extra hours to your service package",
+      "extraMeat": "Extra Meat",
+      "extraMeatNote": "Add additional meat selections to your order"
     },
     "prices": {
       "each4": "$4 each",

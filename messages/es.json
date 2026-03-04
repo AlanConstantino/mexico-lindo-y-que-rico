@@ -132,7 +132,9 @@
       "burgers": "Hamburguesas con Queso",
       "hotdogs": "Hot Dogs",
       "extraTime": "Tiempo Extra",
-      "extraTimeNote": "Agrega horas adicionales a tu paquete de servicio"
+      "extraTimeNote": "Agrega horas adicionales a tu paquete de servicio",
+      "extraMeat": "Carne Extra",
+      "extraMeatNote": "Agrega selecciones adicionales de carne a tu pedido"
     },
     "prices": {
       "each4": "$4 c/u",

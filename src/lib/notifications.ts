@@ -18,6 +18,7 @@ const EXTRA_DISPLAY_NAMES: Record<string, { en: string; es: string }> = {
   burgers: { en: "Cheeseburgers", es: "Hamburguesas con Queso" },
   hotdogs: { en: "Hot Dogs", es: "Hot Dogs" },
   extraTime: { en: "Extra Time", es: "Tiempo Extra" },
+  extraMeat: { en: "Extra Meat", es: "Carne Extra" },
 };
 
 const FLAVOR_DISPLAY_NAMES: Record<string, { en: string; es: string }> = {

@@ -38,7 +38,8 @@ export type ExtraId =
   | "salad"
   | "burgers"
   | "hotdogs"
-  | "extraTime";
+  | "extraTime"
+  | "extraMeat";
 
 export const MEAT_OPTIONS: MeatId[] = [
   "asada",
@@ -89,6 +90,7 @@ export const EXTRA_OPTIONS: ExtraOption[] = [
   { id: "burgers", price: 4, perUnit: true },
   { id: "hotdogs", price: 2, perUnit: true },
   { id: "extraTime", price: 40, perUnit: true },
+  { id: "extraMeat", price: 40, perUnit: true },
 ];
 
 export function getBasePrice(

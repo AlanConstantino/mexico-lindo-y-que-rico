@@ -87,6 +87,9 @@ export default function ExtrasStep({ data, updateData }: ExtrasStepProps) {
                 {extra.id === "extraTime" && (
                   <div className="text-cream/20 text-[10px] mt-0.5">{tExtras("extraTimeNote")}</div>
                 )}
+                {extra.id === "extraMeat" && (
+                  <div className="text-cream/20 text-[10px] mt-0.5">{tExtras("extraMeatNote")}</div>
+                )}
               </div>
 
               {/* Quantity controls */}
