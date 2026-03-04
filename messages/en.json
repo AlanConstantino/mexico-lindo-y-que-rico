@@ -103,7 +103,8 @@
     },
     "largeEventTitle": "Need more than 200 guests?",
     "largeEventDesc": "Call us for a custom quote! We'll work with you to create the perfect package for your large event.",
-    "largeEventCta": "Call Us"
+    "largeEventCta": "Call Us",
+    "largeEventEmail": "or email us"
   },
   "extras": {
     "label": "Add-Ons",
@@ -282,7 +283,8 @@
     "perHour": "per hour",
     "largeEventTitle": "Need more than 200 guests?",
     "largeEventDesc": "Call us for a custom quote! We'll work with you to create the perfect package for your large event.",
-    "largeEventCta": "Call Us"
+    "largeEventCta": "Call Us",
+    "largeEventEmail": "or email us"
   },
   "admin": {
     "loading": "Loading...",

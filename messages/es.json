@@ -103,7 +103,8 @@
     },
     "largeEventTitle": "¿Necesita más de 200 invitados?",
     "largeEventDesc": "¡Llámenos para una cotización personalizada! Trabajaremos con usted para crear el paquete perfecto para su gran evento.",
-    "largeEventCta": "Llámenos"
+    "largeEventCta": "Llámenos",
+    "largeEventEmail": "o envíenos un correo"
   },
   "extras": {
     "label": "Complementos",
@@ -282,7 +283,8 @@
     "perHour": "por hora",
     "largeEventTitle": "¿Necesita más de 200 invitados?",
     "largeEventDesc": "¡Llámenos para una cotización personalizada! Trabajaremos con usted para crear el paquete perfecto para su gran evento.",
-    "largeEventCta": "Llámenos"
+    "largeEventCta": "Llámenos",
+    "largeEventEmail": "o envíenos un correo"
   },
   "admin": {
     "loading": "Cargando...",
