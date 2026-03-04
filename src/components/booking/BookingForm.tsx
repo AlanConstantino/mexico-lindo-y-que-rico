@@ -203,13 +203,22 @@ export default function BookingForm() {
             const isActive = stepNum === step;
             const isComplete = stepNum < step;
             return (
-              <div key={label} className="flex flex-col items-center flex-1">
+              <div
+                key={label}
+                className={`flex flex-col items-center flex-1 ${isComplete ? "cursor-pointer" : ""}`}
+                onClick={() => {
+                  if (isComplete) {
+                    setStep(stepNum);
+                    setError(null);
+                  }
+                }}
+              >
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold transition-all duration-300 ${
                     isActive
                       ? "bg-amber text-navy scale-110"
                       : isComplete
-                        ? "bg-amber/20 text-amber border border-amber/40"
+                        ? "bg-amber/20 text-amber border border-amber/40 hover:bg-amber/30 hover:scale-105"
                         : "bg-navy-light/50 text-cream/30 border border-cream/10"
                   }`}
                 >
