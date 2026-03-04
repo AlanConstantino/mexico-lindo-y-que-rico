@@ -190,7 +190,8 @@ export async function sendBookingNotification(
 
   const htmlMessage = `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-      <h1 style="color: #E8A935; border-bottom: 2px solid #C45A3C; padding-bottom: 10px;">
+      <img src="https://que.rico.catering/images/logo.png" alt="México Lindo Y Que Rico" width="80" height="80" style="display: block; margin: 0 auto 16px; border-radius: 8px;" />
+        <h1 style="color: #E8A935; border-bottom: 2px solid #C45A3C; padding-bottom: 10px;">
         🎉 ¡Nueva Reservación Recibida!
       </h1>
 
@@ -309,6 +310,7 @@ export async function sendCustomerConfirmation(
     <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
       <!-- Header -->
       <div style="background: #2D2926; padding: 40px 30px; text-align: center;">
+        <img src="https://que.rico.catering/images/logo.png" alt="México Lindo Y Que Rico" width="80" height="80" style="display: block; margin: 0 auto 16px; border-radius: 8px;" />
         <h1 style="color: #E8A935; margin: 0; font-size: 28px;">México Lindo Y Que Rico</h1>
         <p style="color: #FAF5EF99; margin: 8px 0 0; font-size: 14px;">Aquí la panza es primero.</p>
       </div>
@@ -523,6 +525,7 @@ export async function sendEventReminder(
     <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
       <!-- Header -->
       <div style="background: #2D2926; padding: 40px 30px; text-align: center;">
+        <img src="https://que.rico.catering/images/logo.png" alt="México Lindo Y Que Rico" width="80" height="80" style="display: block; margin: 0 auto 16px; border-radius: 8px;" />
         <h1 style="color: #E8A935; margin: 0; font-size: 28px;">México Lindo Y Que Rico</h1>
         <p style="color: #FAF5EF99; margin: 8px 0 0; font-size: 14px;">Aquí la panza es primero.</p>
       </div>
@@ -658,7 +661,8 @@ export async function sendOwnerReminder(
 
   const htmlMessage = `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-      <h1 style="color: #E8A935; border-bottom: 2px solid #C45A3C; padding-bottom: 10px;">
+      <img src="https://que.rico.catering/images/logo.png" alt="México Lindo Y Que Rico" width="80" height="80" style="display: block; margin: 0 auto 16px; border-radius: 8px;" />
+        <h1 style="color: #E8A935; border-bottom: 2px solid #C45A3C; padding-bottom: 10px;">
         📋 Evento Próximo — En ${data.reminderDays} Días
       </h1>
 
@@ -738,6 +742,7 @@ export async function sendDayBeforeReminder(
   const htmlMessage = `
     <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
       <div style="background: #2D2926; padding: 40px 30px; text-align: center;">
+        <img src="https://que.rico.catering/images/logo.png" alt="México Lindo Y Que Rico" width="80" height="80" style="display: block; margin: 0 auto 16px; border-radius: 8px;" />
         <h1 style="color: #E8A935; margin: 0; font-size: 28px;">México Lindo Y Que Rico</h1>
         <p style="color: #FAF5EF99; margin: 8px 0 0; font-size: 14px;">Aquí la panza es primero.</p>
       </div>
@@ -817,6 +822,7 @@ export async function sendCancellationConfirmation(data: {
   const htmlMessage = `
     <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
       <div style="background: #2D2926; padding: 40px 30px; text-align: center;">
+        <img src="https://que.rico.catering/images/logo.png" alt="México Lindo Y Que Rico" width="80" height="80" style="display: block; margin: 0 auto 16px; border-radius: 8px;" />
         <h1 style="color: #E8A935; margin: 0; font-size: 28px;">México Lindo Y Que Rico</h1>
       </div>
       <div style="padding: 30px;">
@@ -883,6 +889,7 @@ export async function sendOwnerCancellationNotice(data: {
     <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
       <!-- Header -->
       <div style="background: #2D2926; padding: 40px 30px; text-align: center;">
+        <img src="https://que.rico.catering/images/logo.png" alt="México Lindo Y Que Rico" width="80" height="80" style="display: block; margin: 0 auto 16px; border-radius: 8px;" />
         <h1 style="color: #E8A935; margin: 0; font-size: 28px;">México Lindo Y Que Rico</h1>
         <p style="color: #FAF5EF99; margin: 8px 0 0; font-size: 14px;">Aquí la panza es primero.</p>
       </div>
@@ -982,6 +989,7 @@ export async function sendRescheduleConfirmation(data: {
   const htmlMessage = `
     <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
       <div style="background: #2D2926; padding: 40px 30px; text-align: center;">
+        <img src="https://que.rico.catering/images/logo.png" alt="México Lindo Y Que Rico" width="80" height="80" style="display: block; margin: 0 auto 16px; border-radius: 8px;" />
         <h1 style="color: #E8A935; margin: 0; font-size: 28px;">México Lindo Y Que Rico</h1>
       </div>
       <div style="padding: 30px;">
@@ -1057,6 +1065,7 @@ export async function sendOwnerRescheduleNotice(data: {
     <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
       <!-- Header -->
       <div style="background: #2D2926; padding: 40px 30px; text-align: center;">
+        <img src="https://que.rico.catering/images/logo.png" alt="México Lindo Y Que Rico" width="80" height="80" style="display: block; margin: 0 auto 16px; border-radius: 8px;" />
         <h1 style="color: #E8A935; margin: 0; font-size: 28px;">México Lindo Y Que Rico</h1>
         <p style="color: #FAF5EF99; margin: 8px 0 0; font-size: 14px;">Aquí la panza es primero.</p>
       </div>
@@ -1182,6 +1191,7 @@ export async function sendCashPendingConfirmation(
     <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
       <!-- Header -->
       <div style="background: #2D2926; padding: 40px 30px; text-align: center;">
+        <img src="https://que.rico.catering/images/logo.png" alt="México Lindo Y Que Rico" width="80" height="80" style="display: block; margin: 0 auto 16px; border-radius: 8px;" />
         <h1 style="color: #E8A935; margin: 0; font-size: 28px;">México Lindo Y Que Rico</h1>
         <p style="color: #FAF5EF99; margin: 8px 0 0; font-size: 14px;">Aquí la panza es primero.</p>
       </div>
@@ -1304,6 +1314,7 @@ export async function sendOwnerInitiatedCancellation(data: {
   const htmlMessage = `
     <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
       <div style="background: #2D2926; padding: 40px 30px; text-align: center;">
+        <img src="https://que.rico.catering/images/logo.png" alt="México Lindo Y Que Rico" width="80" height="80" style="display: block; margin: 0 auto 16px; border-radius: 8px;" />
         <h1 style="color: #E8A935; margin: 0; font-size: 28px;">México Lindo Y Que Rico</h1>
       </div>
       <div style="padding: 30px;">
