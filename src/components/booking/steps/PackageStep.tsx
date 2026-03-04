@@ -104,6 +104,17 @@ export default function PackageStep({ data, updateData }: PackageStepProps) {
           </div>
         </div>
       )}
+
+      {/* Large event notice */}
+      <div className="mt-8 p-4 rounded-xl bg-amber/5 border border-amber/15 text-center">
+        <p className="text-cream/70 text-sm mb-2">{t("largeEventTitle")}</p>
+        <a
+          href="tel:+15622359361"
+          className="text-amber text-sm font-semibold hover:text-amber-light transition-colors"
+        >
+          {t("largeEventCta")} — (562) 235-9361
+        </a>
+      </div>
     </div>
   );
 }

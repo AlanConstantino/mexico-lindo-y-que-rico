@@ -100,7 +100,10 @@
       "plates": "Platos y Servilletas",
       "forks": "Tenedores con Arroz y Frijoles",
       "drinks": "Vasos, Hielo y Aguas Frescas"
-    }
+    },
+    "largeEventTitle": "¿Necesita más de 200 invitados?",
+    "largeEventDesc": "¡Llámenos para una cotización personalizada! Trabajaremos con usted para crear el paquete perfecto para su gran evento.",
+    "largeEventCta": "Llámenos"
   },
   "extras": {
     "label": "Complementos",
@@ -276,7 +279,10 @@
     "submitCashBooking": "Enviar Reserva",
     "spotsLeft": "{count} lugar(es) disponible(s)",
     "legendPartiallyBooked": "Parcialmente reservado",
-    "perHour": "por hora"
+    "perHour": "por hora",
+    "largeEventTitle": "¿Necesita más de 200 invitados?",
+    "largeEventDesc": "¡Llámenos para una cotización personalizada! Trabajaremos con usted para crear el paquete perfecto para su gran evento.",
+    "largeEventCta": "Llámenos"
   },
   "admin": {
     "loading": "Cargando...",

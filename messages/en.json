@@ -100,7 +100,10 @@
       "plates": "Plates & Napkins",
       "forks": "Forks with Rice and Beans",
       "drinks": "Cups, Ice & Aguas Frescas"
-    }
+    },
+    "largeEventTitle": "Need more than 200 guests?",
+    "largeEventDesc": "Call us for a custom quote! We'll work with you to create the perfect package for your large event.",
+    "largeEventCta": "Call Us"
   },
   "extras": {
     "label": "Add-Ons",
@@ -276,7 +279,10 @@
     "submitCashBooking": "Submit Booking",
     "spotsLeft": "{count} spot(s) remaining",
     "legendPartiallyBooked": "Partially booked",
-    "perHour": "per hour"
+    "perHour": "per hour",
+    "largeEventTitle": "Need more than 200 guests?",
+    "largeEventDesc": "Call us for a custom quote! We'll work with you to create the perfect package for your large event.",
+    "largeEventCta": "Call Us"
   },
   "admin": {
     "loading": "Loading...",
