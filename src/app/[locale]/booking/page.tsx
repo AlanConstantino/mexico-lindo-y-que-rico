@@ -27,7 +27,7 @@ export default async function BookingPage() {
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link
             href="/"
-            className="flex items-center gap-2 sm:gap-3 font-heading text-cream hover:text-amber transition-colors duration-300 text-sm sm:text-2xl leading-tight min-w-0"
+            className="flex items-center gap-2 sm:gap-3 font-heading text-cream hover:text-amber transition-colors duration-300 text-base sm:text-3xl leading-tight min-w-0"
           >
             <Image
               src="/images/logo.png"
