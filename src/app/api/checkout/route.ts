@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
     if (paymentMethod === "cash") {
       chargeAmount = 0;
       if (cashPaymentOption === "deposit") {
-        depositAmount = Math.round(serverTotal * serverCashDepositPercent) / 100;
+        depositAmount = Math.round(serverTotal * serverCashDepositPercent / 100 * 100) / 100;
         balanceDue = serverTotal - depositAmount;
       } else {
         // full payment
