@@ -26,6 +26,8 @@ export interface BookingData {
   customerPhone: string;
   eventAddress: string;
   paymentMethod: "card" | "cash";
+  cashPaymentMethod: 'zelle' | 'paypal' | 'cashapp' | 'venmo' | 'cash_in_person' | null;
+  cashPaymentOption: 'deposit' | 'full' | null;
 }
 
 const TOTAL_STEPS = 6;
@@ -78,6 +80,8 @@ export default function BookingForm() {
     customerPhone: "",
     eventAddress: "",
     paymentMethod: "card",
+    cashPaymentMethod: null,
+    cashPaymentOption: null,
   });
 
   const updateData = (updates: Partial<BookingData>) => {
@@ -169,6 +173,8 @@ export default function BookingForm() {
           eventAddress: data.eventAddress,
           totalPrice: subtotal,
           paymentMethod: data.paymentMethod,
+          cashPaymentMethod: data.cashPaymentMethod,
+          cashPaymentOption: data.cashPaymentOption,
           ccSurchargePercent: paymentSettings.cc_surcharge_percent,
           cashDepositPercent: paymentSettings.cash_deposit_percent,
           locale,
@@ -299,7 +305,9 @@ export default function BookingForm() {
             cashDepositPercent={paymentSettings.cash_deposit_percent}
             stripeFeePercent={paymentSettings.stripe_fee_percent}
             stripeFeeFlatCents={paymentSettings.stripe_fee_flat}
-            onPaymentMethodChange={(method: "card" | "cash") => updateData({ paymentMethod: method })}
+            onPaymentMethodChange={(method: "card" | "cash") => updateData({ paymentMethod: method, cashPaymentMethod: null, cashPaymentOption: null })}
+            onCashPaymentOptionChange={(option: 'deposit' | 'full') => updateData({ cashPaymentOption: option })}
+            onCashPaymentMethodChange={(method: 'zelle' | 'paypal' | 'cashapp' | 'venmo' | 'cash_in_person') => updateData({ cashPaymentMethod: method })}
           />
         )}
       </div>
@@ -335,7 +343,7 @@ export default function BookingForm() {
         ) : (
           <button
             onClick={handlePayment}
-            disabled={isSubmitting}
+            disabled={isSubmitting || (data.paymentMethod === "cash" && (!data.cashPaymentOption || !data.cashPaymentMethod))}
             className="px-8 py-3 bg-amber text-navy font-semibold rounded-full hover:bg-amber-light transition-all duration-300 hover:shadow-lg hover:shadow-amber/20 disabled:opacity-50 disabled:cursor-not-allowed text-sm flex items-center gap-2"
           >
             {isSubmitting ? (
@@ -361,6 +369,16 @@ export default function BookingForm() {
                 </svg>
                 {t("processing")}
               </>
+            ) : data.paymentMethod === "cash" && data.cashPaymentMethod && data.cashPaymentOption ? (
+              (() => {
+                const amt = data.cashPaymentOption === "deposit"
+                  ? (total! * paymentSettings.cash_deposit_percent / 100)
+                  : total!;
+                const methodLabel = {
+                  zelle: "Zelle", paypal: "PayPal", cashapp: "Cash App", venmo: "Venmo", cash_in_person: t("cashInPerson"),
+                }[data.cashPaymentMethod];
+                return `${t("submitCashBooking")} — $${amt.toFixed(2)} ${t("via")} ${methodLabel}`;
+              })()
             ) : data.paymentMethod === "cash" ? (
               t("submitCashBooking")
             ) : (
