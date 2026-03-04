@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
       .select("cancellation_fee_type, cancellation_fee_flat, cancellation_fee_percent, free_cancellation_days, notification_email")
       .single();
 
-    const freeCancellationDays = settings?.free_cancellation_days ?? 3;
+    const freeCancellationDays = settings?.free_cancellation_days ?? 7;
     const ownerEmail = settings?.notification_email ?? "mx.lindo.y.que.rico.catering@gmail.com";
 
     const eventDate = new Date(booking.event_date + "T00:00:00");

@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
 
     const reminderDays = settings?.reminder_days ?? 5;
     const ownerEmail = settings?.notification_email ?? "mx.lindo.y.que.rico.catering@gmail.com";
-    const freeCancellationDays = settings?.free_cancellation_days ?? 3;
+    const freeCancellationDays = settings?.free_cancellation_days ?? 7;
 
     // ── Part 1: N-days-before reminders ──
     const targetDateStr = addDaysPST(reminderDays);

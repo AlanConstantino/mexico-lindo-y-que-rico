@@ -52,7 +52,7 @@ export default function AdminSettingsPage() {
     cancellation_fee_type: "flat",
     cancellation_fee_flat: 50,
     cancellation_fee_percent: 25,
-    free_cancellation_days: 3,
+    free_cancellation_days: 7,
     noshow_fee_type: "flat",
     noshow_fee_flat: 100,
     noshow_fee_percent: 50,

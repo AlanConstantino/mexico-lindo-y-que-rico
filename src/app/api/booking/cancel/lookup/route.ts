@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
     .select("cancellation_fee_type, cancellation_fee_flat, cancellation_fee_percent, free_cancellation_days")
     .single();
 
-  const freeCancellationDays = settings?.free_cancellation_days ?? 3;
+  const freeCancellationDays = settings?.free_cancellation_days ?? 7;
   const eventDate = new Date(booking.event_date + "T00:00:00");
   const now = new Date();
   now.setHours(0, 0, 0, 0);
