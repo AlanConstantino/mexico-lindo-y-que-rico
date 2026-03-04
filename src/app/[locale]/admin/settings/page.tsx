@@ -20,6 +20,12 @@ interface Settings {
   noshow_fee_type: "flat" | "percentage";
   noshow_fee_flat: number;
   noshow_fee_percent: number;
+  zelle_handle: string;
+  venmo_handle: string;
+  cashapp_handle: string;
+  paypal_email: string;
+  cash_auto_cancel_hours: number;
+  cash_deposit_percent: number;
 }
 
 function getToken(): string | null {
@@ -56,6 +62,12 @@ export default function AdminSettingsPage() {
     noshow_fee_type: "flat",
     noshow_fee_flat: 100,
     noshow_fee_percent: 50,
+    zelle_handle: "(562) 746-3998",
+    venmo_handle: "",
+    cashapp_handle: "",
+    paypal_email: "",
+    cash_auto_cancel_hours: 48,
+    cash_deposit_percent: 10,
   });
 
   useEffect(() => {
@@ -371,6 +383,57 @@ export default function AdminSettingsPage() {
                   </div>
                 )}
                 <p className="text-xs text-cream/40">{t("settings.noshowFeeHint")}</p>
+              </div>
+            </div>
+
+            {/* Cash / Alternative Payments */}
+            <div className="pt-6 border-t border-cream/10">
+              <h3 className="text-cream/60 text-xs uppercase tracking-wider mb-4">
+                {t("settings.cashPaymentsTitle")}
+              </h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm text-cream/70 mb-1.5">{t("settings.cashDepositPercent")}</label>
+                  <input type="number" min={0} max={100} value={settings.cash_deposit_percent}
+                    onChange={(e) => setSettings({ ...settings, cash_deposit_percent: parseInt(e.target.value) || 0 })}
+                    className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors" />
+                  <p className="text-xs text-cream/40 mt-1">{t("settings.cashDepositPercentHint")}</p>
+                </div>
+                <div>
+                  <label className="block text-sm text-cream/70 mb-1.5">{t("settings.cashAutoCancelHours")}</label>
+                  <input type="number" min={1} max={168} value={settings.cash_auto_cancel_hours}
+                    onChange={(e) => setSettings({ ...settings, cash_auto_cancel_hours: parseInt(e.target.value) || 48 })}
+                    className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors" />
+                  <p className="text-xs text-cream/40 mt-1">{t("settings.cashAutoCancelHoursHint")}</p>
+                </div>
+                <div>
+                  <label className="block text-sm text-cream/70 mb-1.5">{t("settings.zelleHandle")}</label>
+                  <input type="text" value={settings.zelle_handle}
+                    onChange={(e) => setSettings({ ...settings, zelle_handle: e.target.value })}
+                    placeholder="(562) 746-3998"
+                    className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream placeholder:text-cream/30 focus:outline-none focus:border-amber/50 transition-colors" />
+                </div>
+                <div>
+                  <label className="block text-sm text-cream/70 mb-1.5">{t("settings.paypalEmail")}</label>
+                  <input type="email" value={settings.paypal_email}
+                    onChange={(e) => setSettings({ ...settings, paypal_email: e.target.value })}
+                    placeholder="paypal@example.com"
+                    className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream placeholder:text-cream/30 focus:outline-none focus:border-amber/50 transition-colors" />
+                </div>
+                <div>
+                  <label className="block text-sm text-cream/70 mb-1.5">{t("settings.cashappHandle")}</label>
+                  <input type="text" value={settings.cashapp_handle}
+                    onChange={(e) => setSettings({ ...settings, cashapp_handle: e.target.value })}
+                    placeholder="$yourtag"
+                    className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream placeholder:text-cream/30 focus:outline-none focus:border-amber/50 transition-colors" />
+                </div>
+                <div>
+                  <label className="block text-sm text-cream/70 mb-1.5">{t("settings.venmoHandle")}</label>
+                  <input type="text" value={settings.venmo_handle}
+                    onChange={(e) => setSettings({ ...settings, venmo_handle: e.target.value })}
+                    placeholder="@yourhandle"
+                    className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream placeholder:text-cream/30 focus:outline-none focus:border-amber/50 transition-colors" />
+                </div>
               </div>
             </div>
 
