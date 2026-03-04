@@ -445,7 +445,7 @@
       "testEmailPlaceholder": "Enter email address (leave empty to use notification email)",
       "cashPaymentsTitle": "Cash / Alternative Payments",
       "cashDepositPercent": "Cash Deposit (%)",
-      "cashDepositPercentHint": "Percentage of total required as deposit for cash bookings",
+      "cashDepositPercentHint": "Percentage of total required as non-refundable deposit for cash bookings",
       "cashAutoCancelHours": "Auto-Cancel Hours",
       "cashAutoCancelHoursHint": "Hours before unconfirmed cash bookings are automatically cancelled",
       "zelleHandle": "Zelle Phone/Email",

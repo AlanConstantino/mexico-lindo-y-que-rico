@@ -104,6 +104,7 @@ function formatTime(time: string): string {
 
 interface BookingNotification {
   bookingId: string;
+  bookingNumber?: string;
   customerName: string;
   customerEmail: string;
   customerPhone: string;
@@ -119,6 +120,14 @@ interface BookingNotification {
   overrideRecipient?: string;
   cancelUrl?: string;
   rescheduleUrl?: string;
+  // Cash payment fields
+  depositAmount?: number; // in cents
+  balanceDue?: number; // in cents
+  cashPaymentMethod?: string;
+  cashPaymentOption?: string; // "deposit" | "full"
+  depositDeadline?: string; // ISO date string
+  paymentHandle?: string; // the actual handle/number for the chosen method
+  depositPercent?: number;
 }
 
 // ─── Owner Notification (always English) ─────────────────────────
@@ -1169,6 +1178,11 @@ export async function sendOwnerRescheduleNotice(data: {
 
 // ─── Cash Booking Pending Confirmation (i18n) ────────────────────
 
+const PAYMENT_METHOD_LABELS: Record<string, Record<string, string>> = {
+  en: { zelle: "Zelle", paypal: "PayPal", cashapp: "Cash App", venmo: "Venmo", cash_in_person: "Cash in Person" },
+  es: { zelle: "Zelle", paypal: "PayPal", cashapp: "Cash App", venmo: "Venmo", cash_in_person: "Efectivo en Persona" },
+};
+
 export async function sendCashPendingConfirmation(
   booking: BookingNotification,
   locale: SupportedLocale = "en"
@@ -1179,11 +1193,45 @@ export async function sendCashPendingConfirmation(
   const svcLabel = emailTranslations.serviceLabel(booking.serviceType, locale);
   const cashTimeDisplay = booking.eventTime ? formatTime(booking.eventTime) : null;
 
+  const isDeposit = booking.cashPaymentOption === "deposit";
+  const amountDue = isDeposit
+    ? `$${((booking.depositAmount ?? 0) / 100).toFixed(2)}`
+    : formattedPrice;
+  const balanceDue = isDeposit
+    ? `$${((booking.balanceDue ?? 0) / 100).toFixed(2)}`
+    : "$0.00";
+  const methodLabel = PAYMENT_METHOD_LABELS[locale]?.[booking.cashPaymentMethod || ""] ?? booking.cashPaymentMethod ?? "";
+  const bookingNumber = booking.bookingNumber ?? booking.bookingId;
+
+  const deadlineDate = booking.depositDeadline
+    ? new Date(booking.depositDeadline).toLocaleString(locale === "es" ? "es-US" : "en-US", {
+        weekday: "long", month: "long", day: "numeric", year: "numeric",
+        hour: "numeric", minute: "2-digit", timeZoneName: "short",
+      })
+    : "";
+
   const textMessage = [
-    `${t.cashPending.heading}`,
+    t.cashPending.heading,
     ``,
-    `${t.cashPending.subtitle(booking.customerName)}`,
+    t.cashPending.subtitle(booking.customerName).replace(/<[^>]+>/g, ""),
     ``,
+    `--- ${t.cashPending.whatNext} ---`,
+    `1. ${t.cashPending.step1(amountDue, methodLabel).replace(/<[^>]+>/g, "")}`,
+    `2. ${t.cashPending.step2(bookingNumber).replace(/<[^>]+>/g, "")}`,
+    `3. ${t.cashPending.step3.replace(/<[^>]+>/g, "")}`,
+    ``,
+    `--- ${t.cashPending.paymentDetails} ---`,
+    `${t.cashPending.amountDue}: ${amountDue}${isDeposit ? ` (${booking.depositPercent ?? 10}% deposit)` : ""}`,
+    `${t.cashPending.paymentMethod}: ${methodLabel}`,
+    ...(booking.paymentHandle ? [`${t.cashPending.sendTo}: ${booking.paymentHandle}`] : []),
+    `${t.cashPending.reference}: ${bookingNumber}`,
+    ...(deadlineDate ? [`${t.cashPending.deadline}: ${deadlineDate}`] : []),
+    ``,
+    isDeposit ? t.cashPending.nonRefundable : t.cashPending.fullPaymentNote,
+    ...(isDeposit ? [`${t.cashPending.balanceRemaining}: ${balanceDue}`] : []),
+    ...(deadlineDate ? [``, t.cashPending.deadlineWarning(deadlineDate).replace(/<[^>]+>/g, "")] : []),
+    ``,
+    `--- ${t.cashPending.yourEventDetails} ---`,
     `${t.confirmation.date}: ${formattedDate}${cashTimeDisplay ? ` · ${cashTimeDisplay}` : ""}`,
     `${t.confirmation.address}: ${booking.eventAddress || t.confirmation.notProvided}`,
     `${t.confirmation.package}: ${svcLabel}`,
@@ -1201,7 +1249,6 @@ export async function sendCashPendingConfirmation(
       : []),
     ``,
     `${t.cashPending.estimatedTotal}: ${formattedPrice}`,
-    `${t.cashPending.dueCash}`,
     ``,
     `${t.confirmation.questionsCall} (562) 235-9361 / (562) 746-3998.`,
     ``,
@@ -1224,15 +1271,64 @@ export async function sendCashPendingConfirmation(
           ${t.cashPending.subtitle(booking.customerName)}
         </p>
 
-        <!-- What's Next -->
+        <!-- How to Confirm -->
         <div style="background: #E8A93520; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
           <h3 style="color: #1B2A4A; margin: 0 0 12px; font-size: 16px;">${t.cashPending.whatNext}</h3>
           <ol style="margin: 0; padding-left: 20px; color: #555; font-size: 14px; line-height: 1.8;">
-            <li>${t.cashPending.step1}</li>
-            <li>${t.cashPending.step2}</li>
+            <li>${t.cashPending.step1(amountDue, methodLabel)}</li>
+            <li>${t.cashPending.step2(bookingNumber)}</li>
             <li>${t.cashPending.step3}</li>
           </ol>
         </div>
+
+        <!-- Payment Instructions Card -->
+        <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border: 2px solid #CC2D2D;">
+          <h3 style="color: #CC2D2D; margin: 0 0 16px; font-size: 18px;">${t.cashPending.paymentDetails}</h3>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 8px 0; color: #888; font-size: 14px;">${t.cashPending.amountDue}</td>
+              <td style="padding: 8px 0; color: #1B2A4A; font-weight: 700; text-align: right; font-size: 18px;">${amountDue}${isDeposit ? ` <span style="font-size: 12px; font-weight: 400; color: #888;">(${booking.depositPercent ?? 10}%)</span>` : ""}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; color: #888; font-size: 14px;">${t.cashPending.paymentMethod}</td>
+              <td style="padding: 8px 0; color: #1B2A4A; font-weight: 600; text-align: right;">${methodLabel}</td>
+            </tr>
+            ${booking.paymentHandle ? `
+            <tr>
+              <td style="padding: 8px 0; color: #888; font-size: 14px;">${t.cashPending.sendTo}</td>
+              <td style="padding: 8px 0; color: #1B2A4A; font-weight: 600; text-align: right;">${booking.paymentHandle}</td>
+            </tr>
+            ` : ""}
+            <tr>
+              <td style="padding: 8px 0; color: #888; font-size: 14px;">${t.cashPending.reference}</td>
+              <td style="padding: 8px 0; color: #1B2A4A; font-weight: 600; text-align: right; font-family: monospace;">${bookingNumber}</td>
+            </tr>
+            ${deadlineDate ? `
+            <tr>
+              <td style="padding: 8px 0; color: #888; font-size: 14px;">${t.cashPending.deadline}</td>
+              <td style="padding: 8px 0; color: #CC2D2D; font-weight: 600; text-align: right; font-size: 13px;">${deadlineDate}</td>
+            </tr>
+            ` : ""}
+          </table>
+
+          ${isDeposit ? `
+          <div style="margin-top: 16px; padding: 12px; background: #CC2D2D10; border-radius: 8px; border-left: 3px solid #CC2D2D;">
+            <p style="margin: 0 0 4px; color: #CC2D2D; font-size: 13px; font-weight: 600;">${t.cashPending.nonRefundable}</p>
+            <p style="margin: 0; color: #555; font-size: 13px;">${t.cashPending.balanceRemaining}: <strong>${balanceDue}</strong></p>
+          </div>
+          ` : `
+          <div style="margin-top: 16px; padding: 12px; background: #2B5DAE10; border-radius: 8px;">
+            <p style="margin: 0; color: #2B5DAE; font-size: 13px;">${t.cashPending.fullPaymentNote}</p>
+          </div>
+          `}
+        </div>
+
+        ${deadlineDate ? `
+        <!-- Deadline Warning -->
+        <div style="background: #CC2D2D; color: white; padding: 16px 20px; border-radius: 12px; margin-bottom: 24px; text-align: center;">
+          <p style="margin: 0; font-size: 14px;">${t.cashPending.deadlineWarning(deadlineDate)}</p>
+        </div>
+        ` : ""}
 
         <!-- Event Details Card -->
         <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #E8A935;">
@@ -1285,7 +1381,6 @@ export async function sendCashPendingConfirmation(
         <div style="background: #1B2A4A; color: #FAF5EF; padding: 24px; border-radius: 12px; text-align: center; margin-bottom: 24px;">
           <p style="margin: 0 0 4px; color: #FAF5EF99; font-size: 14px;">${t.cashPending.estimatedTotal}</p>
           <p style="margin: 0; font-size: 32px; font-weight: bold; color: #E8A935;">${formattedPrice}</p>
-          <p style="margin: 8px 0 0; color: #FAF5EF66; font-size: 12px;">${t.cashPending.dueCash}</p>
         </div>
 
         <!-- Contact -->
@@ -1301,7 +1396,7 @@ export async function sendCashPendingConfirmation(
         <p style="margin: 0; color: #FAF5EF66; font-size: 12px;">
           ${t.confirmation.footer}
         </p>
-        <p style="margin: 4px 0 0; color: #FAF5EF44; font-size: 11px;">Booking ID: ${booking.bookingId}</p>
+        <p style="margin: 4px 0 0; color: #FAF5EF44; font-size: 11px;">Ref: ${bookingNumber}</p>
       </div>
     </div>
   `;

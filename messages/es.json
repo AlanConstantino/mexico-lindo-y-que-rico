@@ -445,7 +445,7 @@
       "testEmailPlaceholder": "Ingresa correo electrónico (dejar vacío para usar correo de notificaciones)",
       "cashPaymentsTitle": "Pagos en Efectivo / Alternativos",
       "cashDepositPercent": "Depósito en Efectivo (%)",
-      "cashDepositPercentHint": "Porcentaje del total requerido como depósito para reservas en efectivo",
+      "cashDepositPercentHint": "Porcentaje del total requerido como depósito no reembolsable para reservas en efectivo",
       "cashAutoCancelHours": "Horas para Auto-Cancelación",
       "cashAutoCancelHoursHint": "Horas antes de que las reservas en efectivo sin confirmar se cancelen automáticamente",
       "zelleHandle": "Teléfono/Email de Zelle",

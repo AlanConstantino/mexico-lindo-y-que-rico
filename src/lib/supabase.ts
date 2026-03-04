@@ -14,10 +14,10 @@ export const supabaseAdmin = createClient(
 
 /**
  * Generate a short, human-readable booking reference number.
- * Format: QR-YYYYMMDD-XXXX (e.g., QR-20260301-A3F2)
+ * Format: QR-YYYYMMDD-XXXXXX (e.g., QR-20260301-A3F2B7)
  */
 export function generateBookingNumber(eventDate: string): string {
   const datePart = eventDate.replace(/-/g, "");
-  const hex = Math.random().toString(16).substring(2, 6).toUpperCase();
+  const hex = Math.random().toString(16).substring(2, 8).toUpperCase().padEnd(6, "0");
   return `QR-${datePart}-${hex}`;
 }

@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
     // Fetch payment settings from DB (server-side truth)
     const { data: paySettings } = await supabaseAdmin
       .from("settings")
-      .select("cc_surcharge_percent, cash_deposit_percent, stripe_fee_percent, stripe_fee_flat, cash_auto_cancel_hours")
+      .select("cc_surcharge_percent, cash_deposit_percent, stripe_fee_percent, stripe_fee_flat, cash_auto_cancel_hours, zelle_handle, venmo_handle, cashapp_handle, paypal_email")
       .single();
 
     const serverSurchargePercent = paySettings?.cc_surcharge_percent ?? 10;
@@ -259,10 +259,22 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "Failed to create booking" }, { status: 500 });
       }
 
+      // Resolve the payment handle for the chosen method
+      const paymentHandleMap: Record<string, string | null> = {
+        zelle: paySettings?.zelle_handle ?? "(562) 746-3998",
+        paypal: paySettings?.paypal_email ?? null,
+        cashapp: paySettings?.cashapp_handle ?? null,
+        venmo: paySettings?.venmo_handle ?? null,
+        cash_in_person: null,
+      };
+      const paymentHandle = paymentHandleMap[cashPaymentMethod || ""] ?? null;
+      const depositDeadline = new Date(Date.now() + serverCashAutoCancelHours * 60 * 60 * 1000).toISOString();
+
       // Notify owner + send pending confirmation to customer
       const { sendBookingNotification, sendCashPendingConfirmation, mapExtrasForEmail } = await import("@/lib/notifications");
       const baseNotifData = {
         bookingId: booking.id,
+        bookingNumber: booking.booking_number,
         customerName,
         customerEmail,
         customerPhone,
@@ -274,6 +286,13 @@ export async function POST(request: NextRequest) {
         eventAddress,
         totalPrice: serverTotal * 100,
         paymentType: "cash",
+        depositAmount: Math.round(depositAmount * 100),
+        balanceDue: Math.round(balanceDue * 100),
+        cashPaymentMethod: cashPaymentMethod || undefined,
+        cashPaymentOption: cashPaymentOption || "full",
+        depositDeadline,
+        paymentHandle: paymentHandle || undefined,
+        depositPercent: serverCashDepositPercent,
       };
       await Promise.all([
         sendBookingNotification({ ...baseNotifData, extras: mapExtrasForEmail(extrasData, "es") }),
