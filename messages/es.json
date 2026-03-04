@@ -452,7 +452,13 @@
       "paypalEmail": "Email de PayPal",
       "cashappHandle": "$Cashtag de Cash App",
       "venmoHandle": "@Handle de Venmo"
-    }
+    },
+    "paidInFull": "Pagado",
+    "depositPaid": "Depósito Pagado",
+    "balanceDue": "Saldo pendiente: ${amount}",
+    "awaitingPayment": "Esperando Pago",
+    "confirmPayment": "Confirmar Pago",
+    "via": "vía"
   },
   "metadata": {
     "home": {

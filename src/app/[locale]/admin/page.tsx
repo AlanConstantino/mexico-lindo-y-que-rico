@@ -33,6 +33,12 @@ interface Booking {
   status: string;
   created_at: string;
   booking_number: string | null;
+  payment_type: string;
+  cash_payment_option: string | null;
+  cash_payment_method: string | null;
+  deposit_confirmed: boolean;
+  deposit_amount: number;
+  balance_due: number;
 }
 
 function getToken(): string | null {
@@ -203,6 +209,26 @@ export default function AdminPage() {
       console.error("Failed to update status");
     } finally {
       setUpdatingId(null);
+    }
+  };
+
+  const confirmCashPayment = async (id: string) => {
+    const token = getToken();
+    if (!token) return;
+    try {
+      const res = await fetch("/api/admin/bookings/confirm-payment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ bookingId: id }),
+      });
+      if (res.ok) {
+        fetchBookings();
+      }
+    } catch {
+      console.error("Failed to confirm payment");
     }
   };
 
@@ -602,13 +628,54 @@ export default function AdminPage() {
                           ${(booking.total_price / 100).toFixed(2)}
                         </span>
                         <span>
-                          <span
-                            className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-medium ${paymentColor(
-                              booking.stripe_payment_status
-                            )}`}
-                          >
-                            {booking.stripe_payment_status}
-                          </span>
+                          {booking.payment_type === "cash" ? (
+                            <span className="flex flex-col items-start gap-1">
+                              <span
+                                className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-medium ${
+                                  booking.deposit_confirmed && booking.cash_payment_option === "full"
+                                    ? "bg-teal/20 text-teal-light border border-teal/20"
+                                    : booking.deposit_confirmed
+                                      ? "bg-amber/15 text-amber border border-amber/20"
+                                      : "bg-terracotta/15 text-terracotta-light border border-terracotta/20"
+                                }`}
+                              >
+                                {booking.deposit_confirmed && booking.cash_payment_option === "full"
+                                  ? `🟢 ${t("admin.paidInFull")}`
+                                  : booking.deposit_confirmed
+                                    ? `🟡 ${t("admin.depositPaid")}`
+                                    : `🔴 ${t("admin.awaitingPayment")}`}
+                              </span>
+                              {booking.deposit_confirmed && booking.cash_payment_option === "deposit" && booking.balance_due > 0 && (
+                                <span className="text-[10px] text-cream/40">
+                                  {t("admin.balanceDue", { amount: (booking.balance_due / 100).toFixed(2) })}
+                                </span>
+                              )}
+                              {booking.cash_payment_method && (
+                                <span className="text-[10px] text-cream/30">
+                                  {t("admin.via")} {booking.cash_payment_method}
+                                </span>
+                              )}
+                              {!booking.deposit_confirmed && booking.status !== "cancelled" && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    confirmCashPayment(booking.id);
+                                  }}
+                                  className="text-[10px] px-2 py-0.5 bg-teal/20 text-teal-light rounded-full hover:bg-teal/30 transition-colors"
+                                >
+                                  ✓ {t("admin.confirmPayment")}
+                                </button>
+                              )}
+                            </span>
+                          ) : (
+                            <span
+                              className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-medium ${paymentColor(
+                                booking.stripe_payment_status
+                              )}`}
+                            >
+                              {booking.stripe_payment_status}
+                            </span>
+                          )}
                         </span>
                         <span>
                           <span
