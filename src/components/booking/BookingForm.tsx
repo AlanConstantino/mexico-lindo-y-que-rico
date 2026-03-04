@@ -305,7 +305,9 @@ export default function BookingForm() {
             cashDepositPercent={paymentSettings.cash_deposit_percent}
             stripeFeePercent={paymentSettings.stripe_fee_percent}
             stripeFeeFlatCents={paymentSettings.stripe_fee_flat}
-            onPaymentMethodChange={(method: "card" | "cash") => updateData({ paymentMethod: method })}
+            onPaymentMethodChange={(method: "card" | "cash") => updateData({ paymentMethod: method, cashPaymentMethod: null, cashPaymentOption: null })}
+            onCashPaymentOptionChange={(option: 'deposit' | 'full') => updateData({ cashPaymentOption: option })}
+            onCashPaymentMethodChange={(method: 'zelle' | 'paypal' | 'cashapp' | 'venmo' | 'cash_in_person') => updateData({ cashPaymentMethod: method })}
           />
         )}
       </div>
@@ -367,6 +369,16 @@ export default function BookingForm() {
                 </svg>
                 {t("processing")}
               </>
+            ) : data.paymentMethod === "cash" && data.cashPaymentMethod && data.cashPaymentOption ? (
+              (() => {
+                const amt = data.cashPaymentOption === "deposit"
+                  ? (total! * paymentSettings.cash_deposit_percent / 100)
+                  : total!;
+                const methodLabel = {
+                  zelle: "Zelle", paypal: "PayPal", cashapp: "Cash App", venmo: "Venmo", cash_in_person: t("cashInPerson"),
+                }[data.cashPaymentMethod];
+                return `${t("submitCashBooking")} — $${amt.toFixed(2)} ${t("via")} ${methodLabel}`;
+              })()
             ) : data.paymentMethod === "cash" ? (
               t("submitCashBooking")
             ) : (

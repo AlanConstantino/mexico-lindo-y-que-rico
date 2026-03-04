@@ -14,6 +14,8 @@ interface ReviewStepProps {
   stripeFeePercent: number;
   stripeFeeFlatCents: number;
   onPaymentMethodChange: (method: "card" | "cash") => void;
+  onCashPaymentOptionChange: (option: "deposit" | "full") => void;
+  onCashPaymentMethodChange: (method: "zelle" | "paypal" | "cashapp" | "venmo" | "cash_in_person") => void;
 }
 
 export default function ReviewStep({
@@ -26,6 +28,8 @@ export default function ReviewStep({
   stripeFeePercent,
   stripeFeeFlatCents,
   onPaymentMethodChange,
+  onCashPaymentOptionChange,
+  onCashPaymentMethodChange,
 }: ReviewStepProps) {
   const t = useTranslations("booking");
   const tMenu = useTranslations("menu.meats");
@@ -234,15 +238,88 @@ export default function ReviewStep({
                 <span className="text-cream font-medium text-sm">{t("payWithCash")}</span>
               </div>
               <div className="space-y-1">
-                <p className="text-cream/50 text-xs">{t("cardOnFileNote")}</p>
                 <div className="flex justify-between text-xs">
-                  <span className="text-cream/50">{t("cashDueOnEventDay")}</span>
+                  <span className="text-cream/50">{t("total")}</span>
                   <span className="text-cream/70">${total.toFixed(2)}</span>
                 </div>
               </div>
             </button>
 
           </div>
+
+          {/* Cash Payment Options */}
+          {data.paymentMethod === "cash" && (
+            <div className="mt-4 space-y-4">
+              {/* Deposit or Full Payment */}
+              <div>
+                <div className="text-cream/50 text-xs uppercase tracking-wider mb-2">
+                  {t("cashPaymentOptionLabel")}
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => onCashPaymentOptionChange("deposit")}
+                    className={`p-3 rounded-xl border-2 text-left transition-all duration-200 ${
+                      data.cashPaymentOption === "deposit"
+                        ? "border-amber bg-amber/5"
+                        : "border-cream/10 hover:border-cream/20"
+                    }`}
+                  >
+                    <div className="text-cream font-medium text-sm">{t("payDeposit", { percent: cashDepositPercent })}</div>
+                    <div className="text-amber text-lg font-heading mt-1">${depositAmount.toFixed(2)}</div>
+                    <div className="text-cream/40 text-xs mt-1">{t("balanceDueOnEvent", { amount: balanceDue.toFixed(2) })}</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onCashPaymentOptionChange("full")}
+                    className={`p-3 rounded-xl border-2 text-left transition-all duration-200 ${
+                      data.cashPaymentOption === "full"
+                        ? "border-amber bg-amber/5"
+                        : "border-cream/10 hover:border-cream/20"
+                    }`}
+                  >
+                    <div className="text-cream font-medium text-sm">{t("payInFull")}</div>
+                    <div className="text-amber text-lg font-heading mt-1">${total.toFixed(2)}</div>
+                    <div className="text-cream/40 text-xs mt-1">{t("nothingDueOnEvent")}</div>
+                  </button>
+                </div>
+              </div>
+
+              {/* Payment Method Picker */}
+              {data.cashPaymentOption && (
+                <div>
+                  <div className="text-cream/50 text-xs uppercase tracking-wider mb-2">
+                    {t("cashMethodLabel")}
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {(["zelle", "paypal", "cashapp", "venmo"] as const).map((method) => (
+                      <button
+                        key={method}
+                        type="button"
+                        onClick={() => onCashPaymentMethodChange(method)}
+                        className={`p-3 rounded-xl border-2 text-center transition-all duration-200 ${
+                          data.cashPaymentMethod === method
+                            ? "border-amber bg-amber/5"
+                            : "border-cream/10 hover:border-cream/20"
+                        }`}
+                      >
+                        <div className="text-cream font-medium text-sm">{t(`cashMethod_${method}`)}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Auto-cancel warning */}
+              {data.cashPaymentMethod && (
+                <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20">
+                  <p className="text-red-400 text-xs">
+                    ⚠️ {t("cashAutoCancelWarning")}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Price Breakdown */}
@@ -279,9 +356,16 @@ export default function ReviewStep({
               ${data.paymentMethod === "card" ? cardTotal.toFixed(2) : total.toFixed(2)}
             </span>
           </div>
-          {data.paymentMethod === "cash" && (
-            <div className="text-xs text-cream/40 mt-2">
-              {t("cardOnFileSummary")}
+          {data.paymentMethod === "cash" && data.cashPaymentOption === "deposit" && (
+            <div className="mt-3 pt-3 border-t border-cream/10 space-y-1">
+              <div className="flex justify-between text-xs">
+                <span className="text-cream/50">{t("depositDueNow")}</span>
+                <span className="text-amber font-medium">${depositAmount.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-cream/50">{t("balanceDueLabel")}</span>
+                <span className="text-cream/50">${balanceDue.toFixed(2)}</span>
+              </div>
             </div>
           )}
         </div>
