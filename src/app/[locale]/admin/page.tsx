@@ -97,6 +97,7 @@ export default function AdminPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(false);
   const [filterStatus, setFilterStatus] = useState("all");
+  const [filterPayment, setFilterPayment] = useState("all");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -265,15 +266,23 @@ export default function AdminPage() {
 
   // Filtered bookings for table (by search query)
   const filteredBookings = useMemo(() => {
-    if (!searchQuery.trim()) return bookings;
-    const q = searchQuery.toLowerCase();
-    return bookings.filter(
-      (b) =>
-        b.customer_name.toLowerCase().includes(q) ||
-        b.customer_email.toLowerCase().includes(q) ||
-        (b.booking_number && b.booking_number.toLowerCase().includes(q))
-    );
-  }, [bookings, searchQuery]);
+    let result = bookings;
+    if (filterPayment === "card") {
+      result = result.filter((b) => b.stripe_payment_status !== "not_applicable");
+    } else if (filterPayment === "cash") {
+      result = result.filter((b) => b.stripe_payment_status === "not_applicable");
+    }
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(
+        (b) =>
+          b.customer_name.toLowerCase().includes(q) ||
+          b.customer_email.toLowerCase().includes(q) ||
+          (b.booking_number && b.booking_number.toLowerCase().includes(q))
+      );
+    }
+    return result;
+  }, [bookings, searchQuery, filterPayment]);
 
   const statusColor = (status: string) => {
     switch (status) {
@@ -487,6 +496,18 @@ export default function AdminPage() {
                       <option value="pending">{t("filters.pending")}</option>
                       <option value="confirmed">{t("filters.confirmed")}</option>
                       <option value="cancelled">{t("filters.cancelled")}</option>
+                    </select>
+                  </div>
+                  <div className="shrink-0">
+                    <label className="block text-cream/40 text-xs uppercase tracking-wider mb-1.5">{t("filters.paymentType")}</label>
+                    <select
+                      value={filterPayment}
+                      onChange={(e) => setFilterPayment(e.target.value)}
+                      className="px-3 py-2.5 bg-navy border border-cream/10 rounded-lg text-sm text-cream focus:outline-none focus:border-amber/50"
+                    >
+                      <option value="all">{t("filters.all")}</option>
+                      <option value="card">{t("filters.card")}</option>
+                      <option value="cash">{t("filters.cash")}</option>
                     </select>
                   </div>
                 </div>

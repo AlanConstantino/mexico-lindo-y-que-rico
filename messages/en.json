@@ -329,7 +329,10 @@
       "from": "From date",
       "to": "To date",
       "apply": "Apply",
-      "csv": "Export CSV"
+      "csv": "Export CSV",
+      "paymentType": "Payment",
+      "card": "Card",
+      "cash": "Cash"
     },
     "table": {
       "date": "Date",

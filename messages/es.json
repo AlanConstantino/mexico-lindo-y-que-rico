@@ -329,7 +329,10 @@
       "from": "Desde",
       "to": "Hasta",
       "apply": "Aplicar",
-      "csv": "Exportar CSV"
+      "csv": "Exportar CSV",
+      "paymentType": "Pago",
+      "card": "Tarjeta",
+      "cash": "Efectivo"
     },
     "table": {
       "date": "Fecha",
