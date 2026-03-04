@@ -96,6 +96,15 @@ export const emailTranslations = {
       reason: "If you have any questions or would like to rebook, please don't hesitate to reach out to us at",
       apology: "We apologize for any inconvenience and hope to serve you in the future!",
     },
+    autoCancellation: {
+      subject: "Booking Cancelled — Payment Not Received",
+      heading: "Booking Cancelled",
+      message: (name: string, date: string) =>
+        `Hi ${name}, your catering booking for <strong>${date}</strong> has been automatically cancelled because payment was not confirmed within the required deadline.`,
+      amountDue: "Amount due",
+      contactUs: "If you believe this was an error or would like to rebook, please contact us at",
+      apology: "We apologize for any inconvenience and hope to serve you in the future!",
+    },
     reschedule: {
       subject: (date: string) => `Booking Rescheduled — ${date} 🌮`,
       heading: "Booking Rescheduled! 📅",
@@ -179,6 +188,15 @@ export const emailTranslations = {
       message: (name: string, date: string) =>
         `Hola ${name}, lamentamos informarte que tu reservación de catering para el <strong>${date}</strong> ha sido cancelada.`,
       reason: "Si tienes alguna pregunta o deseas reservar nuevamente, no dudes en comunicarte con nosotros al",
+      apology: "¡Nos disculpamos por cualquier inconveniente y esperamos atenderte en el futuro!",
+    },
+    autoCancellation: {
+      subject: "Reservación Cancelada — Pago No Recibido",
+      heading: "Reservación Cancelada",
+      message: (name: string, date: string) =>
+        `Hola ${name}, tu reservación de catering para el <strong>${date}</strong> ha sido cancelada automáticamente porque el pago no fue confirmado dentro del plazo requerido.`,
+      amountDue: "Monto pendiente",
+      contactUs: "Si crees que esto fue un error o deseas reservar nuevamente, comunícate con nosotros al",
       apology: "¡Nos disculpamos por cualquier inconveniente y esperamos atenderte en el futuro!",
     },
     reschedule: {

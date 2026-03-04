@@ -1372,3 +1372,51 @@ export async function sendOwnerInitiatedCancellation(data: {
     console.error("❌ Failed to send owner-initiated cancellation email:", error);
   }
 }
+
+export async function sendAutoCancelEmail(data: {
+  customerName: string;
+  customerEmail: string;
+  eventDate: string;
+  bookingId: string;
+  bookingNumber?: string | null;
+  amountDue: number;
+}, locale: SupportedLocale = "en"): Promise<void> {
+  const t = getTranslations(locale);
+  const formattedDate = emailTranslations.formatDate(data.eventDate, locale);
+  const formattedAmount = `$${(data.amountDue / 100).toFixed(2)}`;
+
+  const htmlMessage = `
+    <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
+      <div style="background: #1B2A4A; padding: 40px 30px; text-align: center;">
+        <img src="https://que.rico.catering/images/logo.png" alt="México Lindo Y Que Rico" width="80" height="80" style="display: block; margin: 0 auto 16px; border-radius: 8px;" />
+        <h1 style="color: #E8A935; margin: 0; font-size: 28px;">México Lindo Y Que Rico</h1>
+      </div>
+      <div style="padding: 30px;">
+        <h2 style="color: #CC2D2D; margin: 0 0 8px;">❌ ${t.autoCancellation.heading}</h2>
+        <p style="color: #555; margin: 0 0 16px; line-height: 1.6;">${t.autoCancellation.message(data.customerName, formattedDate)}</p>
+        <div style="background: #1B2A4A0A; border-radius: 8px; padding: 16px; margin: 0 0 16px;">
+          ${data.bookingNumber ? `<p style="color: #555; margin: 0 0 8px;"><strong>Ref:</strong> ${data.bookingNumber}</p>` : ""}
+          <p style="color: #555; margin: 0 0 8px;"><strong>${t.autoCancellation.amountDue}:</strong> ${formattedAmount}</p>
+        </div>
+        <p style="color: #555; line-height: 1.6;">${t.autoCancellation.contactUs} <a href="tel:5622359361" style="color: #E8A935;">(562) 235-9361</a> or <a href="tel:5627463998" style="color: #E8A935;">(562) 746-3998</a>.</p>
+        <p style="color: #555; line-height: 1.6;">${t.autoCancellation.apology}</p>
+      </div>
+      <div style="background: #1B2A4A; padding: 20px 30px; text-align: center;">
+        <p style="margin: 0; color: #FAF5EF44; font-size: 11px;">${data.bookingNumber ? `Ref: ${data.bookingNumber} · ` : ""}Booking ID: ${data.bookingId}</p>
+      </div>
+    </div>
+  `;
+
+  try {
+    await resend.emails.send({
+      from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
+      to: data.customerEmail,
+      subject: t.autoCancellation.subject,
+      text: `${t.autoCancellation.heading} — ${formattedDate}. ${t.autoCancellation.amountDue}: ${formattedAmount}. ${t.autoCancellation.contactUs} (562) 235-9361 or (562) 746-3998.`,
+      html: htmlMessage,
+    });
+    console.log(`✅ Auto-cancel email sent to ${data.customerEmail}`);
+  } catch (error) {
+    console.error("❌ Failed to send auto-cancel email:", error);
+  }
+}
