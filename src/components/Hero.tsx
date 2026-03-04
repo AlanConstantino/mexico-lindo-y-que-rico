@@ -29,12 +29,23 @@ export default function Hero() {
           {t("subtitle")}
         </p>
 
-        <h1 className="animate-fade-in-up opacity-0 animate-delay-100 font-heading text-4xl sm:text-7xl md:text-8xl lg:text-9xl text-cream leading-[0.9] mb-3 sm:mb-4">
-          {t("heading1")}
-        </h1>
-        <h1 className="animate-fade-in-up opacity-0 animate-delay-200 font-heading text-4xl sm:text-7xl md:text-8xl lg:text-9xl text-amber leading-[0.9] mb-5 sm:mb-8">
-          {t("heading2")}
-        </h1>
+        <div className="animate-fade-in-up opacity-0 animate-delay-100 flex items-center justify-center gap-4 sm:gap-6 md:gap-8 mb-5 sm:mb-8">
+          <Image
+            src="/images/logo.png"
+            alt="México Lindo Y Que Rico logo"
+            width={150}
+            height={150}
+            className="w-20 h-20 sm:w-28 sm:h-28 md:w-36 md:h-36 lg:w-40 lg:h-40 rounded-xl object-cover flex-shrink-0"
+          />
+          <div className="text-left">
+            <h1 className="font-heading text-4xl sm:text-7xl md:text-8xl lg:text-9xl text-cream leading-[0.9] mb-1 sm:mb-2">
+              {t("heading1")}
+            </h1>
+            <h1 className="animate-fade-in-up opacity-0 animate-delay-200 font-heading text-4xl sm:text-7xl md:text-8xl lg:text-9xl text-amber leading-[0.9]">
+              {t("heading2")}
+            </h1>
+          </div>
+        </div>
 
         <p className="animate-fade-in-up opacity-0 animate-delay-300 font-heading text-lg sm:text-2xl md:text-3xl text-cream/60 italic mb-8 sm:mb-12">
           &ldquo;{t("tagline")}&rdquo;
