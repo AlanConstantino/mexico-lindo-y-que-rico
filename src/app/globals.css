@@ -1,20 +1,20 @@
 @import "tailwindcss";
 
 @theme {
-  --color-navy: #2D2926;
-  --color-navy-light: #3A3632;
-  --color-navy-dark: #1E1B19;
+  --color-navy: #1B2A4A;
+  --color-navy-light: #243658;
+  --color-navy-dark: #111D33;
   --color-amber: #E8A935;
   --color-amber-light: #F0BD55;
   --color-amber-dark: #C8912A;
-  --color-terracotta: #C45A3C;
-  --color-terracotta-light: #D46E52;
-  --color-terracotta-dark: #A64B30;
+  --color-terracotta: #CC2D2D;
+  --color-terracotta-light: #E04040;
+  --color-terracotta-dark: #A82222;
   --color-cream: #FAF5EF;
   --color-cream-dark: #EDE6DC;
-  --color-teal: #7A8B6F;
-  --color-teal-light: #8FA382;
-  --color-teal-dark: #65745B;
+  --color-teal: #2B5DAE;
+  --color-teal-light: #3A71C4;
+  --color-teal-dark: #1E4A8A;
 
   --font-heading: "Supermercado One", cursive;
   --font-body: "DM Sans", sans-serif;

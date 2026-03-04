@@ -20,8 +20,8 @@ interface Booking {
 const COLORS = {
   amber: "#E8A935",
   amberLight: "#F0BD55",
-  navy: "#2D2926",
-  navyLight: "#3A3632",
+  navy: "#1B2A4A",
+  navyLight: "#243658",
   cream: "#FAF5EF",
   creamMuted: "rgba(250,245,239,0.4)",
   gridLine: "rgba(250,245,239,0.06)",

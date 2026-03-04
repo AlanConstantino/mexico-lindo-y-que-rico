@@ -18,7 +18,7 @@ interface Booking {
 const COLORS = {
   terracotta: "#C45A3C",
   terracottaLight: "#D46E52",
-  navyLight: "#3A3632",
+  navyLight: "#243658",
   cream: "#FAF5EF",
   creamMuted: "rgba(250,245,239,0.4)",
   gridLine: "rgba(250,245,239,0.06)",

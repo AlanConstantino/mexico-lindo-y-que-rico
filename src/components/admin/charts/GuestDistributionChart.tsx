@@ -17,7 +17,7 @@ interface Booking {
 const PIE_COLORS = ["#E8A935", "#C45A3C", "#7A8B6F", "#F0BD55"];
 
 const COLORS = {
-  navyLight: "#3A3632",
+  navyLight: "#243658",
   cream: "#FAF5EF",
 };
 

@@ -192,30 +192,30 @@ export async function sendBookingNotification(
   const htmlMessage = `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
       <img src="https://que.rico.catering/images/logo.png" alt="México Lindo Y Que Rico" width="80" height="80" style="display: block; margin: 0 auto 16px; border-radius: 8px;" />
-        <h1 style="color: #E8A935; border-bottom: 2px solid #C45A3C; padding-bottom: 10px;">
+        <h1 style="color: #E8A935; border-bottom: 2px solid #CC2D2D; padding-bottom: 10px;">
         🎉 ¡Nueva Reservación Recibida!
       </h1>
 
       ${paymentBannerHtml}
       
-      <h3 style="color: #3B2A1E;">Info del Cliente</h3>
+      <h3 style="color: #1B2A4A;">Info del Cliente</h3>
       <p><strong>Nombre:</strong> ${booking.customerName}</p>
       <p><strong>Correo:</strong> <a href="mailto:${booking.customerEmail}">${booking.customerEmail}</a></p>
       <p><strong>Teléfono:</strong> <a href="tel:${booking.customerPhone}">${booking.customerPhone}</a></p>
       
-      <h3 style="color: #3B2A1E;">Detalles del Evento</h3>
+      <h3 style="color: #1B2A4A;">Detalles del Evento</h3>
       <p><strong>Fecha:</strong> ${formattedDate}</p>
       ${timeDisplay ? `<p><strong>Hora:</strong> ${timeDisplay}</p>` : ""}
       <p><strong>Dirección:</strong> ${booking.eventAddress || "No proporcionada"}</p>
       <p><strong>Paquete:</strong> Servicio de ${booking.serviceType === "2hr" ? "2" : "3"} Horas</p>
       <p><strong>Invitados:</strong> ${booking.guestCount}</p>
       
-      <h3 style="color: #3B2A1E;">Carnes</h3>
+      <h3 style="color: #1B2A4A;">Carnes</h3>
       <ul>
         ${booking.meats.map((m) => `<li>${m}</li>`).join("")}
       </ul>
       
-      <h3 style="color: #3B2A1E;">Extras</h3>
+      <h3 style="color: #1B2A4A;">Extras</h3>
       ${
         booking.extras?.length
           ? `<ul>${booking.extras.map((e) => {
@@ -228,7 +228,7 @@ export async function sendBookingNotification(
           : "<p>Ninguno</p>"
       }
       
-      <div style="background: #2D2926; color: #FAF5EF; padding: 20px; border-radius: 12px; margin-top: 20px; text-align: center;">
+      <div style="background: #1B2A4A; color: #FAF5EF; padding: 20px; border-radius: 12px; margin-top: 20px; text-align: center;">
         <p style="font-size: 24px; margin: 0; color: #E8A935; font-weight: bold;">${formattedPrice}</p>
         <p style="margin: 5px 0 0; color: #FAF5EF99;">Monto Total</p>
       </div>
@@ -310,7 +310,7 @@ export async function sendCustomerConfirmation(
   const htmlMessage = `
     <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
       <!-- Header -->
-      <div style="background: #2D2926; padding: 40px 30px; text-align: center;">
+      <div style="background: #1B2A4A; padding: 40px 30px; text-align: center;">
         <img src="https://que.rico.catering/images/logo.png" alt="México Lindo Y Que Rico" width="80" height="80" style="display: block; margin: 0 auto 16px; border-radius: 8px;" />
         <h1 style="color: #E8A935; margin: 0; font-size: 28px;">México Lindo Y Que Rico</h1>
         <p style="color: #FAF5EF99; margin: 8px 0 0; font-size: 14px;">Aquí la panza es primero.</p>
@@ -318,38 +318,38 @@ export async function sendCustomerConfirmation(
 
       <!-- Body -->
       <div style="padding: 30px;">
-        <h2 style="color: #2D2926; margin: 0 0 8px;">${t.confirmation.greeting(booking.customerName)}</h2>
+        <h2 style="color: #1B2A4A; margin: 0 0 8px;">${t.confirmation.greeting(booking.customerName)}</h2>
         <p style="color: #555; margin: 0 0 24px; font-size: 16px;">
           ${t.confirmation.subtitle}
         </p>
 
         <!-- Event Details Card -->
         <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #E8A935;">
-          <h3 style="color: #2D2926; margin: 0 0 16px; font-size: 18px;">${t.confirmation.eventDetails}</h3>
+          <h3 style="color: #1B2A4A; margin: 0 0 16px; font-size: 18px;">${t.confirmation.eventDetails}</h3>
           <table style="width: 100%; border-collapse: collapse;">
             <tr>
               <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.date}</td>
-              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${formattedDate}${custTimeDisplay ? ` · ${custTimeDisplay}` : ""}</td>
+              <td style="padding: 6px 0; color: #1B2A4A; font-weight: 600; text-align: right;">${formattedDate}${custTimeDisplay ? ` · ${custTimeDisplay}` : ""}</td>
             </tr>
             <tr>
               <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.address}</td>
-              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${booking.eventAddress || t.confirmation.notProvided}</td>
+              <td style="padding: 6px 0; color: #1B2A4A; font-weight: 600; text-align: right;">${booking.eventAddress || t.confirmation.notProvided}</td>
             </tr>
             <tr>
               <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.package}</td>
-              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${svcLabel}</td>
+              <td style="padding: 6px 0; color: #1B2A4A; font-weight: 600; text-align: right;">${svcLabel}</td>
             </tr>
             <tr>
               <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.guests}</td>
-              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${booking.guestCount}</td>
+              <td style="padding: 6px 0; color: #1B2A4A; font-weight: 600; text-align: right;">${booking.guestCount}</td>
             </tr>
           </table>
         </div>
 
         <!-- Meats Card -->
-        <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #C45A3C;">
-          <h3 style="color: #2D2926; margin: 0 0 12px; font-size: 18px;">${t.confirmation.yourMeats}</h3>
-          <ul style="margin: 0; padding-left: 20px; color: #2D2926;">
+        <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #CC2D2D;">
+          <h3 style="color: #1B2A4A; margin: 0 0 12px; font-size: 18px;">${t.confirmation.yourMeats}</h3>
+          <ul style="margin: 0; padding-left: 20px; color: #1B2A4A;">
             ${booking.meats.map((m) => `<li style="padding: 4px 0;">${m}</li>`).join("")}
           </ul>
         </div>
@@ -359,8 +359,8 @@ export async function sendCustomerConfirmation(
             ? `
         <!-- Extras Card -->
         <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #7A8B6F;">
-          <h3 style="color: #2D2926; margin: 0 0 12px; font-size: 18px;">${t.confirmation.extras}</h3>
-          <ul style="margin: 0; padding-left: 20px; color: #2D2926;">
+          <h3 style="color: #1B2A4A; margin: 0 0 12px; font-size: 18px;">${t.confirmation.extras}</h3>
+          <ul style="margin: 0; padding-left: 20px; color: #1B2A4A;">
             ${extrasSection}
           </ul>
         </div>`
@@ -369,21 +369,21 @@ export async function sendCustomerConfirmation(
 
         <!-- What's Included -->
         <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #E8A935;">
-          <h3 style="color: #2D2926; margin: 0 0 12px; font-size: 18px;">${t.confirmation.whatsIncluded}</h3>
+          <h3 style="color: #1B2A4A; margin: 0 0 12px; font-size: 18px;">${t.confirmation.whatsIncluded}</h3>
           <ul style="margin: 0; padding-left: 20px; color: #555;">
             ${(t.confirmation.includedItems as unknown as string[]).map((item: string) => `<li style="padding: 3px 0; font-size: 14px;">${item}</li>`).join("")}
           </ul>
         </div>
 
         <!-- Total -->
-        <div style="background: #2D2926; color: #FAF5EF; padding: 24px; border-radius: 12px; text-align: center; margin-bottom: 24px;">
+        <div style="background: #1B2A4A; color: #FAF5EF; padding: 24px; border-radius: 12px; text-align: center; margin-bottom: 24px;">
           <p style="margin: 0 0 4px; color: #FAF5EF99; font-size: 14px;">${t.confirmation.totalPaid}</p>
           <p style="margin: 0; font-size: 32px; font-weight: bold; color: #E8A935;">${formattedPrice}</p>
         </div>
 
         <!-- Setup Note -->
         <div style="background: #E8A93520; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
-          <p style="margin: 0; color: #2D2926; font-size: 14px;">
+          <p style="margin: 0; color: #1B2A4A; font-size: 14px;">
             ${t.confirmation.setupNote}
           </p>
         </div>
@@ -391,9 +391,9 @@ export async function sendCustomerConfirmation(
         ${booking.cancelUrl || booking.rescheduleUrl ? `
         <!-- Manage Booking -->
         <div style="background: #f5f0eb; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px; text-align: center;">
-          <p style="margin: 0 0 8px; color: #2D2926; font-size: 13px; font-weight: 600;">${t.confirmation.manageBooking}</p>
+          <p style="margin: 0 0 8px; color: #1B2A4A; font-size: 13px; font-weight: 600;">${t.confirmation.manageBooking}</p>
           <p style="margin: 0; font-size: 13px;">
-            ${booking.rescheduleUrl ? `<a href="${booking.rescheduleUrl}" style="color: #C45A3C; text-decoration: none; font-weight: 600;">${t.confirmation.reschedule}</a>` : ""}
+            ${booking.rescheduleUrl ? `<a href="${booking.rescheduleUrl}" style="color: #CC2D2D; text-decoration: none; font-weight: 600;">${t.confirmation.reschedule}</a>` : ""}
             ${booking.cancelUrl && booking.rescheduleUrl ? ' &nbsp;·&nbsp; ' : ""}
             ${booking.cancelUrl ? `<a href="${booking.cancelUrl}" style="color: #888; text-decoration: none;">${t.confirmation.cancelBooking}</a>` : ""}
           </p>
@@ -402,13 +402,13 @@ export async function sendCustomerConfirmation(
 
         <!-- Contact -->
         <p style="color: #555; font-size: 14px; text-align: center; margin: 0;">
-          ${t.confirmation.questionsCall} <a href="tel:5622359361" style="color: #C45A3C; text-decoration: none; font-weight: 600;">(562) 235-9361</a>
-          or <a href="tel:5627463998" style="color: #C45A3C; text-decoration: none; font-weight: 600;">(562) 746-3998</a>
+          ${t.confirmation.questionsCall} <a href="tel:5622359361" style="color: #CC2D2D; text-decoration: none; font-weight: 600;">(562) 235-9361</a>
+          or <a href="tel:5627463998" style="color: #CC2D2D; text-decoration: none; font-weight: 600;">(562) 746-3998</a>
         </p>
       </div>
 
       <!-- Footer -->
-      <div style="background: #2D2926; padding: 20px 30px; text-align: center;">
+      <div style="background: #1B2A4A; padding: 20px 30px; text-align: center;">
         <p style="margin: 0; color: #FAF5EF66; font-size: 12px;">
           ${t.confirmation.footer}
         </p>
@@ -480,8 +480,8 @@ function formatExtrasForReminder(
 
   const html = `
     <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #7A8B6F;">
-      <h3 style="color: #2D2926; margin: 0 0 12px; font-size: 18px;">✨ Extras</h3>
-      <ul style="margin: 0; padding-left: 20px; color: #2D2926;">
+      <h3 style="color: #1B2A4A; margin: 0 0 12px; font-size: 18px;">✨ Extras</h3>
+      <ul style="margin: 0; padding-left: 20px; color: #1B2A4A;">
         ${lines.map((l) => `<li style="padding: 4px 0;">${l.name} x${l.qty} — ${l.price}</li>`).join("")}
       </ul>
     </div>`;
@@ -525,7 +525,7 @@ export async function sendEventReminder(
   const htmlMessage = `
     <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
       <!-- Header -->
-      <div style="background: #2D2926; padding: 40px 30px; text-align: center;">
+      <div style="background: #1B2A4A; padding: 40px 30px; text-align: center;">
         <img src="https://que.rico.catering/images/logo.png" alt="México Lindo Y Que Rico" width="80" height="80" style="display: block; margin: 0 auto 16px; border-radius: 8px;" />
         <h1 style="color: #E8A935; margin: 0; font-size: 28px;">México Lindo Y Que Rico</h1>
         <p style="color: #FAF5EF99; margin: 8px 0 0; font-size: 14px;">Aquí la panza es primero.</p>
@@ -533,38 +533,38 @@ export async function sendEventReminder(
 
       <!-- Body -->
       <div style="padding: 30px;">
-        <h2 style="color: #2D2926; margin: 0 0 8px;">${t.reminder.heading(data.reminderDays)}</h2>
+        <h2 style="color: #1B2A4A; margin: 0 0 8px;">${t.reminder.heading(data.reminderDays)}</h2>
         <p style="color: #555; margin: 0 0 24px; font-size: 16px;">
           ${t.reminder.subtitle(data.customerName)}
         </p>
 
         <!-- Event Details Card -->
         <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #E8A935;">
-          <h3 style="color: #2D2926; margin: 0 0 16px; font-size: 18px;">${t.confirmation.eventDetails}</h3>
+          <h3 style="color: #1B2A4A; margin: 0 0 16px; font-size: 18px;">${t.confirmation.eventDetails}</h3>
           <table style="width: 100%; border-collapse: collapse;">
             <tr>
               <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.date}</td>
-              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${formattedDate}${reminderTimeDisplay ? ` · ${reminderTimeDisplay}` : ""}</td>
+              <td style="padding: 6px 0; color: #1B2A4A; font-weight: 600; text-align: right;">${formattedDate}${reminderTimeDisplay ? ` · ${reminderTimeDisplay}` : ""}</td>
             </tr>
             <tr>
               <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.address}</td>
-              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${data.eventAddress || t.confirmation.notProvided}</td>
+              <td style="padding: 6px 0; color: #1B2A4A; font-weight: 600; text-align: right;">${data.eventAddress || t.confirmation.notProvided}</td>
             </tr>
             <tr>
               <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.package}</td>
-              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${svcLabel}</td>
+              <td style="padding: 6px 0; color: #1B2A4A; font-weight: 600; text-align: right;">${svcLabel}</td>
             </tr>
             <tr>
               <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.guests}</td>
-              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${data.guestCount}</td>
+              <td style="padding: 6px 0; color: #1B2A4A; font-weight: 600; text-align: right;">${data.guestCount}</td>
             </tr>
           </table>
         </div>
 
         <!-- Meats Card -->
-        <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #C45A3C;">
-          <h3 style="color: #2D2926; margin: 0 0 12px; font-size: 18px;">${t.confirmation.yourMeats}</h3>
-          <ul style="margin: 0; padding-left: 20px; color: #2D2926;">
+        <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #CC2D2D;">
+          <h3 style="color: #1B2A4A; margin: 0 0 12px; font-size: 18px;">${t.confirmation.yourMeats}</h3>
+          <ul style="margin: 0; padding-left: 20px; color: #1B2A4A;">
             ${data.meats.map((m) => `<li style="padding: 4px 0;">${m}</li>`).join("")}
           </ul>
         </div>
@@ -572,34 +572,34 @@ export async function sendEventReminder(
         ${extrasHtml}
 
         <!-- Total -->
-        <div style="background: #2D2926; color: #FAF5EF; padding: 24px; border-radius: 12px; text-align: center; margin-bottom: 24px;">
+        <div style="background: #1B2A4A; color: #FAF5EF; padding: 24px; border-radius: 12px; text-align: center; margin-bottom: 24px;">
           <p style="margin: 0 0 4px; color: #FAF5EF99; font-size: 14px;">${t.confirmation.totalPaid}</p>
           <p style="margin: 0; font-size: 32px; font-weight: bold; color: #E8A935;">${formattedPrice}</p>
         </div>
 
         <!-- Setup Note -->
         <div style="background: #E8A93520; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
-          <p style="margin: 0; color: #2D2926; font-size: 14px;">
+          <p style="margin: 0; color: #1B2A4A; font-size: 14px;">
             ${t.confirmation.setupNote}
           </p>
         </div>
 
         ${data.cancelUrl || data.rescheduleUrl ? `
         <div style="text-align: center; margin-bottom: 24px;">
-          ${data.cancelUrl ? `<a href="${data.cancelUrl}" style="display: inline-block; padding: 12px 24px; background: #C45A3C; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 0 8px 8px 0;">${t.confirmation.cancelBooking}</a>` : ""}
-          ${data.rescheduleUrl ? `<a href="${data.rescheduleUrl}" style="display: inline-block; padding: 12px 24px; background: #E8A935; color: #2D2926; text-decoration: none; border-radius: 8px; font-weight: 600;">${t.confirmation.reschedule}</a>` : ""}
+          ${data.cancelUrl ? `<a href="${data.cancelUrl}" style="display: inline-block; padding: 12px 24px; background: #CC2D2D; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 0 8px 8px 0;">${t.confirmation.cancelBooking}</a>` : ""}
+          ${data.rescheduleUrl ? `<a href="${data.rescheduleUrl}" style="display: inline-block; padding: 12px 24px; background: #E8A935; color: #1B2A4A; text-decoration: none; border-radius: 8px; font-weight: 600;">${t.confirmation.reschedule}</a>` : ""}
         </div>` : ""}
 
         <!-- Contact -->
         <p style="color: #555; font-size: 14px; text-align: center; margin: 0;">
           ${t.confirmation.questionsCall}
-          <a href="tel:5622359361" style="color: #C45A3C; text-decoration: none; font-weight: 600;">(562) 235-9361</a>
-          or <a href="tel:5627463998" style="color: #C45A3C; text-decoration: none; font-weight: 600;">(562) 746-3998</a>
+          <a href="tel:5622359361" style="color: #CC2D2D; text-decoration: none; font-weight: 600;">(562) 235-9361</a>
+          or <a href="tel:5627463998" style="color: #CC2D2D; text-decoration: none; font-weight: 600;">(562) 746-3998</a>
         </p>
       </div>
 
       <!-- Footer -->
-      <div style="background: #2D2926; padding: 20px 30px; text-align: center;">
+      <div style="background: #1B2A4A; padding: 20px 30px; text-align: center;">
         <p style="margin: 0; color: #FAF5EF66; font-size: 12px;">
           ${t.confirmation.footer}
         </p>
@@ -663,26 +663,26 @@ export async function sendOwnerReminder(
   const htmlMessage = `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
       <img src="https://que.rico.catering/images/logo.png" alt="México Lindo Y Que Rico" width="80" height="80" style="display: block; margin: 0 auto 16px; border-radius: 8px;" />
-        <h1 style="color: #E8A935; border-bottom: 2px solid #C45A3C; padding-bottom: 10px;">
+        <h1 style="color: #E8A935; border-bottom: 2px solid #CC2D2D; padding-bottom: 10px;">
         📋 Evento Próximo — En ${data.reminderDays} Días
       </h1>
 
-      <h3 style="color: #3B2A1E;">Cliente</h3>
+      <h3 style="color: #1B2A4A;">Cliente</h3>
       <p><strong>Nombre:</strong> ${data.customerName}</p>
       <p><strong>Teléfono:</strong> <a href="tel:${data.customerPhone}">${data.customerPhone}</a></p>
       <p><strong>Correo:</strong> <a href="mailto:${data.customerEmail}">${data.customerEmail}</a></p>
 
-      <h3 style="color: #3B2A1E;">Detalles del Evento</h3>
+      <h3 style="color: #1B2A4A;">Detalles del Evento</h3>
       <p><strong>Fecha:</strong> ${formattedDate}</p>
       ${ownerTimeDisplay ? `<p><strong>Hora:</strong> ${ownerTimeDisplay}</p>` : ""}
       <p><strong>Dirección:</strong> ${data.eventAddress || "No proporcionada"}</p>
       <p><strong>Paquete:</strong> Servicio de ${data.serviceType === "2hr" ? "2" : "3"} Horas</p>
       <p><strong>Invitados:</strong> ${data.guestCount}</p>
 
-      <h3 style="color: #3B2A1E;">Carnes</h3>
+      <h3 style="color: #1B2A4A;">Carnes</h3>
       <ul>${data.meats.map((m) => `<li>${m}</li>`).join("")}</ul>
 
-      <div style="background: #2D2926; color: #FAF5EF; padding: 20px; border-radius: 12px; margin-top: 20px; text-align: center;">
+      <div style="background: #1B2A4A; color: #FAF5EF; padding: 20px; border-radius: 12px; margin-top: 20px; text-align: center;">
         <p style="font-size: 24px; margin: 0; color: #E8A935; font-weight: bold;">${formattedPrice}</p>
         <p style="margin: 5px 0 0; color: #FAF5EF99;">Monto Total</p>
       </div>
@@ -742,49 +742,49 @@ export async function sendDayBeforeReminder(
 
   const htmlMessage = `
     <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
-      <div style="background: #2D2926; padding: 40px 30px; text-align: center;">
+      <div style="background: #1B2A4A; padding: 40px 30px; text-align: center;">
         <img src="https://que.rico.catering/images/logo.png" alt="México Lindo Y Que Rico" width="80" height="80" style="display: block; margin: 0 auto 16px; border-radius: 8px;" />
         <h1 style="color: #E8A935; margin: 0; font-size: 28px;">México Lindo Y Que Rico</h1>
         <p style="color: #FAF5EF99; margin: 8px 0 0; font-size: 14px;">Aquí la panza es primero.</p>
       </div>
       <div style="padding: 30px;">
-        <h2 style="color: #2D2926; margin: 0 0 8px;">${t.dayBefore.heading}</h2>
+        <h2 style="color: #1B2A4A; margin: 0 0 8px;">${t.dayBefore.heading}</h2>
         <p style="color: #555; margin: 0 0 24px; font-size: 16px;">
           ${t.dayBefore.subtitle(data.customerName)}
         </p>
         <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #E8A935;">
-          <h3 style="color: #2D2926; margin: 0 0 16px; font-size: 18px;">${t.confirmation.eventDetails}</h3>
+          <h3 style="color: #1B2A4A; margin: 0 0 16px; font-size: 18px;">${t.confirmation.eventDetails}</h3>
           <table style="width: 100%; border-collapse: collapse;">
-            <tr><td style="padding: 6px 0; color: #888;">${t.confirmation.date}</td><td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${formattedDate}${dayBeforeTimeDisplay ? ` · ${dayBeforeTimeDisplay}` : ""}</td></tr>
-            <tr><td style="padding: 6px 0; color: #888;">${t.confirmation.address}</td><td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${data.eventAddress || t.confirmation.notProvided}</td></tr>
-            <tr><td style="padding: 6px 0; color: #888;">${t.confirmation.package}</td><td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${svcLabel}</td></tr>
-            <tr><td style="padding: 6px 0; color: #888;">${t.confirmation.guests}</td><td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${data.guestCount}</td></tr>
+            <tr><td style="padding: 6px 0; color: #888;">${t.confirmation.date}</td><td style="padding: 6px 0; color: #1B2A4A; font-weight: 600; text-align: right;">${formattedDate}${dayBeforeTimeDisplay ? ` · ${dayBeforeTimeDisplay}` : ""}</td></tr>
+            <tr><td style="padding: 6px 0; color: #888;">${t.confirmation.address}</td><td style="padding: 6px 0; color: #1B2A4A; font-weight: 600; text-align: right;">${data.eventAddress || t.confirmation.notProvided}</td></tr>
+            <tr><td style="padding: 6px 0; color: #888;">${t.confirmation.package}</td><td style="padding: 6px 0; color: #1B2A4A; font-weight: 600; text-align: right;">${svcLabel}</td></tr>
+            <tr><td style="padding: 6px 0; color: #888;">${t.confirmation.guests}</td><td style="padding: 6px 0; color: #1B2A4A; font-weight: 600; text-align: right;">${data.guestCount}</td></tr>
           </table>
         </div>
-        <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #C45A3C;">
-          <h3 style="color: #2D2926; margin: 0 0 12px; font-size: 18px;">${t.confirmation.yourMeats}</h3>
-          <ul style="margin: 0; padding-left: 20px; color: #2D2926;">
+        <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #CC2D2D;">
+          <h3 style="color: #1B2A4A; margin: 0 0 12px; font-size: 18px;">${t.confirmation.yourMeats}</h3>
+          <ul style="margin: 0; padding-left: 20px; color: #1B2A4A;">
             ${data.meats.map((m: string) => `<li style="padding: 4px 0;">${m}</li>`).join("")}
           </ul>
         </div>
         ${extrasHtml}
-        <div style="background: #2D2926; color: #FAF5EF; padding: 24px; border-radius: 12px; text-align: center; margin-bottom: 24px;">
+        <div style="background: #1B2A4A; color: #FAF5EF; padding: 24px; border-radius: 12px; text-align: center; margin-bottom: 24px;">
           <p style="margin: 0 0 4px; color: #FAF5EF99; font-size: 14px;">${t.confirmation.totalPaid}</p>
           <p style="margin: 0; font-size: 32px; font-weight: bold; color: #E8A935;">${formattedPrice}</p>
         </div>
         <div style="background: #E8A93520; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
-          <p style="margin: 0; color: #2D2926; font-size: 14px;">${t.dayBefore.setupNote}</p>
+          <p style="margin: 0; color: #1B2A4A; font-size: 14px;">${t.dayBefore.setupNote}</p>
         </div>
-        <div style="background: #C45A3C15; border: 1px solid #C45A3C30; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
-          <p style="margin: 0 0 8px; color: #C45A3C; font-size: 14px; font-weight: 600;">${t.dayBefore.needToCancel}</p>
+        <div style="background: #CC2D2D15; border: 1px solid #CC2D2D30; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
+          <p style="margin: 0 0 8px; color: #CC2D2D; font-size: 14px; font-weight: 600;">${t.dayBefore.needToCancel}</p>
           <p style="margin: 0 0 12px; color: #555; font-size: 13px;">${t.dayBefore.cancelWarning(formattedFee)}</p>
-          <a href="${data.cancelUrl}" style="display: inline-block; padding: 10px 20px; background: #C45A3C; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 13px;">${t.confirmation.cancelBooking}</a>
+          <a href="${data.cancelUrl}" style="display: inline-block; padding: 10px 20px; background: #CC2D2D; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 13px;">${t.confirmation.cancelBooking}</a>
         </div>
         <div style="background: #E8A93520; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
-          <p style="margin: 0; color: #2D2926; font-size: 14px;">${t.dayBefore.needToReschedule(locale)} <a href="tel:5622359361" style="color: #C45A3C;">(562) 235-9361</a> or <a href="tel:5627463998" style="color: #C45A3C;">(562) 746-3998</a></p>
+          <p style="margin: 0; color: #1B2A4A; font-size: 14px;">${t.dayBefore.needToReschedule(locale)} <a href="tel:5622359361" style="color: #CC2D2D;">(562) 235-9361</a> or <a href="tel:5627463998" style="color: #CC2D2D;">(562) 746-3998</a></p>
         </div>
       </div>
-      <div style="background: #2D2926; padding: 20px 30px; text-align: center;">
+      <div style="background: #1B2A4A; padding: 20px 30px; text-align: center;">
         <p style="margin: 0; color: #FAF5EF66; font-size: 12px;">${t.confirmation.footer}</p>
         <p style="margin: 4px 0 0; color: #FAF5EF44; font-size: 11px;">Booking ID: ${data.bookingId}</p>
       </div>
@@ -822,19 +822,19 @@ export async function sendCancellationConfirmation(data: {
 
   const htmlMessage = `
     <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
-      <div style="background: #2D2926; padding: 40px 30px; text-align: center;">
+      <div style="background: #1B2A4A; padding: 40px 30px; text-align: center;">
         <img src="https://que.rico.catering/images/logo.png" alt="México Lindo Y Que Rico" width="80" height="80" style="display: block; margin: 0 auto 16px; border-radius: 8px;" />
         <h1 style="color: #E8A935; margin: 0; font-size: 28px;">México Lindo Y Que Rico</h1>
       </div>
       <div style="padding: 30px;">
-        <h2 style="color: #2D2926; margin: 0 0 8px;">${t.cancellation.heading}</h2>
+        <h2 style="color: #1B2A4A; margin: 0 0 8px;">${t.cancellation.heading}</h2>
         <p style="color: #555; margin: 0 0 24px;">${t.cancellation.message(data.customerName, formattedDate)}</p>
         ${data.cancellationFee > 0 ? `<p style="color: #555;">${t.cancellation.cancellationFee}: <strong>${formattedFee}</strong></p>` : ""}
         <p style="color: #555;">${t.cancellation.refundAmount}: <strong>${formattedRefund}</strong></p>
         <p style="color: #888; font-size: 13px;">${t.cancellation.refundNote}</p>
-        <p style="color: #555; font-size: 14px; margin-top: 24px;">${t.cancellation.hopeToServe} <a href="tel:5622359361" style="color: #C45A3C;">(562) 235-9361</a> or <a href="tel:5627463998" style="color: #C45A3C;">(562) 746-3998</a>.</p>
+        <p style="color: #555; font-size: 14px; margin-top: 24px;">${t.cancellation.hopeToServe} <a href="tel:5622359361" style="color: #CC2D2D;">(562) 235-9361</a> or <a href="tel:5627463998" style="color: #CC2D2D;">(562) 746-3998</a>.</p>
       </div>
-      <div style="background: #2D2926; padding: 20px 30px; text-align: center;">
+      <div style="background: #1B2A4A; padding: 20px 30px; text-align: center;">
         <p style="margin: 0; color: #FAF5EF44; font-size: 11px;">Booking ID: ${data.bookingId}</p>
       </div>
     </div>
@@ -889,7 +889,7 @@ export async function sendOwnerCancellationNotice(data: {
   const htmlMessage = `
     <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
       <!-- Header -->
-      <div style="background: #2D2926; padding: 40px 30px; text-align: center;">
+      <div style="background: #1B2A4A; padding: 40px 30px; text-align: center;">
         <img src="https://que.rico.catering/images/logo.png" alt="México Lindo Y Que Rico" width="80" height="80" style="display: block; margin: 0 auto 16px; border-radius: 8px;" />
         <h1 style="color: #E8A935; margin: 0; font-size: 28px;">México Lindo Y Que Rico</h1>
         <p style="color: #FAF5EF99; margin: 8px 0 0; font-size: 14px;">Aquí la panza es primero.</p>
@@ -898,7 +898,7 @@ export async function sendOwnerCancellationNotice(data: {
       <!-- Body -->
       <div style="padding: 30px;">
         <!-- Alert Banner -->
-        <div style="background: #F8D7DA; border: 2px solid #C45A3C; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
+        <div style="background: #F8D7DA; border: 2px solid #CC2D2D; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
           <p style="margin: 0; font-size: 18px; font-weight: bold; color: #721C24;">❌ Reservación Cancelada</p>
           <p style="margin: 8px 0 0; font-size: 14px; color: #721C24;">El cliente <strong>${data.customerName}</strong> ha cancelado su evento del <strong>${formattedDate}</strong>.</p>
         </div>
@@ -906,42 +906,42 @@ export async function sendOwnerCancellationNotice(data: {
         <!-- Event Date -->
         <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; text-align: center;">
           <p style="margin: 0; font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 1px;">Fecha del Evento (Cancelado)</p>
-          <p style="margin: 8px 0 0; font-size: 18px; color: #C45A3C; font-weight: 600; text-decoration: line-through;">${formattedDate}</p>
+          <p style="margin: 8px 0 0; font-size: 18px; color: #CC2D2D; font-weight: 600; text-decoration: line-through;">${formattedDate}</p>
         </div>
 
         <!-- Financial Summary -->
-        <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #C45A3C;">
-          <h3 style="color: #2D2926; margin: 0 0 16px; font-size: 18px;">Resumen Financiero</h3>
+        <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #CC2D2D;">
+          <h3 style="color: #1B2A4A; margin: 0 0 16px; font-size: 18px;">Resumen Financiero</h3>
           <table style="width: 100%; border-collapse: collapse;">
             <tr>
               <td style="padding: 8px 0; color: #888; font-size: 14px;">Cargo por Cancelación</td>
-              <td style="padding: 8px 0; color: #2D2926; font-weight: bold; text-align: right; font-size: 16px;">${feeFormatted}</td>
+              <td style="padding: 8px 0; color: #1B2A4A; font-weight: bold; text-align: right; font-size: 16px;">${feeFormatted}</td>
             </tr>
             <tr>
               <td style="padding: 8px 0; color: #888; font-size: 14px;">Reembolso al Cliente</td>
-              <td style="padding: 8px 0; color: #2D2926; font-weight: bold; text-align: right; font-size: 16px;">${refundFormatted}</td>
+              <td style="padding: 8px 0; color: #1B2A4A; font-weight: bold; text-align: right; font-size: 16px;">${refundFormatted}</td>
             </tr>
           </table>
         </div>
 
         <!-- Customer Info Card -->
         <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #E8A935;">
-          <h3 style="color: #2D2926; margin: 0 0 16px; font-size: 18px;">Info del Cliente</h3>
+          <h3 style="color: #1B2A4A; margin: 0 0 16px; font-size: 18px;">Info del Cliente</h3>
           <table style="width: 100%; border-collapse: collapse;">
             <tr>
               <td style="padding: 6px 0; color: #888; font-size: 14px;">Nombre</td>
-              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${data.customerName}</td>
+              <td style="padding: 6px 0; color: #1B2A4A; font-weight: 600; text-align: right;">${data.customerName}</td>
             </tr>
             <tr>
               <td style="padding: 6px 0; color: #888; font-size: 14px;">Correo</td>
-              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">
-                <a href="mailto:${data.customerEmail}" style="color: #C45A3C; text-decoration: none;">${data.customerEmail}</a>
+              <td style="padding: 6px 0; color: #1B2A4A; font-weight: 600; text-align: right;">
+                <a href="mailto:${data.customerEmail}" style="color: #CC2D2D; text-decoration: none;">${data.customerEmail}</a>
               </td>
             </tr>
             <tr>
               <td style="padding: 6px 0; color: #888; font-size: 14px;">Teléfono</td>
-              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">
-                <a href="tel:${data.customerPhone}" style="color: #C45A3C; text-decoration: none;">${data.customerPhone}</a>
+              <td style="padding: 6px 0; color: #1B2A4A; font-weight: 600; text-align: right;">
+                <a href="tel:${data.customerPhone}" style="color: #CC2D2D; text-decoration: none;">${data.customerPhone}</a>
               </td>
             </tr>
           </table>
@@ -951,7 +951,7 @@ export async function sendOwnerCancellationNotice(data: {
       </div>
 
       <!-- Footer -->
-      <div style="background: #2D2926; padding: 20px 30px; text-align: center;">
+      <div style="background: #1B2A4A; padding: 20px 30px; text-align: center;">
         <p style="color: #FAF5EF66; font-size: 12px; margin: 0;">México Lindo Y Que Rico · Gran Los Ángeles · 20+ Años de Sabor</p>
       </div>
     </div>
@@ -989,22 +989,22 @@ export async function sendRescheduleConfirmation(data: {
 
   const htmlMessage = `
     <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
-      <div style="background: #2D2926; padding: 40px 30px; text-align: center;">
+      <div style="background: #1B2A4A; padding: 40px 30px; text-align: center;">
         <img src="https://que.rico.catering/images/logo.png" alt="México Lindo Y Que Rico" width="80" height="80" style="display: block; margin: 0 auto 16px; border-radius: 8px;" />
         <h1 style="color: #E8A935; margin: 0; font-size: 28px;">México Lindo Y Que Rico</h1>
       </div>
       <div style="padding: 30px;">
-        <h2 style="color: #2D2926; margin: 0 0 8px;">${t.reschedule.heading}</h2>
+        <h2 style="color: #1B2A4A; margin: 0 0 8px;">${t.reschedule.heading}</h2>
         <p style="color: #555; margin: 0 0 24px;">${t.reschedule.message(data.customerName)}</p>
         <div style="background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
           <p style="color: #888; margin: 0 0 4px; font-size: 13px;">${t.reschedule.previousDate}</p>
-          <p style="color: #C45A3C; margin: 0 0 16px; text-decoration: line-through;">${oldFormatted}${oldTimeDisplay ? ` · ${oldTimeDisplay}` : ""}</p>
+          <p style="color: #CC2D2D; margin: 0 0 16px; text-decoration: line-through;">${oldFormatted}${oldTimeDisplay ? ` · ${oldTimeDisplay}` : ""}</p>
           <p style="color: #888; margin: 0 0 4px; font-size: 13px;">${t.reschedule.newDate}</p>
-          <p style="color: #2D2926; margin: 0; font-weight: 600; font-size: 18px;">${newFormatted}${newTimeDisplay ? ` · ${newTimeDisplay}` : ""}</p>
+          <p style="color: #1B2A4A; margin: 0; font-weight: 600; font-size: 18px;">${newFormatted}${newTimeDisplay ? ` · ${newTimeDisplay}` : ""}</p>
         </div>
-        <p style="color: #555; font-size: 14px;">${t.reschedule.questionsCall} <a href="tel:5622359361" style="color: #C45A3C;">(562) 235-9361</a> or <a href="tel:5627463998" style="color: #C45A3C;">(562) 746-3998</a>.</p>
+        <p style="color: #555; font-size: 14px;">${t.reschedule.questionsCall} <a href="tel:5622359361" style="color: #CC2D2D;">(562) 235-9361</a> or <a href="tel:5627463998" style="color: #CC2D2D;">(562) 746-3998</a>.</p>
       </div>
-      <div style="background: #2D2926; padding: 20px 30px; text-align: center;">
+      <div style="background: #1B2A4A; padding: 20px 30px; text-align: center;">
         <p style="margin: 0; color: #FAF5EF44; font-size: 11px;">Booking ID: ${data.bookingId}</p>
       </div>
     </div>
@@ -1065,7 +1065,7 @@ export async function sendOwnerRescheduleNotice(data: {
   const htmlMessage = `
     <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
       <!-- Header -->
-      <div style="background: #2D2926; padding: 40px 30px; text-align: center;">
+      <div style="background: #1B2A4A; padding: 40px 30px; text-align: center;">
         <img src="https://que.rico.catering/images/logo.png" alt="México Lindo Y Que Rico" width="80" height="80" style="display: block; margin: 0 auto 16px; border-radius: 8px;" />
         <h1 style="color: #E8A935; margin: 0; font-size: 28px;">México Lindo Y Que Rico</h1>
         <p style="color: #FAF5EF99; margin: 8px 0 0; font-size: 14px;">Aquí la panza es primero.</p>
@@ -1084,7 +1084,7 @@ export async function sendOwnerRescheduleNotice(data: {
           <div style="display: flex;">
             <div style="flex: 1; padding: 12px; text-align: center;">
               <p style="margin: 0; font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 1px;">Fecha Anterior</p>
-              <p style="margin: 8px 0 0; font-size: 16px; color: #C45A3C; font-weight: 600; text-decoration: line-through;">${oldFormatted}${oldTimeDisplay ? ` · ${oldTimeDisplay}` : ""}</p>
+              <p style="margin: 8px 0 0; font-size: 16px; color: #CC2D2D; font-weight: 600; text-decoration: line-through;">${oldFormatted}${oldTimeDisplay ? ` · ${oldTimeDisplay}` : ""}</p>
             </div>
           </div>
           <div style="text-align: center; padding: 8px 0;">
@@ -1098,22 +1098,22 @@ export async function sendOwnerRescheduleNotice(data: {
 
         <!-- Customer Info Card -->
         <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #E8A935;">
-          <h3 style="color: #2D2926; margin: 0 0 16px; font-size: 18px;">Info del Cliente</h3>
+          <h3 style="color: #1B2A4A; margin: 0 0 16px; font-size: 18px;">Info del Cliente</h3>
           <table style="width: 100%; border-collapse: collapse;">
             <tr>
               <td style="padding: 6px 0; color: #888; font-size: 14px;">Nombre</td>
-              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${data.customerName}</td>
+              <td style="padding: 6px 0; color: #1B2A4A; font-weight: 600; text-align: right;">${data.customerName}</td>
             </tr>
             <tr>
               <td style="padding: 6px 0; color: #888; font-size: 14px;">Correo</td>
-              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">
-                <a href="mailto:${data.customerEmail}" style="color: #C45A3C; text-decoration: none;">${data.customerEmail}</a>
+              <td style="padding: 6px 0; color: #1B2A4A; font-weight: 600; text-align: right;">
+                <a href="mailto:${data.customerEmail}" style="color: #CC2D2D; text-decoration: none;">${data.customerEmail}</a>
               </td>
             </tr>
             <tr>
               <td style="padding: 6px 0; color: #888; font-size: 14px;">Teléfono</td>
-              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">
-                <a href="tel:${data.customerPhone}" style="color: #C45A3C; text-decoration: none;">${data.customerPhone}</a>
+              <td style="padding: 6px 0; color: #1B2A4A; font-weight: 600; text-align: right;">
+                <a href="tel:${data.customerPhone}" style="color: #CC2D2D; text-decoration: none;">${data.customerPhone}</a>
               </td>
             </tr>
           </table>
@@ -1121,14 +1121,14 @@ export async function sendOwnerRescheduleNotice(data: {
 
         <!-- Admin Button -->
         <div style="text-align: center; margin-bottom: 20px;">
-          <a href="${adminUrl}" style="display: inline-block; background: #2D2926; color: #E8A935; font-weight: bold; font-size: 14px; padding: 14px 28px; border-radius: 10px; text-decoration: none;">Ver en Panel de Administración →</a>
+          <a href="${adminUrl}" style="display: inline-block; background: #1B2A4A; color: #E8A935; font-weight: bold; font-size: 14px; padding: 14px 28px; border-radius: 10px; text-decoration: none;">Ver en Panel de Administración →</a>
         </div>
 
         <p style="color: #999; font-size: 12px; text-align: center; margin: 0;">ID de Reservación: ${data.bookingId}</p>
       </div>
 
       <!-- Footer -->
-      <div style="background: #2D2926; padding: 20px 30px; text-align: center;">
+      <div style="background: #1B2A4A; padding: 20px 30px; text-align: center;">
         <p style="color: #FAF5EF66; font-size: 12px; margin: 0;">México Lindo Y Que Rico · Gran Los Ángeles · 20+ Años de Sabor</p>
       </div>
     </div>
@@ -1191,7 +1191,7 @@ export async function sendCashPendingConfirmation(
   const htmlMessage = `
     <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
       <!-- Header -->
-      <div style="background: #2D2926; padding: 40px 30px; text-align: center;">
+      <div style="background: #1B2A4A; padding: 40px 30px; text-align: center;">
         <img src="https://que.rico.catering/images/logo.png" alt="México Lindo Y Que Rico" width="80" height="80" style="display: block; margin: 0 auto 16px; border-radius: 8px;" />
         <h1 style="color: #E8A935; margin: 0; font-size: 28px;">México Lindo Y Que Rico</h1>
         <p style="color: #FAF5EF99; margin: 8px 0 0; font-size: 14px;">Aquí la panza es primero.</p>
@@ -1199,14 +1199,14 @@ export async function sendCashPendingConfirmation(
 
       <!-- Body -->
       <div style="padding: 30px;">
-        <h2 style="color: #2D2926; margin: 0 0 8px;">${t.cashPending.heading}</h2>
+        <h2 style="color: #1B2A4A; margin: 0 0 8px;">${t.cashPending.heading}</h2>
         <p style="color: #555; margin: 0 0 24px; font-size: 16px;">
           ${t.cashPending.subtitle(booking.customerName)}
         </p>
 
         <!-- What's Next -->
         <div style="background: #E8A93520; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
-          <h3 style="color: #2D2926; margin: 0 0 12px; font-size: 16px;">${t.cashPending.whatNext}</h3>
+          <h3 style="color: #1B2A4A; margin: 0 0 12px; font-size: 16px;">${t.cashPending.whatNext}</h3>
           <ol style="margin: 0; padding-left: 20px; color: #555; font-size: 14px; line-height: 1.8;">
             <li>${t.cashPending.step1}</li>
             <li>${t.cashPending.step2}</li>
@@ -1216,31 +1216,31 @@ export async function sendCashPendingConfirmation(
 
         <!-- Event Details Card -->
         <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #E8A935;">
-          <h3 style="color: #2D2926; margin: 0 0 16px; font-size: 18px;">${t.cashPending.yourEventDetails}</h3>
+          <h3 style="color: #1B2A4A; margin: 0 0 16px; font-size: 18px;">${t.cashPending.yourEventDetails}</h3>
           <table style="width: 100%; border-collapse: collapse;">
             <tr>
               <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.date}</td>
-              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${formattedDate}${cashTimeDisplay ? ` · ${cashTimeDisplay}` : ""}</td>
+              <td style="padding: 6px 0; color: #1B2A4A; font-weight: 600; text-align: right;">${formattedDate}${cashTimeDisplay ? ` · ${cashTimeDisplay}` : ""}</td>
             </tr>
             <tr>
               <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.address}</td>
-              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${booking.eventAddress || t.confirmation.notProvided}</td>
+              <td style="padding: 6px 0; color: #1B2A4A; font-weight: 600; text-align: right;">${booking.eventAddress || t.confirmation.notProvided}</td>
             </tr>
             <tr>
               <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.package}</td>
-              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${svcLabel}</td>
+              <td style="padding: 6px 0; color: #1B2A4A; font-weight: 600; text-align: right;">${svcLabel}</td>
             </tr>
             <tr>
               <td style="padding: 6px 0; color: #888; font-size: 14px;">${t.confirmation.guests}</td>
-              <td style="padding: 6px 0; color: #2D2926; font-weight: 600; text-align: right;">${booking.guestCount}</td>
+              <td style="padding: 6px 0; color: #1B2A4A; font-weight: 600; text-align: right;">${booking.guestCount}</td>
             </tr>
           </table>
         </div>
 
         <!-- Meats Card -->
-        <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #C45A3C;">
-          <h3 style="color: #2D2926; margin: 0 0 12px; font-size: 18px;">${t.confirmation.yourMeats}</h3>
-          <ul style="margin: 0; padding-left: 20px; color: #2D2926;">
+        <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #CC2D2D;">
+          <h3 style="color: #1B2A4A; margin: 0 0 12px; font-size: 18px;">${t.confirmation.yourMeats}</h3>
+          <ul style="margin: 0; padding-left: 20px; color: #1B2A4A;">
             ${booking.meats.map((m) => `<li style="padding: 4px 0;">${m}</li>`).join("")}
           </ul>
         </div>
@@ -1248,8 +1248,8 @@ export async function sendCashPendingConfirmation(
         ${booking.extras?.length ? `
         <!-- Extras Card -->
         <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #E8A935;">
-          <h3 style="color: #2D2926; margin: 0 0 12px; font-size: 18px;">${t.confirmation.extras}</h3>
-          <ul style="margin: 0; padding-left: 20px; color: #2D2926;">
+          <h3 style="color: #1B2A4A; margin: 0 0 12px; font-size: 18px;">${t.confirmation.extras}</h3>
+          <ul style="margin: 0; padding-left: 20px; color: #1B2A4A;">
             ${booking.extras.map((e) => {
               let line = `<li style="padding: 4px 0;">${e.name} x${e.quantity} — ${e.price}`;
               if (e.flavors?.length) {
@@ -1262,7 +1262,7 @@ export async function sendCashPendingConfirmation(
         ` : ""}
 
         <!-- Total -->
-        <div style="background: #2D2926; color: #FAF5EF; padding: 24px; border-radius: 12px; text-align: center; margin-bottom: 24px;">
+        <div style="background: #1B2A4A; color: #FAF5EF; padding: 24px; border-radius: 12px; text-align: center; margin-bottom: 24px;">
           <p style="margin: 0 0 4px; color: #FAF5EF99; font-size: 14px;">${t.cashPending.estimatedTotal}</p>
           <p style="margin: 0; font-size: 32px; font-weight: bold; color: #E8A935;">${formattedPrice}</p>
           <p style="margin: 8px 0 0; color: #FAF5EF66; font-size: 12px;">${t.cashPending.dueCash}</p>
@@ -1271,13 +1271,13 @@ export async function sendCashPendingConfirmation(
         <!-- Contact -->
         <p style="color: #555; font-size: 14px; text-align: center; margin: 0;">
           ${t.confirmation.questionsCall}
-          <a href="tel:5622359361" style="color: #C45A3C; text-decoration: none; font-weight: 600;">(562) 235-9361</a>
-          or <a href="tel:5627463998" style="color: #C45A3C; text-decoration: none; font-weight: 600;">(562) 746-3998</a>
+          <a href="tel:5622359361" style="color: #CC2D2D; text-decoration: none; font-weight: 600;">(562) 235-9361</a>
+          or <a href="tel:5627463998" style="color: #CC2D2D; text-decoration: none; font-weight: 600;">(562) 746-3998</a>
         </p>
       </div>
 
       <!-- Footer -->
-      <div style="background: #2D2926; padding: 20px 30px; text-align: center;">
+      <div style="background: #1B2A4A; padding: 20px 30px; text-align: center;">
         <p style="margin: 0; color: #FAF5EF66; font-size: 12px;">
           ${t.confirmation.footer}
         </p>
@@ -1314,17 +1314,17 @@ export async function sendOwnerInitiatedCancellation(data: {
 
   const htmlMessage = `
     <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
-      <div style="background: #2D2926; padding: 40px 30px; text-align: center;">
+      <div style="background: #1B2A4A; padding: 40px 30px; text-align: center;">
         <img src="https://que.rico.catering/images/logo.png" alt="México Lindo Y Que Rico" width="80" height="80" style="display: block; margin: 0 auto 16px; border-radius: 8px;" />
         <h1 style="color: #E8A935; margin: 0; font-size: 28px;">México Lindo Y Que Rico</h1>
       </div>
       <div style="padding: 30px;">
-        <h2 style="color: #C45A3C; margin: 0 0 8px;">❌ ${t.ownerCancellation.heading}</h2>
+        <h2 style="color: #CC2D2D; margin: 0 0 8px;">❌ ${t.ownerCancellation.heading}</h2>
         <p style="color: #555; margin: 0 0 24px; line-height: 1.6;">${t.ownerCancellation.message(data.customerName, formattedDate)}</p>
-        <p style="color: #555; line-height: 1.6;">${t.ownerCancellation.reason} <a href="tel:5622359361" style="color: #C45A3C;">(562) 235-9361</a> or <a href="tel:5627463998" style="color: #C45A3C;">(562) 746-3998</a>.</p>
+        <p style="color: #555; line-height: 1.6;">${t.ownerCancellation.reason} <a href="tel:5622359361" style="color: #CC2D2D;">(562) 235-9361</a> or <a href="tel:5627463998" style="color: #CC2D2D;">(562) 746-3998</a>.</p>
         <p style="color: #555; line-height: 1.6;">${t.ownerCancellation.apology}</p>
       </div>
-      <div style="background: #2D2926; padding: 20px 30px; text-align: center;">
+      <div style="background: #1B2A4A; padding: 20px 30px; text-align: center;">
         <p style="margin: 0; color: #FAF5EF44; font-size: 11px;">${data.bookingNumber ? `Ref: ${data.bookingNumber} · ` : ""}Booking ID: ${data.bookingId}</p>
       </div>
     </div>
