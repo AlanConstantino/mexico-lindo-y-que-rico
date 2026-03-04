@@ -32,6 +32,8 @@ interface CheckoutBody {
   eventAddress: string;
   totalPrice: number;
   paymentMethod?: "card" | "cash";
+  cashPaymentMethod?: "zelle" | "paypal" | "cashapp" | "venmo" | "cash_in_person" | null;
+  cashPaymentOption?: "deposit" | "full" | null;
   ccSurchargePercent?: number;
   cashDepositPercent?: number;
   locale?: string;
@@ -71,6 +73,8 @@ export async function POST(request: NextRequest) {
       aguaFlavors = {},
       extraMeatSelections = {},
       paymentMethod = "card",
+      cashPaymentMethod = null,
+      cashPaymentOption = null,
       ccSurchargePercent = 10,
       cashDepositPercent = 50,
       locale = "en",
@@ -97,12 +101,14 @@ export async function POST(request: NextRequest) {
     // Fetch payment settings from DB (server-side truth)
     const { data: paySettings } = await supabaseAdmin
       .from("settings")
-      .select("cc_surcharge_percent, cash_deposit_percent, stripe_fee_percent, stripe_fee_flat")
+      .select("cc_surcharge_percent, cash_deposit_percent, stripe_fee_percent, stripe_fee_flat, cash_auto_cancel_hours")
       .single();
 
     const serverSurchargePercent = paySettings?.cc_surcharge_percent ?? 10;
     const serverStripeFeePercent = paySettings?.stripe_fee_percent ?? 2.9;
     const serverStripeFeeFlatCents = paySettings?.stripe_fee_flat ?? 30;
+    const serverCashDepositPercent = paySettings?.cash_deposit_percent ?? 10;
+    const serverCashAutoCancelHours = paySettings?.cash_auto_cancel_hours ?? 48;
 
     // Recalculate price on server side (never trust client price)
     const basePrice = getBasePrice(serviceType, guestCount);
@@ -116,7 +122,14 @@ export async function POST(request: NextRequest) {
 
     if (paymentMethod === "cash") {
       chargeAmount = 0;
-      balanceDue = serverTotal;
+      if (cashPaymentOption === "deposit") {
+        depositAmount = Math.round(serverTotal * serverCashDepositPercent) / 100;
+        balanceDue = serverTotal - depositAmount;
+      } else {
+        // full payment
+        depositAmount = serverTotal;
+        balanceDue = 0;
+      }
     } else {
       surchargeAmount = calculateSurcharge(serverTotal, serverSurchargePercent);
       processingFee = calculateProcessingFee(serverTotal, serverStripeFeePercent, serverStripeFeeFlatCents);
@@ -230,8 +243,12 @@ export async function POST(request: NextRequest) {
           event_address: eventAddress,
           total_price: serverTotal * 100,
           payment_type: "cash",
-          deposit_amount: 0,
-          balance_due: serverTotal * 100,
+          deposit_amount: Math.round(depositAmount * 100),
+          balance_due: Math.round(balanceDue * 100),
+          cash_payment_method: cashPaymentMethod,
+          cash_payment_option: cashPaymentOption || "full",
+          deposit_confirmed: false,
+          deposit_deadline: new Date(Date.now() + serverCashAutoCancelHours * 60 * 60 * 1000).toISOString(),
           locale,
           stripe_payment_status: "not_applicable",
           status: "pending",
@@ -270,7 +287,7 @@ export async function POST(request: NextRequest) {
 
       // Redirect to success page with booking ID instead of Stripe session
       return NextResponse.json({
-        url: `${origin}/${locale}/booking/success?booking_id=${booking.id}&ref=${booking.booking_number}&cash=true`,
+        url: `${origin}/${locale}/booking/success?session_id=cash_${booking.id}&ref=${booking.booking_number}&cash=true`,
         bookingId: booking.id,
       });
     }

@@ -343,7 +343,7 @@ export default function BookingForm() {
         ) : (
           <button
             onClick={handlePayment}
-            disabled={isSubmitting}
+            disabled={isSubmitting || (data.paymentMethod === "cash" && (!data.cashPaymentOption || !data.cashPaymentMethod))}
             className="px-8 py-3 bg-amber text-navy font-semibold rounded-full hover:bg-amber-light transition-all duration-300 hover:shadow-lg hover:shadow-amber/20 disabled:opacity-50 disabled:cursor-not-allowed text-sm flex items-center gap-2"
           >
             {isSubmitting ? (
