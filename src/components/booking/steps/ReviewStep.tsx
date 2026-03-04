@@ -249,38 +249,47 @@ export default function ReviewStep({
 
           {/* Cash Payment Options */}
           {data.paymentMethod === "cash" && (
-            <div className="mt-4 space-y-4">
+            <div className="mt-5 space-y-4">
+              {/* Auto-cancel warning — always visible */}
+              <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/30 flex items-start gap-2">
+                <span className="text-lg leading-none">⚠️</span>
+                <p className="text-yellow-200/90 text-xs leading-relaxed">
+                  {t("autoCancelWarning", { hours: 48 })}
+                </p>
+              </div>
+
               {/* Deposit or Full Payment */}
               <div>
-                <div className="text-cream/50 text-xs uppercase tracking-wider mb-2">
-                  {t("cashPaymentOptionLabel")}
+                <div className="text-cream/50 text-xs uppercase tracking-wider mb-3">
+                  {t("selectPaymentOption")}
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
                     onClick={() => onCashPaymentOptionChange("deposit")}
-                    className={`p-3 rounded-xl border-2 text-left transition-all duration-200 ${
+                    className={`p-5 rounded-xl border-2 text-center transition-all duration-200 ${
                       data.cashPaymentOption === "deposit"
-                        ? "border-amber bg-amber/5"
+                        ? "border-amber bg-amber/10 shadow-lg shadow-amber/5"
                         : "border-cream/10 hover:border-cream/20"
                     }`}
                   >
-                    <div className="text-cream font-medium text-sm">{t("payDeposit", { percent: cashDepositPercent })}</div>
-                    <div className="text-amber text-lg font-heading mt-1">${depositAmount.toFixed(2)}</div>
-                    <div className="text-cream/40 text-xs mt-1">{t("balanceDueOnEvent", { amount: balanceDue.toFixed(2) })}</div>
+                    <div className="text-cream font-medium text-sm mb-1">{t("payDeposit", { percent: cashDepositPercent })}</div>
+                    <div className="text-amber font-heading text-2xl">${depositAmount.toFixed(2)}</div>
+                    <div className="text-cream/40 text-[10px] mt-2">{t("depositNonRefundable")}</div>
+                    <div className="text-cream/30 text-[10px]">{t("balanceDueOnEvent", { amount: balanceDue.toFixed(2) })}</div>
                   </button>
                   <button
                     type="button"
                     onClick={() => onCashPaymentOptionChange("full")}
-                    className={`p-3 rounded-xl border-2 text-left transition-all duration-200 ${
+                    className={`p-5 rounded-xl border-2 text-center transition-all duration-200 ${
                       data.cashPaymentOption === "full"
-                        ? "border-amber bg-amber/5"
+                        ? "border-amber bg-amber/10 shadow-lg shadow-amber/5"
                         : "border-cream/10 hover:border-cream/20"
                     }`}
                   >
-                    <div className="text-cream font-medium text-sm">{t("payInFull")}</div>
-                    <div className="text-amber text-lg font-heading mt-1">${total.toFixed(2)}</div>
-                    <div className="text-cream/40 text-xs mt-1">{t("nothingDueOnEvent")}</div>
+                    <div className="text-cream font-medium text-sm mb-1">{t("payFull")}</div>
+                    <div className="text-amber font-heading text-2xl">${total.toFixed(2)}</div>
+                    <div className="text-cream/40 text-[10px] mt-2">{t("nothingDueOnEvent")}</div>
                   </button>
                 </div>
               </div>
@@ -288,34 +297,31 @@ export default function ReviewStep({
               {/* Payment Method Picker */}
               {data.cashPaymentOption && (
                 <div>
-                  <div className="text-cream/50 text-xs uppercase tracking-wider mb-2">
-                    {t("cashMethodLabel")}
+                  <div className="text-cream/50 text-xs uppercase tracking-wider mb-3">
+                    {t("selectPaymentMethod")}
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    {(["zelle", "paypal", "cashapp", "venmo"] as const).map((method) => (
+                  <div className="grid grid-cols-2 gap-3">
+                    {([
+                      { id: "zelle" as const, label: "Zelle", icon: "💸" },
+                      { id: "paypal" as const, label: "PayPal", icon: "🅿️" },
+                      { id: "cashapp" as const, label: "Cash App", icon: "💵" },
+                      { id: "venmo" as const, label: "Venmo", icon: "✌️" },
+                    ] as const).map((m) => (
                       <button
-                        key={method}
+                        key={m.id}
                         type="button"
-                        onClick={() => onCashPaymentMethodChange(method)}
-                        className={`p-3 rounded-xl border-2 text-center transition-all duration-200 ${
-                          data.cashPaymentMethod === method
-                            ? "border-amber bg-amber/5"
+                        onClick={() => onCashPaymentMethodChange(m.id)}
+                        className={`p-3 rounded-xl border-2 flex items-center gap-3 transition-all duration-200 ${
+                          data.cashPaymentMethod === m.id
+                            ? "border-amber bg-amber/10"
                             : "border-cream/10 hover:border-cream/20"
                         }`}
                       >
-                        <div className="text-cream font-medium text-sm">{t(`cashMethod_${method}`)}</div>
+                        <span className="text-2xl">{m.icon}</span>
+                        <span className="text-cream font-medium text-sm">{m.label}</span>
                       </button>
                     ))}
                   </div>
-                </div>
-              )}
-
-              {/* Auto-cancel warning */}
-              {data.cashPaymentMethod && (
-                <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20">
-                  <p className="text-red-400 text-xs">
-                    ⚠️ {t("cashAutoCancelWarning")}
-                  </p>
                 </div>
               )}
             </div>
