@@ -27,7 +27,7 @@ export default function Footer() {
                 alt="México Lindo Y Que Rico logo"
                 width={56}
                 height={56}
-                className="rounded-full object-cover"
+                className="rounded-lg object-cover"
               />
               <p className="font-heading text-3xl text-cream">
                 México Lindo<br />

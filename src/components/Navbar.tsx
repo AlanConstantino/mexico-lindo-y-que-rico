@@ -53,7 +53,7 @@ export default function Navbar() {
             alt="México Lindo Y Que Rico logo"
             width={40}
             height={40}
-            className="rounded-full w-8 h-8 sm:w-10 sm:h-10 object-cover"
+            className="rounded-lg w-8 h-8 sm:w-10 sm:h-10 object-cover"
           />
           <span>México Lindo<br /><span className="text-amber">Y Que Rico</span></span>
         </a>
