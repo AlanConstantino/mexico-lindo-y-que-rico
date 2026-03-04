@@ -23,7 +23,7 @@ export default function Footer() {
           <div>
             <div className="flex items-center gap-3 mb-3">
               <Image
-                src="/images/logo.jpg"
+                src="/images/logo.png"
                 alt="México Lindo Y Que Rico logo"
                 width={56}
                 height={56}

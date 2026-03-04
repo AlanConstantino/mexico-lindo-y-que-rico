@@ -49,7 +49,7 @@ export default function Navbar() {
           className="flex items-center gap-2 sm:gap-3 font-heading text-cream hover:text-amber transition-colors duration-300 text-sm sm:text-2xl leading-tight min-w-0"
         >
           <Image
-            src="/images/logo.jpg"
+            src="/images/logo.png"
             alt="México Lindo Y Que Rico logo"
             width={40}
             height={40}
