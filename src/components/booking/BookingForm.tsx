@@ -26,6 +26,8 @@ export interface BookingData {
   customerPhone: string;
   eventAddress: string;
   paymentMethod: "card" | "cash";
+  cashPaymentMethod: 'zelle' | 'paypal' | 'cashapp' | 'venmo' | 'cash_in_person' | null;
+  cashPaymentOption: 'deposit' | 'full' | null;
 }
 
 const TOTAL_STEPS = 6;
@@ -78,6 +80,8 @@ export default function BookingForm() {
     customerPhone: "",
     eventAddress: "",
     paymentMethod: "card",
+    cashPaymentMethod: null,
+    cashPaymentOption: null,
   });
 
   const updateData = (updates: Partial<BookingData>) => {
@@ -169,6 +173,8 @@ export default function BookingForm() {
           eventAddress: data.eventAddress,
           totalPrice: subtotal,
           paymentMethod: data.paymentMethod,
+          cashPaymentMethod: data.cashPaymentMethod,
+          cashPaymentOption: data.cashPaymentOption,
           ccSurchargePercent: paymentSettings.cc_surcharge_percent,
           cashDepositPercent: paymentSettings.cash_deposit_percent,
           locale,
