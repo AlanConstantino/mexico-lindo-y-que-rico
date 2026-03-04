@@ -60,8 +60,8 @@ export default async function BookingPage() {
         </div>
       </nav>
 
-      <main className="pt-28 pb-24 px-6">
-        <div className="max-w-3xl mx-auto">
+      <main className="pt-28 pb-24 px-6 overflow-x-hidden">
+        <div className="max-w-3xl mx-auto overflow-hidden">
           {/* Header */}
           <div className="text-center mb-12">
             <p className="text-amber text-xs uppercase tracking-[0.3em] mb-4 font-medium">

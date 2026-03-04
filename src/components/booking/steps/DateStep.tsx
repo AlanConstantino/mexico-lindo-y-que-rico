@@ -342,40 +342,15 @@ export default function DateStep({ data, updateData }: DateStepProps) {
             {t("selectTime")}
           </h3>
           <p className="text-cream/40 text-sm mb-4">{t("selectTimeDesc")}</p>
-          <div className="relative">
-            <select
-              value={data.eventTime ?? ""}
-              onChange={(e) =>
-                updateData({ eventTime: e.target.value || null })
-              }
-              className="w-full appearance-none rounded-xl bg-navy-light/30 border border-cream/10 text-cream px-4 py-3 pr-10 text-sm focus:outline-none focus:border-amber/40 transition-colors cursor-pointer"
-            >
-              <option value="" className="bg-navy text-cream/50">
-                {t("selectTime")}
-              </option>
-              {Array.from({ length: 96 }, (_, i) => {
-                const hour = Math.floor(i / 4);
-                const min = (i % 4) * 15;
-                const value = `${String(hour).padStart(2, "0")}:${String(min).padStart(2, "0")}`;
-                const hour12 = hour % 12 || 12;
-                const ampm = hour >= 12 ? "PM" : "AM";
-                const label = `${hour12}:${String(min).padStart(2, "0")} ${ampm}`;
-                return (
-                  <option key={value} value={value} className="bg-navy text-cream">
-                    {label}
-                  </option>
-                );
-              })}
-            </select>
-            <svg
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-cream/40 pointer-events-none"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-            </svg>
-          </div>
+          <input
+            type="time"
+            value={data.eventTime ?? ""}
+            onChange={(e) =>
+              updateData({ eventTime: e.target.value || null })
+            }
+            className="block w-full min-w-0 rounded-xl bg-navy-light/30 border border-cream/10 text-cream px-4 py-3 text-sm focus:outline-none focus:border-amber/40 transition-colors cursor-pointer [color-scheme:dark] [-webkit-appearance:none] [&::-webkit-calendar-picker-indicator]:invert"
+            style={{ maxWidth: "100%" }}
+          />
           {data.eventTime && (() => {
             const [h, m] = data.eventTime.split(":").map(Number);
             const arrivalHour = h - 1;
