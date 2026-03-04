@@ -5,7 +5,6 @@ import {
   calculateTotal,
   getBasePrice,
   calculateSurcharge,
-  calculateDeposit,
   calculateProcessingFee,
   EXTRA_OPTIONS,
   type ServiceType,
@@ -34,8 +33,6 @@ interface CheckoutBody {
   paymentMethod?: "card" | "cash";
   cashPaymentMethod?: "zelle" | "paypal" | "cashapp" | "venmo" | "cash_in_person" | null;
   cashPaymentOption?: "deposit" | "full" | null;
-  ccSurchargePercent?: number;
-  cashDepositPercent?: number;
   locale?: string;
 }
 
@@ -75,8 +72,6 @@ export async function POST(request: NextRequest) {
       paymentMethod = "card",
       cashPaymentMethod = null,
       cashPaymentOption = null,
-      ccSurchargePercent = 10,
-      cashDepositPercent = 50,
       locale = "en",
     } = body;
 

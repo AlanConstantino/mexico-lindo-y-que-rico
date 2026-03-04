@@ -36,11 +36,10 @@ export default function DateStep({ data, updateData }: DateStepProps) {
   const [loading, setLoading] = useState(false);
   const [initialLoad, setInitialLoad] = useState(true);
 
+  // Availability data for the current view month
+  const [availability, setAvailability] = useState<AvailabilityData>(defaultAvailability);
   // Cache of availability data keyed by "YYYY-MM"
   const cacheRef = useRef<Record<string, AvailabilityData>>({});
-
-  const availability =
-    cacheRef.current[monthKey(viewYear, viewMonth)] ?? defaultAvailability;
 
   const fetchMonth = useCallback(
     async (year: number, month: number): Promise<AvailabilityData | null> => {
@@ -87,7 +86,8 @@ export default function DateStep({ data, updateData }: DateStepProps) {
     const cached = cacheRef.current[key];
 
     if (cached) {
-      // Already cached — no spinner needed, just prefetch adjacent
+      // Already cached — no spinner needed, just update state and prefetch adjacent
+      setAvailability(cached);
       prefetchAdjacent(viewYear, viewMonth);
       return;
     }
@@ -101,8 +101,9 @@ export default function DateStep({ data, updateData }: DateStepProps) {
         setLoading(false);
         setInitialLoad(false);
       }
-      // Force re-render to pick up new cache entry
-      setViewYear((y) => y);
+      // Update availability state from cache
+      const fetched = cacheRef.current[key];
+      if (fetched) setAvailability(fetched);
       prefetchAdjacent(viewYear, viewMonth);
     });
   }, [viewYear, viewMonth, fetchMonth, prefetchAdjacent, initialLoad]);

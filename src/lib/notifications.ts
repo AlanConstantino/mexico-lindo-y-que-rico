@@ -102,15 +102,6 @@ function formatTime(time: string): string {
   return `${hour12}:${m} ${ampm}`;
 }
 
-function formatSetupTime(eventTime: string): string {
-  const [h, m] = eventTime.split(':');
-  let hour = parseInt(h) - 1;
-  if (hour < 0) hour = 0;
-  const ampm = hour >= 12 ? 'PM' : 'AM';
-  const hour12 = hour % 12 || 12;
-  return `${hour12}:${m} ${ampm}`;
-}
-
 interface BookingNotification {
   bookingId: string;
   customerName: string;

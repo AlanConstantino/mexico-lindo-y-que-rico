@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import type { ServiceType, MeatId, ExtraId, AguaFlavorQuantities, ExtraMeatQuantities } from "@/lib/pricing";
-import { calculateTotal, getBasePrice, getExtrasTotal, calculateSurcharge, calculateDeposit, calculateProcessingFee } from "@/lib/pricing";
+import { calculateTotal, getBasePrice, getExtrasTotal, calculateSurcharge, calculateProcessingFee } from "@/lib/pricing";
 import DateStep from "./steps/DateStep";
 import PackageStep from "./steps/PackageStep";
 import MeatStep from "./steps/MeatStep";
