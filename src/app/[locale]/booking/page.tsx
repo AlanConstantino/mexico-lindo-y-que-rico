@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 import type { Metadata } from "next";
+import Image from "next/image";
 import BookingForm from "@/components/booking/BookingForm";
 
 export async function generateMetadata({
@@ -26,9 +27,16 @@ export default async function BookingPage() {
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link
             href="/"
-            className="font-heading text-2xl text-cream hover:text-amber transition-colors duration-300"
+            className="flex items-center gap-2 sm:gap-3 font-heading text-2xl text-cream hover:text-amber transition-colors duration-300"
           >
-            México Lindo <span className="text-amber">Y Que Rico</span>
+            <Image
+              src="/images/logo.png"
+              alt="México Lindo Y Que Rico logo"
+              width={40}
+              height={40}
+              className="rounded-lg w-8 h-8 sm:w-10 sm:h-10 object-cover"
+            />
+            <span>México Lindo <span className="text-amber">Y Que Rico</span></span>
           </Link>
           <Link
             href="/"
