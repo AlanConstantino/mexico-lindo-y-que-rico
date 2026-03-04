@@ -30,6 +30,20 @@ export async function generateMetadata({
       "catering service",
       "LA catering",
     ],
+    icons: {
+      icon: [
+        { url: "/favicon.png", sizes: "32x32", type: "image/png" },
+        { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      ],
+      apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+    },
+    manifest: "/manifest.json",
+    openGraph: {
+      title: t("title"),
+      description: t("description"),
+      images: [{ url: "/images/logo.jpg", width: 1280, height: 1280 }],
+      type: "website",
+    },
   };
 }
 

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
+import Image from "next/image";
 
 export default function Navbar() {
   const t = useTranslations("nav");
@@ -45,9 +46,16 @@ export default function Navbar() {
         {/* Logo */}
         <a
           href="#hero"
-          className="font-heading text-cream hover:text-amber transition-colors duration-300 text-sm sm:text-2xl leading-tight min-w-0"
+          className="flex items-center gap-2 sm:gap-3 font-heading text-cream hover:text-amber transition-colors duration-300 text-sm sm:text-2xl leading-tight min-w-0"
         >
-          México Lindo<br /><span className="text-amber">Y Que Rico</span>
+          <Image
+            src="/images/logo.jpg"
+            alt="México Lindo Y Que Rico logo"
+            width={40}
+            height={40}
+            className="rounded-full w-8 h-8 sm:w-10 sm:h-10 object-cover"
+          />
+          <span>México Lindo<br /><span className="text-amber">Y Que Rico</span></span>
         </a>
 
         {/* Desktop Nav */}

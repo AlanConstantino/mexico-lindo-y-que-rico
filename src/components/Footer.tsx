@@ -1,5 +1,6 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import Image from "next/image";
 
 export default function Footer() {
   const t = useTranslations("footer");
@@ -20,10 +21,19 @@ export default function Footer() {
         <div className="grid md:grid-cols-3 gap-12 mb-16">
           {/* Brand */}
           <div>
-            <p className="font-heading text-3xl text-cream mb-3">
-              México Lindo<br />
-              <span className="text-amber">Y Que Rico</span>
-            </p>
+            <div className="flex items-center gap-3 mb-3">
+              <Image
+                src="/images/logo.jpg"
+                alt="México Lindo Y Que Rico logo"
+                width={56}
+                height={56}
+                className="rounded-full object-cover"
+              />
+              <p className="font-heading text-3xl text-cream">
+                México Lindo<br />
+                <span className="text-amber">Y Que Rico</span>
+              </p>
+            </div>
             <p className="text-cream/30 text-sm leading-relaxed mt-4">
               {t("description")}
             </p>
