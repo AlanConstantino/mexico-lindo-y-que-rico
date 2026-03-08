@@ -74,7 +74,7 @@ export default function ReviewStep({
 
       <div className="space-y-4">
         {/* Event Date */}
-        <div className="p-4 rounded-xl bg-navy-light/30 border border-cream/5">
+        <div className="p-4 rounded-xl bg-card border border-card-border">
           <div className="text-cream/40 text-xs uppercase tracking-wider mb-1">
             {t("eventDate")}
           </div>
@@ -84,7 +84,7 @@ export default function ReviewStep({
         </div>
 
         {/* Package */}
-        <div className="p-4 rounded-xl bg-navy-light/30 border border-cream/5">
+        <div className="p-4 rounded-xl bg-card border border-card-border">
           <div className="text-cream/40 text-xs uppercase tracking-wider mb-1">
             {t("package")}
           </div>
@@ -94,7 +94,7 @@ export default function ReviewStep({
         </div>
 
         {/* Meats */}
-        <div className="p-4 rounded-xl bg-navy-light/30 border border-cream/5">
+        <div className="p-4 rounded-xl bg-card border border-card-border">
           <div className="text-cream/40 text-xs uppercase tracking-wider mb-2">
             {t("meats")}
           </div>
@@ -111,7 +111,7 @@ export default function ReviewStep({
         </div>
 
         {/* Extras */}
-        <div className="p-4 rounded-xl bg-navy-light/30 border border-cream/5">
+        <div className="p-4 rounded-xl bg-card border border-card-border">
           <div className="text-cream/40 text-xs uppercase tracking-wider mb-2">
             {t("extras")}
           </div>
@@ -156,7 +156,7 @@ export default function ReviewStep({
         </div>
 
         {/* Event Address */}
-        <div className="p-4 rounded-xl bg-navy-light/30 border border-cream/5">
+        <div className="p-4 rounded-xl bg-card border border-card-border">
           <div className="text-cream/40 text-xs uppercase tracking-wider mb-1">
             {t("eventAddress")}
           </div>
@@ -164,7 +164,7 @@ export default function ReviewStep({
         </div>
 
         {/* Contact Info */}
-        <div className="p-4 rounded-xl bg-navy-light/30 border border-cream/5">
+        <div className="p-4 rounded-xl bg-card border border-card-border">
           <div className="text-cream/40 text-xs uppercase tracking-wider mb-2">
             {t("contact")}
           </div>
@@ -176,7 +176,7 @@ export default function ReviewStep({
         </div>
 
         {/* Payment Method Selection */}
-        <div className="p-5 rounded-xl bg-navy-light/30 border border-cream/5">
+        <div className="p-5 rounded-xl bg-card border border-card-border">
           <div className="text-cream/40 text-xs uppercase tracking-wider mb-4">
             {t("paymentMethod")}
           </div>

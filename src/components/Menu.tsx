@@ -50,7 +50,7 @@ export default function Menu() {
           {meatKeys.map((key) => (
             <div
               key={key}
-              className="reveal group relative overflow-hidden rounded-2xl bg-gradient-to-br from-navy-light to-navy-dark border border-cream/5 hover:border-terracotta/30 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-terracotta/10"
+              className="reveal group relative overflow-hidden rounded-2xl bg-card border border-card-border hover:border-terracotta/30 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-terracotta/10"
             >
               {/* Image */}
               <div className="relative h-28 sm:h-44 overflow-hidden">

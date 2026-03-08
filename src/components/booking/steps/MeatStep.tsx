@@ -43,7 +43,7 @@ export default function MeatStep({ data, updateData }: MeatStepProps) {
           className={`text-sm font-medium px-3 py-1 rounded-full transition-colors ${
             totalSelected === 4
               ? "bg-amber/10 text-amber border border-amber/30"
-              : "bg-navy-light/50 text-cream/40 border border-cream/10"
+              : "bg-card text-cream/40 border border-card-border"
           }`}
         >
           {t("meatsCount", { count: totalSelected })}
@@ -63,7 +63,7 @@ export default function MeatStep({ data, updateData }: MeatStepProps) {
               className={`p-4 rounded-xl border text-left transition-all duration-300 ${
                 isSelected
                   ? "border-amber bg-amber/5 shadow-lg shadow-amber/5"
-                  : "border-cream/10 bg-navy-light/30"
+                  : "border-card-border bg-card"
               }`}
             >
               <div className="flex items-start justify-between gap-2">

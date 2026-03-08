@@ -233,7 +233,7 @@ export default function BookingForm() {
                       ? "bg-amber text-navy scale-110"
                       : isComplete
                         ? "bg-amber/20 text-amber border border-amber/40 hover:bg-amber/30 hover:scale-105"
-                        : "bg-navy-light/50 text-cream/30 border border-cream/10"
+                        : "bg-card text-cream/30 border border-card-border"
                   }`}
                 >
                   {isComplete ? (
@@ -280,7 +280,7 @@ export default function BookingForm() {
 
       {/* Running total (show from step 2 onwards) */}
       {total !== null && step >= 2 && (
-        <div className="mb-6 flex items-center justify-between px-4 py-3 rounded-xl bg-navy-light/30 border border-cream/5">
+        <div className="mb-6 flex items-center justify-between px-4 py-3 rounded-xl bg-card border border-card-border">
           <span className="text-cream/40 text-sm">{t("total")}</span>
           <span className="font-heading text-2xl text-amber">
             ${total.toFixed(2)}
