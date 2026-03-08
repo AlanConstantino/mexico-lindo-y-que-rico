@@ -51,7 +51,7 @@ export default function BookingsChart({
 
   if (data.length === 0) {
     return (
-      <div className="bg-teal/10 rounded-2xl border border-teal/20 p-6">
+      <div className="bg-gradient-to-r from-amber/10 to-terracotta/10 rounded-2xl border border-amber/20 p-6">
         <h3 className="text-cream text-sm font-medium mb-4">{title}</h3>
         <div className="h-[250px] flex items-center justify-center text-cream/30 text-sm">
           No booking data
@@ -61,7 +61,7 @@ export default function BookingsChart({
   }
 
   return (
-    <div className="bg-teal/10 rounded-2xl border border-teal/20 p-6">
+    <div className="bg-gradient-to-r from-amber/10 to-terracotta/10 rounded-2xl border border-amber/20 p-6">
       <h3 className="text-cream text-sm font-medium mb-4">{title}</h3>
       <div className="h-[250px]">
         <ResponsiveContainer width="100%" height="100%">

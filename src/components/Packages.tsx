@@ -48,7 +48,7 @@ function PricingCard({
       className={`reveal relative group rounded-2xl p-4 sm:p-8 transition-all duration-500 hover:-translate-y-1 ${
         featured
           ? "bg-gradient-to-b from-amber/15 to-amber/5 border border-amber/30 shadow-lg shadow-amber/10"
-          : "bg-teal/10 border border-teal/20 hover:border-amber/20"
+          : "bg-gradient-to-r from-amber/10 to-terracotta/10 border border-amber/20 hover:border-amber/20"
       }`}
     >
       {featured && (
@@ -166,7 +166,7 @@ export default function Packages() {
         {/* Extra hour + Included */}
         <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {/* Extra hour */}
-          <div className="reveal p-8 rounded-2xl bg-teal/10 border border-teal/20">
+          <div className="reveal p-8 rounded-2xl bg-gradient-to-r from-amber/10 to-terracotta/10 border border-amber/20">
             <p className="text-teal-light text-xs uppercase tracking-[0.2em] mb-3 font-medium">
               {t("moreTimeLabel")}
             </p>
@@ -180,7 +180,7 @@ export default function Packages() {
           </div>
 
           {/* What's included */}
-          <div className="reveal p-8 rounded-2xl bg-teal/10 border border-teal/20">
+          <div className="reveal p-8 rounded-2xl bg-gradient-to-r from-amber/10 to-terracotta/10 border border-amber/20">
             <p className="text-amber text-xs uppercase tracking-[0.2em] mb-4 font-medium">
               {t("includesLabel")}
             </p>

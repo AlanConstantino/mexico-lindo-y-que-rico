@@ -54,7 +54,7 @@ export default function PackageStep({ data, updateData }: PackageStepProps) {
               className={`p-5 rounded-2xl border text-left transition-all duration-300 ${
                 isSelected
                   ? "border-amber bg-amber/5 shadow-lg shadow-amber/5"
-                  : "border-teal/20 bg-teal/10 hover:border-cream/20"
+                  : "border-amber/20 bg-gradient-to-r from-amber/10 to-terracotta/10 hover:border-cream/20"
               }`}
             >
               <div
@@ -84,7 +84,7 @@ export default function PackageStep({ data, updateData }: PackageStepProps) {
                   className={`p-4 rounded-xl border text-center transition-all duration-300 ${
                     isSelected
                       ? "border-amber bg-amber/5 shadow-lg shadow-amber/5"
-                      : "border-teal/20 bg-teal/10 hover:border-cream/20"
+                      : "border-amber/20 bg-gradient-to-r from-amber/10 to-terracotta/10 hover:border-cream/20"
                   }`}
                 >
                   <div
