@@ -55,7 +55,7 @@ export default function RevenueChart({
 
   if (data.length === 0) {
     return (
-      <div className="bg-card rounded-2xl border border-card-border p-6">
+      <div className="bg-teal/10 rounded-2xl border border-teal/20 p-6">
         <h3 className="text-cream text-sm font-medium mb-4">{title}</h3>
         <div className="h-[250px] flex items-center justify-center text-cream/30 text-sm">
           No revenue data
@@ -65,7 +65,7 @@ export default function RevenueChart({
   }
 
   return (
-    <div className="bg-card rounded-2xl border border-card-border p-6">
+    <div className="bg-teal/10 rounded-2xl border border-teal/20 p-6">
       <h3 className="text-cream text-sm font-medium mb-4">{title}</h3>
       <div className="h-[250px]">
         <ResponsiveContainer width="100%" height="100%">

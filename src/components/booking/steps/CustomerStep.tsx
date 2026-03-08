@@ -33,7 +33,7 @@ export default function CustomerStep({ data, updateData }: CustomerStepProps) {
             value={data.customerName}
             onChange={(e) => updateData({ customerName: e.target.value })}
             placeholder={t("namePlaceholder")}
-            className="w-full px-4 py-3 rounded-xl bg-card-light border border-card-border text-cream placeholder:text-cream/20 focus:border-amber/40 focus:outline-none focus:ring-1 focus:ring-amber/20 transition-all text-sm"
+            className="w-full px-4 py-3 rounded-xl bg-teal/10 border border-teal/20 text-cream placeholder:text-cream/20 focus:border-amber/40 focus:outline-none focus:ring-1 focus:ring-amber/20 transition-all text-sm"
           />
         </div>
 
@@ -51,7 +51,7 @@ export default function CustomerStep({ data, updateData }: CustomerStepProps) {
             value={data.customerEmail}
             onChange={(e) => updateData({ customerEmail: e.target.value })}
             placeholder={t("emailPlaceholder")}
-            className="w-full px-4 py-3 rounded-xl bg-card-light border border-card-border text-cream placeholder:text-cream/20 focus:border-amber/40 focus:outline-none focus:ring-1 focus:ring-amber/20 transition-all text-sm"
+            className="w-full px-4 py-3 rounded-xl bg-teal/10 border border-teal/20 text-cream placeholder:text-cream/20 focus:border-amber/40 focus:outline-none focus:ring-1 focus:ring-amber/20 transition-all text-sm"
           />
           {data.customerEmail &&
             !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.customerEmail) && (
@@ -75,7 +75,7 @@ export default function CustomerStep({ data, updateData }: CustomerStepProps) {
             value={data.customerPhone}
             onChange={(e) => updateData({ customerPhone: e.target.value })}
             placeholder={t("phonePlaceholder")}
-            className="w-full px-4 py-3 rounded-xl bg-card-light border border-card-border text-cream placeholder:text-cream/20 focus:border-amber/40 focus:outline-none focus:ring-1 focus:ring-amber/20 transition-all text-sm"
+            className="w-full px-4 py-3 rounded-xl bg-teal/10 border border-teal/20 text-cream placeholder:text-cream/20 focus:border-amber/40 focus:outline-none focus:ring-1 focus:ring-amber/20 transition-all text-sm"
           />
         </div>
 
@@ -93,7 +93,7 @@ export default function CustomerStep({ data, updateData }: CustomerStepProps) {
             value={data.eventAddress}
             onChange={(e) => updateData({ eventAddress: e.target.value })}
             placeholder={t("addressPlaceholder")}
-            className="w-full px-4 py-3 rounded-xl bg-card-light border border-card-border text-cream placeholder:text-cream/20 focus:border-amber/40 focus:outline-none focus:ring-1 focus:ring-amber/20 transition-all text-sm"
+            className="w-full px-4 py-3 rounded-xl bg-teal/10 border border-teal/20 text-cream placeholder:text-cream/20 focus:border-amber/40 focus:outline-none focus:ring-1 focus:ring-amber/20 transition-all text-sm"
           />
           {data.eventAddress && data.eventAddress.trim().length > 0 && (
             !(/\d/.test(data.eventAddress) && /\d{5}/.test(data.eventAddress) && data.eventAddress.trim().length >= 10) ? (

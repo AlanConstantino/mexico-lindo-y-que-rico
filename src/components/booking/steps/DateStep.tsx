@@ -208,7 +208,7 @@ export default function DateStep({ data, updateData }: DateStepProps) {
       <p className="text-cream/40 text-sm mb-8">{t("selectDateDesc")}</p>
 
       {/* Calendar */}
-      <div className="rounded-2xl bg-card border border-card-border p-4 sm:p-6">
+      <div className="rounded-2xl bg-teal/10 border border-teal/20 p-4 sm:p-6">
         {/* Month navigation */}
         <div className="flex items-center justify-between mb-6">
           <button
@@ -349,7 +349,7 @@ export default function DateStep({ data, updateData }: DateStepProps) {
             onChange={(e) =>
               updateData({ eventTime: e.target.value || null })
             }
-            className="block w-full min-w-0 rounded-xl bg-card border border-card-border text-cream px-4 py-3 text-sm focus:outline-none focus:border-amber/40 transition-colors cursor-pointer [color-scheme:dark] [-webkit-appearance:none] [&::-webkit-calendar-picker-indicator]:invert"
+            className="block w-full min-w-0 rounded-xl bg-teal/10 border border-teal/20 text-cream px-4 py-3 text-sm focus:outline-none focus:border-amber/40 transition-colors cursor-pointer [color-scheme:dark] [-webkit-appearance:none] [&::-webkit-calendar-picker-indicator]:invert"
             style={{ maxWidth: "100%" }}
           />
           {data.eventTime && (() => {

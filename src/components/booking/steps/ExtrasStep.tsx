@@ -98,7 +98,7 @@ export default function ExtrasStep({ data, updateData }: ExtrasStepProps) {
                 className={`flex items-center justify-between p-4 rounded-xl border transition-all duration-300 ${
                 hasQty
                   ? "border-amber/20 bg-amber/5"
-                  : "border-card-border bg-card"
+                  : "border-teal/20 bg-teal/10"
               } ${hasSubPicker ? "rounded-b-none border-b-0" : ""}`}
             >
               <div className="flex-1 min-w-0">

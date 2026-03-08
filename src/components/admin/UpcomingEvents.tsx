@@ -46,7 +46,7 @@ export default function UpcomingEvents({
   };
 
   return (
-    <div className="bg-card rounded-2xl border border-card-border p-6">
+    <div className="bg-teal/10 rounded-2xl border border-teal/20 p-6">
       <h3 className="text-cream text-sm font-medium mb-4">{title}</h3>
       {upcoming.length === 0 ? (
         <div className="py-8 text-center text-cream/30 text-sm">

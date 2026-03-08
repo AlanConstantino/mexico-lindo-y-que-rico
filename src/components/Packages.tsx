@@ -48,7 +48,7 @@ function PricingCard({
       className={`reveal relative group rounded-2xl p-4 sm:p-8 transition-all duration-500 hover:-translate-y-1 ${
         featured
           ? "bg-gradient-to-b from-amber/15 to-amber/5 border border-amber/30 shadow-lg shadow-amber/10"
-          : "bg-card border border-card-border hover:border-amber/20"
+          : "bg-teal/10 border border-teal/20 hover:border-amber/20"
       }`}
     >
       {featured && (
@@ -180,7 +180,7 @@ export default function Packages() {
           </div>
 
           {/* What's included */}
-          <div className="reveal p-8 rounded-2xl bg-card border border-card-border">
+          <div className="reveal p-8 rounded-2xl bg-teal/10 border border-teal/20">
             <p className="text-amber text-xs uppercase tracking-[0.2em] mb-4 font-medium">
               {t("includesLabel")}
             </p>
