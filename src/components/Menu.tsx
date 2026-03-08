@@ -63,7 +63,7 @@ export default function Menu() {
                   unoptimized
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/80 to-transparent" />
-                <span className="absolute top-2 right-2 sm:top-3 sm:right-3 text-[8px] sm:text-[10px] uppercase tracking-widest text-teal font-semibold bg-navy/80 backdrop-blur-sm px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">
+                <span className="absolute top-2 right-2 sm:top-3 sm:right-3 text-[8px] sm:text-[10px] uppercase tracking-widest text-navy font-semibold bg-amber backdrop-blur-sm px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">
                   {t(`meats.${key}.tag`)}
                 </span>
               </div>

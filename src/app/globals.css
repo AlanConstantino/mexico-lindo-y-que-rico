@@ -34,7 +34,15 @@ html {
 
 body {
   font-family: var(--font-body);
-  background-color: var(--color-navy);
+  background: linear-gradient(
+    180deg,
+    var(--color-navy-dark) 0%,
+    var(--color-navy) 15%,
+    var(--color-navy-light) 35%,
+    var(--color-navy) 55%,
+    var(--color-navy-dark) 75%,
+    var(--color-navy) 100%
+  );
   color: var(--color-cream);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
