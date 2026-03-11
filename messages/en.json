@@ -92,14 +92,14 @@
     "moreTimeText": "Add an extra hour for just",
     "moreTimePrice": "$40",
     "moreTimeNote": "We arrive 1 hour early for setup — this does not count toward your service time.",
-    "includesLabel": "Every Package Includes",
+    "includesLabel": "Included with Every Package",
     "included": {
       "tortillas": "Corn Tortillas",
       "sauces": "Red & Green Hot Sauce",
       "garnish": "Radishes, Onion & Cilantro, Lemons",
       "plates": "Plates & Napkins",
-      "forks": "Forks with Rice and Beans",
-      "drinks": "Cups, Ice & Aguas Frescas"
+      "forks": "Forks",
+      "drinks": "Cups & Ice"
     },
     "largeEventTitle": "Need more than 200 guests?",
     "largeEventDesc": "Call us for a custom quote! We'll work with you to create the perfect package for your large event.",
