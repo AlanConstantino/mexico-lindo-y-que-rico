@@ -20,7 +20,6 @@ const includedKeys = [
   "sauces",
   "garnish",
   "plates",
-  "forks",
 ] as const;
 
 function PricingCard({
