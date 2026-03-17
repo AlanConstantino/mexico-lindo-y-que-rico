@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
+import Stripe from "stripe";
 import { supabaseAdmin } from "@/lib/supabase";
 import { isValidToken } from "../auth/route";
 import { sendCustomerConfirmation, sendOwnerInitiatedCancellation, mapExtrasForEmail } from "@/lib/notifications";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: "2026-01-28.clover",
+});
 
 function getToken(request: NextRequest): string | null {
   const auth = request.headers.get("authorization");
@@ -102,6 +107,21 @@ export async function PATCH(request: NextRequest) {
         cancelUrl,
         rescheduleUrl,
       }).catch((err) => console.error("Failed to send confirmation email:", err));
+    }
+
+    // Auto-refund via Stripe when owner cancels a card booking
+    if (status === "cancelled" && data.stripe_session_id && data.stripe_payment_status === "paid") {
+      try {
+        const session = await stripe.checkout.sessions.retrieve(data.stripe_session_id);
+        const paymentIntentId = session.payment_intent as string;
+        if (paymentIntentId) {
+          await stripe.refunds.create({ payment_intent: paymentIntentId });
+          console.log(`✅ Full refund issued for booking ${data.id}`);
+        }
+      } catch (stripeErr) {
+        console.error("❌ Stripe refund error on admin cancel:", stripeErr);
+        // Don't block the cancellation — log the error, owner can refund manually
+      }
     }
 
     // Send cancellation email when owner cancels a booking
