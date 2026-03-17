@@ -121,7 +121,7 @@ function renderCancellationPolicyHtml(policy: CancellationPolicy, t: ReturnType<
       <ul style="margin: 0; padding-left: 18px; color: #555; font-size: 13px; line-height: 1.8;">
         <li>${t.confirmation.cancellationFreeWindow(policy.freeCancellationDays)}</li>
         <li>${feeText}</li>
-        ${isCash && policy.cashDepositNonRefundable ? `<li>${t.confirmation.cancellationDepositNonRefundable}</li>` : ""}
+        ${isCash && policy.cashDepositNonRefundable ? `<li>${t.confirmation.cancellationDepositNonRefundable(policy.freeCancellationDays)}</li>` : ""}
       </ul>
     </div>
   `;
@@ -138,7 +138,7 @@ function renderCancellationPolicyText(policy: CancellationPolicy, t: ReturnType<
     `• ${feeText}`,
   ];
   if (isCash && policy.cashDepositNonRefundable) {
-    lines.push(`• ${t.confirmation.cancellationDepositNonRefundable}`);
+    lines.push(`• ${t.confirmation.cancellationDepositNonRefundable(policy.freeCancellationDays)}`);
   }
   return lines.join("\n");
 }
