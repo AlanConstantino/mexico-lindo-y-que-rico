@@ -45,6 +45,9 @@ export async function POST(request: NextRequest) {
     now.setHours(0, 0, 0, 0);
     const daysUntil = Math.ceil((eventDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 
+    const isCash = booking.payment_type === "cash";
+    const depositAmount = booking.deposit_amount ?? 0; // in cents
+
     let cancellationFee = 0;
     if (daysUntil < freeCancellationDays) {
       const feeType = settings?.cancellation_fee_type ?? "flat";
@@ -56,9 +59,19 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const refundAmount = Math.max(0, booking.total_price - cancellationFee);
+    // For cash bookings: deposit is always non-refundable
+    // Refund is calculated from what they paid minus the non-refundable deposit and any cancellation fee
+    let refundAmount: number;
+    if (isCash) {
+      const amountPaid = booking.cash_payment_option === "full" ? booking.total_price : depositAmount;
+      // Deposit is non-refundable, so minimum fee is the deposit amount
+      const totalDeductions = Math.max(depositAmount, cancellationFee);
+      refundAmount = Math.max(0, amountPaid - totalDeductions);
+    } else {
+      refundAmount = Math.max(0, booking.total_price - cancellationFee);
+    }
 
-    if (booking.stripe_session_id && booking.stripe_payment_status === "paid") {
+    if (!isCash && booking.stripe_session_id && booking.stripe_payment_status === "paid") {
       try {
         const session = await stripe.checkout.sessions.retrieve(booking.stripe_session_id);
         const paymentIntentId = session.payment_intent as string;

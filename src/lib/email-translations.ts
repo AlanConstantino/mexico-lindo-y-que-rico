@@ -48,6 +48,11 @@ export const emailTranslations = {
       cancelBooking: "Cancel Booking",
       questionsCall: "Questions? Call us at",
       footer: "México Lindo Y Que Rico · Greater Los Angeles · 20+ Years of Flavor",
+      cancellationPolicyTitle: "📋 Cancellation Policy",
+      cancellationFreeWindow: (days: number) => `Free cancellation up to <strong>${days} days</strong> before your event.`,
+      cancellationFeeFlat: (amount: string) => `Cancellations within the above window are subject to a <strong>${amount} fee</strong>.`,
+      cancellationFeePercent: (percent: number) => `Cancellations within the above window are subject to a <strong>${percent}% fee</strong>.`,
+      cancellationDepositNonRefundable: "Cash deposits are non-refundable.",
     },
     cashPending: {
       subject: () => `We've Received Your Booking — Payment Required! 🌮`,
@@ -153,6 +158,11 @@ export const emailTranslations = {
       cancelBooking: "Cancelar Reservación",
       questionsCall: "¿Preguntas? Llámanos al",
       footer: "México Lindo Y Que Rico · Gran Los Ángeles · 20+ Años de Sabor",
+      cancellationPolicyTitle: "📋 Política de Cancelación",
+      cancellationFreeWindow: (days: number) => `Cancelación gratuita hasta <strong>${days} días</strong> antes de tu evento.`,
+      cancellationFeeFlat: (amount: string) => `Las cancelaciones dentro de ese plazo están sujetas a un <strong>cargo de ${amount}</strong>.`,
+      cancellationFeePercent: (percent: number) => `Las cancelaciones dentro de ese plazo están sujetas a un <strong>cargo del ${percent}%</strong>.`,
+      cancellationDepositNonRefundable: "Los depósitos en efectivo no son reembolsables.",
     },
     cashPending: {
       subject: () => `¡Hemos Recibido Tu Reservación — Pago Requerido! 🌮`,

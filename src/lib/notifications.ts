@@ -102,6 +102,47 @@ function formatTime(time: string): string {
   return `${hour12}:${m} ${ampm}`;
 }
 
+interface CancellationPolicy {
+  freeCancellationDays: number;
+  feeType: "flat" | "percentage";
+  feeFlat: number;
+  feePercent: number;
+  cashDepositNonRefundable: boolean;
+}
+
+function renderCancellationPolicyHtml(policy: CancellationPolicy, t: ReturnType<typeof getTranslations>, isCash: boolean): string {
+  const feeText = policy.feeType === "flat"
+    ? t.confirmation.cancellationFeeFlat(`$${policy.feeFlat}`)
+    : t.confirmation.cancellationFeePercent(policy.feePercent);
+
+  return `
+    <div style="background: #f5f0eb; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
+      <p style="margin: 0 0 8px; color: #1B2A4A; font-size: 13px; font-weight: 600;">${t.confirmation.cancellationPolicyTitle}</p>
+      <ul style="margin: 0; padding-left: 18px; color: #555; font-size: 13px; line-height: 1.8;">
+        <li>${t.confirmation.cancellationFreeWindow(policy.freeCancellationDays)}</li>
+        <li>${feeText}</li>
+        ${isCash && policy.cashDepositNonRefundable ? `<li>${t.confirmation.cancellationDepositNonRefundable}</li>` : ""}
+      </ul>
+    </div>
+  `;
+}
+
+function renderCancellationPolicyText(policy: CancellationPolicy, t: ReturnType<typeof getTranslations>, isCash: boolean): string {
+  const feeText = policy.feeType === "flat"
+    ? t.confirmation.cancellationFeeFlat(`$${policy.feeFlat}`).replace(/<[^>]+>/g, "")
+    : t.confirmation.cancellationFeePercent(policy.feePercent).replace(/<[^>]+>/g, "");
+
+  const lines = [
+    `--- ${t.confirmation.cancellationPolicyTitle} ---`,
+    `• ${t.confirmation.cancellationFreeWindow(policy.freeCancellationDays).replace(/<[^>]+>/g, "")}`,
+    `• ${feeText}`,
+  ];
+  if (isCash && policy.cashDepositNonRefundable) {
+    lines.push(`• ${t.confirmation.cancellationDepositNonRefundable}`);
+  }
+  return lines.join("\n");
+}
+
 interface BookingNotification {
   bookingId: string;
   bookingNumber?: string;
@@ -128,6 +169,14 @@ interface BookingNotification {
   depositDeadline?: string; // ISO date string
   paymentHandle?: string; // the actual handle/number for the chosen method
   depositPercent?: number;
+  // Cancellation policy (fetched from admin settings)
+  cancellationPolicy?: {
+    freeCancellationDays: number;
+    feeType: "flat" | "percentage";
+    feeFlat: number; // dollars
+    feePercent: number;
+    cashDepositNonRefundable: boolean;
+  };
 }
 
 // ─── Owner Notification (always English) ─────────────────────────
@@ -327,6 +376,8 @@ export async function sendCustomerConfirmation(
     ``,
     `${t.confirmation.totalPaid}: ${formattedPrice}`,
     ``,
+    ...(booking.cancellationPolicy ? [renderCancellationPolicyText(booking.cancellationPolicy, t, booking.paymentType === "cash")] : []),
+    ``,
     `${t.confirmation.questionsCall} (562) 235-9361 / (562) 746-3998.`,
     ``,
     `— México Lindo Y Que Rico`,
@@ -412,6 +463,8 @@ export async function sendCustomerConfirmation(
             ${t.confirmation.setupNote}
           </p>
         </div>
+        ${booking.cancellationPolicy ? renderCancellationPolicyHtml(booking.cancellationPolicy, t, booking.paymentType === "cash") : ""}
+
 
         ${booking.cancelUrl || booking.rescheduleUrl ? `
         <!-- Manage Booking -->
@@ -1250,6 +1303,8 @@ export async function sendCashPendingConfirmation(
     ``,
     `${t.cashPending.estimatedTotal}: ${formattedPrice}`,
     ``,
+    ...(booking.cancellationPolicy ? [renderCancellationPolicyText(booking.cancellationPolicy, t, true)] : []),
+    ``,
     `${t.confirmation.questionsCall} (562) 235-9361 / (562) 746-3998.`,
     ``,
     `— México Lindo Y Que Rico`,
@@ -1382,6 +1437,8 @@ export async function sendCashPendingConfirmation(
           <p style="margin: 0 0 4px; color: #FAF5EF99; font-size: 14px;">${t.cashPending.estimatedTotal}</p>
           <p style="margin: 0; font-size: 32px; font-weight: bold; color: #E8A935;">${formattedPrice}</p>
         </div>
+        ${booking.cancellationPolicy ? renderCancellationPolicyHtml(booking.cancellationPolicy, t, true) : ""}
+
 
         ${booking.cancelUrl || booking.rescheduleUrl ? `
         <!-- Manage Booking -->

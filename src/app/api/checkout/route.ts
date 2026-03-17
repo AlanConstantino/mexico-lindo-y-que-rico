@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
     // Fetch payment settings from DB (server-side truth)
     const { data: paySettings } = await supabaseAdmin
       .from("settings")
-      .select("cc_surcharge_percent, cash_deposit_percent, stripe_fee_percent, stripe_fee_flat, cash_auto_cancel_hours, zelle_handle, venmo_handle, cashapp_handle, paypal_email")
+      .select("cc_surcharge_percent, cash_deposit_percent, stripe_fee_percent, stripe_fee_flat, cash_auto_cancel_hours, zelle_handle, venmo_handle, cashapp_handle, paypal_email, free_cancellation_days, cancellation_fee_type, cancellation_fee_flat, cancellation_fee_percent")
       .single();
 
     const serverSurchargePercent = paySettings?.cc_surcharge_percent ?? 10;
@@ -299,6 +299,13 @@ export async function POST(request: NextRequest) {
         depositDeadline,
         paymentHandle: paymentHandle || undefined,
         depositPercent: serverCashDepositPercent,
+        cancellationPolicy: {
+          freeCancellationDays: paySettings?.free_cancellation_days ?? 7,
+          feeType: (paySettings?.cancellation_fee_type ?? "flat") as "flat" | "percentage",
+          feeFlat: paySettings?.cancellation_fee_flat ?? 50,
+          feePercent: paySettings?.cancellation_fee_percent ?? 25,
+          cashDepositNonRefundable: true,
+        },
       };
       await Promise.all([
         sendBookingNotification({ ...baseNotifData, extras: mapExtrasForEmail(extrasData, "es") }),

@@ -86,6 +86,20 @@ export async function POST(request: NextRequest) {
       const cancelUrl = `${origin}/${bookingLocale}/booking/cancel/${cancelToken}`;
       const rescheduleUrl = `${origin}/${bookingLocale}/booking/reschedule/${rescheduleToken}`;
 
+      // Fetch cancellation policy settings
+      const { data: cancelSettings } = await supabaseAdmin
+        .from("settings")
+        .select("free_cancellation_days, cancellation_fee_type, cancellation_fee_flat, cancellation_fee_percent, cash_deposit_percent")
+        .single();
+
+      const cancellationPolicy = {
+        freeCancellationDays: cancelSettings?.free_cancellation_days ?? 7,
+        feeType: (cancelSettings?.cancellation_fee_type ?? "flat") as "flat" | "percentage",
+        feeFlat: cancelSettings?.cancellation_fee_flat ?? 50,
+        feePercent: cancelSettings?.cancellation_fee_percent ?? 25,
+        cashDepositNonRefundable: true,
+      };
+
       // Send notification to owner + confirmation to customer
       const baseData = {
         bookingId: booking.id,
@@ -102,6 +116,7 @@ export async function POST(request: NextRequest) {
         paymentType: booking.payment_type as string || "card",
         cancelUrl,
         rescheduleUrl,
+        cancellationPolicy,
       };
       const dbExtras = booking.extras as { id: string; quantity: number; flavors?: Record<string, number> }[] | undefined;
 
