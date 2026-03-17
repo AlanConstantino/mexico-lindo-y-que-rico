@@ -899,6 +899,7 @@ export async function sendCancellationConfirmation(data: {
   paymentType?: string;
   depositAmount?: number; // cents
   cashPaymentMethod?: string;
+  depositRefundable?: boolean;
 }, locale: SupportedLocale = "en"): Promise<void> {
   const t = getTranslations(locale);
   const formattedDate = emailTranslations.formatDate(data.eventDate, locale);
@@ -906,6 +907,7 @@ export async function sendCancellationConfirmation(data: {
   const formattedFee = `$${(data.cancellationFee / 100).toFixed(2)}`;
   const isCash = data.paymentType === "cash";
   const formattedDeposit = isCash && data.depositAmount ? `$${(data.depositAmount / 100).toFixed(2)}` : null;
+  const depositRefundable = data.depositRefundable ?? false;
 
   const refundNote = isCash
     ? (data.refundAmount > 0
@@ -923,7 +925,7 @@ export async function sendCancellationConfirmation(data: {
         <h2 style="color: #1B2A4A; margin: 0 0 8px;">${t.cancellation.heading}</h2>
         <p style="color: #555; margin: 0 0 24px;">${t.cancellation.message(data.customerName, formattedDate)}</p>
 
-        ${isCash && formattedDeposit ? `
+        ${isCash && formattedDeposit && !depositRefundable ? `
         <div style="background: #CC2D2D10; border-left: 3px solid #CC2D2D; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px;">
           <p style="margin: 0; color: #CC2D2D; font-size: 13px; font-weight: 600;">${t.cancellation.depositNonRefundable(formattedDeposit)}</p>
         </div>
@@ -1298,7 +1300,7 @@ export async function sendCashPendingConfirmation(
     `${t.cashPending.reference}: ${bookingNumber}`,
     ...(deadlineDate ? [`${t.cashPending.deadline}: ${deadlineDate}`] : []),
     ``,
-    isDeposit ? t.cashPending.nonRefundable : t.cashPending.fullPaymentNote,
+    isDeposit ? t.cashPending.nonRefundable(booking.cancellationPolicy?.freeCancellationDays ?? 7) : t.cashPending.fullPaymentNote,
     ...(isDeposit ? [`${t.cashPending.balanceRemaining}: ${balanceDue}`] : []),
     ...(deadlineDate ? [``, t.cashPending.deadlineWarning(deadlineDate).replace(/<[^>]+>/g, "")] : []),
     ``,
@@ -1386,7 +1388,7 @@ export async function sendCashPendingConfirmation(
 
           ${isDeposit ? `
           <div style="margin-top: 16px; padding: 12px; background: #CC2D2D10; border-radius: 8px; border-left: 3px solid #CC2D2D;">
-            <p style="margin: 0 0 4px; color: #CC2D2D; font-size: 13px; font-weight: 600;">${t.cashPending.nonRefundable}</p>
+            <p style="margin: 0 0 4px; color: #CC2D2D; font-size: 13px; font-weight: 600;">${t.cashPending.nonRefundable(booking.cancellationPolicy?.freeCancellationDays ?? 7)}</p>
             <p style="margin: 0; color: #555; font-size: 13px;">${t.cashPending.balanceRemaining}: <strong>${balanceDue}</strong></p>
           </div>
           ` : `
