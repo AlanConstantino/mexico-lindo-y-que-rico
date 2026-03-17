@@ -100,6 +100,9 @@ export const emailTranslations = {
       cancellationFee: "Cancellation fee",
       refundAmount: "Refund amount",
       refundNote: "Refunds typically take 5-10 business days to appear on your statement.",
+      cashRefundNote: "Your refund will be sent via the same payment method you used (Zelle, PayPal, Cash App, or Venmo). Please allow 3-5 business days.",
+      cashNoRefund: "As the deposit is non-refundable, no refund will be issued for this cancellation.",
+      depositNonRefundable: (amount: string) => `Your ${amount} deposit is non-refundable.`,
       hopeToServe: "We hope to serve you in the future! Call us at",
     },
     ownerCancellation: {
@@ -108,6 +111,7 @@ export const emailTranslations = {
       message: (name: string, date: string) =>
         `Hi ${name}, we're sorry to let you know that your catering booking for <strong>${date}</strong> has been cancelled.`,
       reason: "If you have any questions or would like to rebook, please don't hesitate to reach out to us at",
+      cardRefund: "A full refund has been issued to your card. Please allow 5-10 business days for it to appear on your statement.",
       apology: "We apologize for any inconvenience and hope to serve you in the future!",
     },
     autoCancellation: {
@@ -208,6 +212,9 @@ export const emailTranslations = {
       cancellationFee: "Cargo por cancelación",
       refundAmount: "Monto del reembolso",
       refundNote: "Los reembolsos generalmente tardan de 5 a 10 días hábiles en aparecer en tu estado de cuenta.",
+      cashRefundNote: "Tu reembolso será enviado por el mismo método de pago que utilizaste (Zelle, PayPal, Cash App o Venmo). Por favor espera de 3 a 5 días hábiles.",
+      cashNoRefund: "Como el depósito no es reembolsable, no se emitirá un reembolso por esta cancelación.",
+      depositNonRefundable: (amount: string) => `Tu depósito de ${amount} no es reembolsable.`,
       hopeToServe: "¡Esperamos atenderte en el futuro! Llámanos al",
     },
     ownerCancellation: {
@@ -216,6 +223,7 @@ export const emailTranslations = {
       message: (name: string, date: string) =>
         `Hola ${name}, lamentamos informarte que tu reservación de catering para el <strong>${date}</strong> ha sido cancelada.`,
       reason: "Si tienes alguna pregunta o deseas reservar nuevamente, no dudes en comunicarte con nosotros al",
+      cardRefund: "Se ha emitido un reembolso completo a tu tarjeta. Por favor espera de 5 a 10 días hábiles para que aparezca en tu estado de cuenta.",
       apology: "¡Nos disculpamos por cualquier inconveniente y esperamos atenderte en el futuro!",
     },
     autoCancellation: {

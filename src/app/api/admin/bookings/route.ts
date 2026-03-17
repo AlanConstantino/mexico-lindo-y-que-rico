@@ -133,6 +133,9 @@ export async function PATCH(request: NextRequest) {
         eventDate: data.event_date,
         bookingId: data.id,
         bookingNumber: data.booking_number,
+        paymentType: data.payment_type,
+        depositAmount: data.deposit_amount,
+        totalPrice: data.total_price,
       }, locale).catch((err) => console.error("Failed to send cancellation email:", err));
     }
 

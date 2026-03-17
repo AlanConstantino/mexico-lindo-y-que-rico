@@ -896,11 +896,22 @@ export async function sendCancellationConfirmation(data: {
   refundAmount: number;
   cancellationFee: number;
   bookingId: string;
+  paymentType?: string;
+  depositAmount?: number; // cents
+  cashPaymentMethod?: string;
 }, locale: SupportedLocale = "en"): Promise<void> {
   const t = getTranslations(locale);
   const formattedDate = emailTranslations.formatDate(data.eventDate, locale);
   const formattedRefund = `$${(data.refundAmount / 100).toFixed(2)}`;
   const formattedFee = `$${(data.cancellationFee / 100).toFixed(2)}`;
+  const isCash = data.paymentType === "cash";
+  const formattedDeposit = isCash && data.depositAmount ? `$${(data.depositAmount / 100).toFixed(2)}` : null;
+
+  const refundNote = isCash
+    ? (data.refundAmount > 0
+        ? t.cancellation.cashRefundNote
+        : t.cancellation.cashNoRefund)
+    : t.cancellation.refundNote;
 
   const htmlMessage = `
     <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
@@ -911,9 +922,16 @@ export async function sendCancellationConfirmation(data: {
       <div style="padding: 30px;">
         <h2 style="color: #1B2A4A; margin: 0 0 8px;">${t.cancellation.heading}</h2>
         <p style="color: #555; margin: 0 0 24px;">${t.cancellation.message(data.customerName, formattedDate)}</p>
+
+        ${isCash && formattedDeposit ? `
+        <div style="background: #CC2D2D10; border-left: 3px solid #CC2D2D; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px;">
+          <p style="margin: 0; color: #CC2D2D; font-size: 13px; font-weight: 600;">${t.cancellation.depositNonRefundable(formattedDeposit)}</p>
+        </div>
+        ` : ""}
+
         ${data.cancellationFee > 0 ? `<p style="color: #555;">${t.cancellation.cancellationFee}: <strong>${formattedFee}</strong></p>` : ""}
-        <p style="color: #555;">${t.cancellation.refundAmount}: <strong>${formattedRefund}</strong></p>
-        <p style="color: #888; font-size: 13px;">${t.cancellation.refundNote}</p>
+        ${data.refundAmount > 0 ? `<p style="color: #555;">${t.cancellation.refundAmount}: <strong>${formattedRefund}</strong></p>` : ""}
+        <p style="color: #888; font-size: 13px;">${refundNote}</p>
         <p style="color: #555; font-size: 14px; margin-top: 24px;">${t.cancellation.hopeToServe} <a href="tel:5622359361" style="color: #CC2D2D;">(562) 235-9361</a> or <a href="tel:5627463998" style="color: #CC2D2D;">(562) 746-3998</a>.</p>
       </div>
       <div style="background: #1B2A4A; padding: 20px 30px; text-align: center;">
@@ -927,7 +945,7 @@ export async function sendCancellationConfirmation(data: {
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: data.customerEmail,
       subject: t.cancellation.subject(formattedDate),
-      text: `${t.cancellation.heading} — ${formattedDate}. ${t.cancellation.refundAmount}: ${formattedRefund}. ${t.cancellation.cancellationFee}: ${formattedFee}.`,
+      text: `${t.cancellation.heading} — ${formattedDate}. ${data.refundAmount > 0 ? `${t.cancellation.refundAmount}: ${formattedRefund}.` : ""} ${data.cancellationFee > 0 ? `${t.cancellation.cancellationFee}: ${formattedFee}.` : ""}`,
       html: htmlMessage,
     });
   } catch (error) {
@@ -1492,9 +1510,17 @@ export async function sendOwnerInitiatedCancellation(data: {
   eventDate: string;
   bookingId: string;
   bookingNumber?: string | null;
+  paymentType?: string;
+  depositAmount?: number; // cents
+  totalPrice?: number; // cents
 }, locale: SupportedLocale = "en"): Promise<void> {
   const t = getTranslations(locale);
   const formattedDate = emailTranslations.formatDate(data.eventDate, locale);
+  const isCash = data.paymentType === "cash";
+  const formattedDeposit = isCash && data.depositAmount ? `$${(data.depositAmount / 100).toFixed(2)}` : null;
+  const refundAmount = isCash && data.totalPrice && data.depositAmount
+    ? `$${((data.totalPrice - data.depositAmount) / 100).toFixed(2)}`
+    : null;
 
   const htmlMessage = `
     <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
@@ -1505,6 +1531,15 @@ export async function sendOwnerInitiatedCancellation(data: {
       <div style="padding: 30px;">
         <h2 style="color: #CC2D2D; margin: 0 0 8px;">❌ ${t.ownerCancellation.heading}</h2>
         <p style="color: #555; margin: 0 0 24px; line-height: 1.6;">${t.ownerCancellation.message(data.customerName, formattedDate)}</p>
+
+        ${isCash && formattedDeposit ? `
+        <div style="background: #CC2D2D10; border-left: 3px solid #CC2D2D; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px;">
+          <p style="margin: 0 0 4px; color: #CC2D2D; font-size: 13px; font-weight: 600;">${t.cancellation.depositNonRefundable(formattedDeposit)}</p>
+          ${refundAmount && data.totalPrice && data.depositAmount && data.totalPrice > data.depositAmount ? `<p style="margin: 0; color: #555; font-size: 13px;">${t.cancellation.refundAmount}: <strong>${refundAmount}</strong></p>` : ""}
+        </div>
+        ` : ""}
+
+        ${!isCash ? `<p style="color: #555; line-height: 1.6;">${t.ownerCancellation.cardRefund}</p>` : ""}
         <p style="color: #555; line-height: 1.6;">${t.ownerCancellation.reason} <a href="tel:5622359361" style="color: #CC2D2D;">(562) 235-9361</a> or <a href="tel:5627463998" style="color: #CC2D2D;">(562) 746-3998</a>.</p>
         <p style="color: #555; line-height: 1.6;">${t.ownerCancellation.apology}</p>
       </div>

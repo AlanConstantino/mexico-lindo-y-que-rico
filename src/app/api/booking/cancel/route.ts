@@ -106,6 +106,9 @@ export async function POST(request: NextRequest) {
         refundAmount,
         cancellationFee,
         bookingId: booking.id,
+        paymentType: booking.payment_type,
+        depositAmount: isCash ? depositAmount : undefined,
+        cashPaymentMethod: isCash ? booking.cash_payment_method : undefined,
       }, bookingLocale),
       sendOwnerCancellationNotice({
         customerName: booking.customer_name,
