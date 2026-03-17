@@ -59,24 +59,13 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // For cash bookings:
-    // - Within free cancellation window (7+ days): full refund including deposit
-    // - Past the window (< 7 days): deposit is non-refundable + cancellation fee applies
-    const withinFreeWindow = daysUntil >= freeCancellationDays;
-    let refundAmount: number;
-    if (isCash) {
-      const amountPaid = booking.cash_payment_option === "full" ? booking.total_price : depositAmount;
-      if (withinFreeWindow) {
-        // Full refund including deposit
-        refundAmount = amountPaid;
-      } else {
-        // Deposit non-refundable + cancellation fee
-        const totalDeductions = depositAmount + cancellationFee;
-        refundAmount = Math.max(0, amountPaid - totalDeductions);
-      }
-    } else {
-      refundAmount = Math.max(0, booking.total_price - cancellationFee);
-    }
+    // Same policy for card and cash:
+    // - 7+ days before event: full refund
+    // - Less than 7 days: refund minus cancellation fee
+    const amountPaid = isCash
+      ? (booking.cash_payment_option === "full" ? booking.total_price : depositAmount)
+      : booking.total_price;
+    const refundAmount = Math.max(0, amountPaid - cancellationFee);
 
     if (!isCash && booking.stripe_session_id && booking.stripe_payment_status === "paid") {
       try {
@@ -116,7 +105,6 @@ export async function POST(request: NextRequest) {
         paymentType: booking.payment_type,
         depositAmount: isCash ? depositAmount : undefined,
         cashPaymentMethod: isCash ? booking.cash_payment_method : undefined,
-        depositRefundable: withinFreeWindow,
       }, bookingLocale),
       sendOwnerCancellationNotice({
         customerName: booking.customer_name,
