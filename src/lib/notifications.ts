@@ -1383,6 +1383,18 @@ export async function sendCashPendingConfirmation(
           <p style="margin: 0; font-size: 32px; font-weight: bold; color: #E8A935;">${formattedPrice}</p>
         </div>
 
+        ${booking.cancelUrl || booking.rescheduleUrl ? `
+        <!-- Manage Booking -->
+        <div style="background: #f5f0eb; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px; text-align: center;">
+          <p style="margin: 0 0 8px; color: #1B2A4A; font-size: 13px; font-weight: 600;">${t.confirmation.manageBooking}</p>
+          <p style="margin: 0; font-size: 13px;">
+            ${booking.rescheduleUrl ? `<a href="${booking.rescheduleUrl}" style="color: #CC2D2D; text-decoration: none; font-weight: 600;">${t.confirmation.reschedule}</a>` : ""}
+            ${booking.cancelUrl && booking.rescheduleUrl ? ' &nbsp;·&nbsp; ' : ""}
+            ${booking.cancelUrl ? `<a href="${booking.cancelUrl}" style="color: #888; text-decoration: none;">${t.confirmation.cancelBooking}</a>` : ""}
+          </p>
+        </div>
+        ` : ""}
+
         <!-- Contact -->
         <p style="color: #555; font-size: 14px; text-align: center; margin: 0;">
           ${t.confirmation.questionsCall}

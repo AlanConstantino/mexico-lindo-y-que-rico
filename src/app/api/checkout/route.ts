@@ -270,6 +270,10 @@ export async function POST(request: NextRequest) {
       const paymentHandle = paymentHandleMap[cashPaymentMethod || ""] ?? null;
       const depositDeadline = new Date(Date.now() + serverCashAutoCancelHours * 60 * 60 * 1000).toISOString();
 
+      // Build cancel/reschedule URLs
+      const cancelUrl = `${origin}/${locale}/booking/cancel/${cancelToken}`;
+      const rescheduleUrl = `${origin}/${locale}/booking/reschedule/${rescheduleToken}`;
+
       // Notify owner + send pending confirmation to customer
       const { sendBookingNotification, sendCashPendingConfirmation, mapExtrasForEmail } = await import("@/lib/notifications");
       const baseNotifData = {
@@ -286,6 +290,8 @@ export async function POST(request: NextRequest) {
         eventAddress,
         totalPrice: serverTotal * 100,
         paymentType: "cash",
+        cancelUrl,
+        rescheduleUrl,
         depositAmount: Math.round(depositAmount * 100),
         balanceDue: Math.round(balanceDue * 100),
         cashPaymentMethod: cashPaymentMethod || undefined,
