@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import AdminNav from "@/components/admin/AdminNav";
 import RevenueChart from "@/components/admin/charts/RevenueChart";
 import BookingsChart from "@/components/admin/charts/BookingsChart";
@@ -39,6 +39,7 @@ interface Booking {
   deposit_confirmed: boolean;
   deposit_amount: number;
   balance_due: number;
+  event_address: string | null;
 }
 
 function getToken(): string | null {
@@ -93,6 +94,14 @@ function IconSearch() {
 
 export default function AdminPage() {
   const t = useTranslations("admin");
+  const locale = useLocale();
+  const dateLocale = locale === "es" ? "es-US" : "en-US";
+
+  const translateStatus = (status: string) => {
+    const key = `status.${status}` as Parameters<typeof t>[0];
+    try { return t(key); } catch { return status; }
+  };
+
   const [authenticated, setAuthenticated] = useState(false);
   const [checking, setChecking] = useState(true);
   const [password, setPassword] = useState("");
@@ -482,6 +491,7 @@ export default function AdminPage() {
             title={t("dashboard.upcomingEvents")}
             noEventsText={t("dashboard.noUpcoming")}
             guestsLabel={t("table.guests").toLowerCase()}
+            locale={locale}
           />
         </div>
 
@@ -609,7 +619,7 @@ export default function AdminPage() {
                       {/* Desktop row */}
                       <div className="hidden lg:grid lg:grid-cols-[110px_1fr_1fr_70px_90px_95px_90px_110px] gap-3 px-4 py-3 items-center">
                         <span className="text-sm text-cream/80">
-                          {new Date(booking.event_date + "T12:00:00").toLocaleDateString()}
+                          {new Date(booking.event_date + "T12:00:00").toLocaleDateString(dateLocale)}
                           {booking.event_time && ` · ${formatTime12(booking.event_time)}`}
                         </span>
                         <span className="text-sm text-cream font-medium truncate">
@@ -673,7 +683,7 @@ export default function AdminPage() {
                                 booking.stripe_payment_status
                               )}`}
                             >
-                              {booking.stripe_payment_status}
+                              {translateStatus(booking.stripe_payment_status)}
                             </span>
                           )}
                         </span>
@@ -683,7 +693,7 @@ export default function AdminPage() {
                               booking.status
                             )}`}
                           >
-                            {booking.status}
+                            {translateStatus(booking.status)}
                           </span>
                         </span>
                       </div>
@@ -699,12 +709,12 @@ export default function AdminPage() {
                               booking.status
                             )}`}
                           >
-                            {booking.status}
+                            {translateStatus(booking.status)}
                           </span>
                         </div>
                         <div className="flex items-center justify-between text-sm text-cream/50">
                           <span>
-                            {new Date(booking.event_date + "T12:00:00").toLocaleDateString()}{booking.event_time ? ` · ${formatTime12(booking.event_time)}` : ""} · {booking.guest_count} {t("table.guests").toLowerCase()}
+                            {new Date(booking.event_date + "T12:00:00").toLocaleDateString(dateLocale)}{booking.event_time ? ` · ${formatTime12(booking.event_time)}` : ""} · {booking.guest_count} {t("table.guests").toLowerCase()}
                           </span>
                           <span className="font-medium text-cream">
                             ${(booking.total_price / 100).toFixed(2)}
@@ -736,6 +746,14 @@ export default function AdminPage() {
                             <p className="text-cream text-sm">{booking.customer_email}</p>
                             <p className="text-cream/60 text-sm">{booking.customer_phone}</p>
                           </div>
+                          {booking.event_address && (
+                            <div>
+                              <span className="text-cream/40 text-[11px] uppercase tracking-wider font-medium block mb-1">
+                                {t("table.address")}
+                              </span>
+                              <p className="text-cream text-sm">{booking.event_address}</p>
+                            </div>
+                          )}
                           <div>
                             <span className="text-cream/40 text-[11px] uppercase tracking-wider font-medium block mb-1">
                               {t("table.meats")}

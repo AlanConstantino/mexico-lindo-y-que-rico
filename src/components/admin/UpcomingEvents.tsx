@@ -16,11 +16,13 @@ export default function UpcomingEvents({
   title,
   noEventsText,
   guestsLabel,
+  locale,
 }: {
   bookings: Booking[];
   title: string;
   noEventsText: string;
   guestsLabel: string;
+  locale?: string;
 }) {
   const upcoming = useMemo(() => {
     const now = new Date();
@@ -56,8 +58,9 @@ export default function UpcomingEvents({
         <div className="space-y-1">
           {upcoming.map((event, i) => {
             const eventDate = new Date(event.event_date + "T12:00:00");
-            const dayName = eventDate.toLocaleDateString("en-US", { weekday: "short" });
-            const monthDay = eventDate.toLocaleDateString("en-US", {
+            const dateLoc = locale === "es" ? "es-US" : "en-US";
+            const dayName = eventDate.toLocaleDateString(dateLoc, { weekday: "short" });
+            const monthDay = eventDate.toLocaleDateString(dateLoc, {
               month: "short",
               day: "numeric",
             });

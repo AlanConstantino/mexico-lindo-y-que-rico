@@ -369,7 +369,8 @@
       "payment": "Payment",
       "status": "Status",
       "meats": "Meats",
-      "extras": "Extras"
+      "extras": "Extras",
+      "address": "Event Address"
     },
     "dashboard": {
       "noBookings": "No bookings found",
@@ -456,7 +457,15 @@
     "balanceDue": "Balance due: ${amount}",
     "awaitingPayment": "Awaiting Payment",
     "confirmPayment": "Confirm Payment",
-    "via": "via"
+    "via": "via",
+    "status": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "cancelled": "Cancelled",
+      "paid": "Paid",
+      "not_applicable": "N/A",
+      "card_on_file": "Card on File"
+    }
   },
   "metadata": {
     "home": {

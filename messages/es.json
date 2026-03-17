@@ -369,7 +369,8 @@
       "payment": "Pago",
       "status": "Estado",
       "meats": "Carnes",
-      "extras": "Extras"
+      "extras": "Extras",
+      "address": "Dirección del Evento"
     },
     "dashboard": {
       "noBookings": "No se encontraron reservas",
@@ -456,7 +457,15 @@
     "balanceDue": "Saldo pendiente: ${amount}",
     "awaitingPayment": "Esperando Pago",
     "confirmPayment": "Confirmar Pago",
-    "via": "vía"
+    "via": "vía",
+    "status": {
+      "pending": "Pendiente",
+      "confirmed": "Confirmado",
+      "cancelled": "Cancelado",
+      "paid": "Pagado",
+      "not_applicable": "N/A",
+      "card_on_file": "Tarjeta Registrada"
+    }
   },
   "metadata": {
     "home": {
