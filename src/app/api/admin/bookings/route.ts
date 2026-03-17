@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { supabaseAdmin } from "@/lib/supabase";
 import { isValidToken } from "../auth/route";
-import { sendCustomerConfirmation, sendOwnerInitiatedCancellation, mapExtrasForEmail } from "@/lib/notifications";
+import { sendCustomerConfirmation, sendOwnerInitiatedCancellation, sendOwnerCancellationNotice, mapExtrasForEmail } from "@/lib/notifications";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2026-01-28.clover",
@@ -137,6 +137,24 @@ export async function PATCH(request: NextRequest) {
         depositAmount: data.deposit_amount,
         totalPrice: data.total_price,
       }, locale).catch((err) => console.error("Failed to send cancellation email:", err));
+
+      // Also notify the owner
+      const { data: settings } = await supabaseAdmin
+        .from("settings")
+        .select("notification_email")
+        .single();
+      const ownerEmail = settings?.notification_email ?? "mx.lindo.y.que.rico.catering@gmail.com";
+
+      await sendOwnerCancellationNotice({
+        customerName: data.customer_name,
+        customerEmail: data.customer_email,
+        customerPhone: data.customer_phone,
+        eventDate: data.event_date,
+        refundAmount: data.total_price, // full refund on admin cancel
+        cancellationFee: 0,
+        bookingId: data.id,
+        ownerEmail,
+      }).catch((err) => console.error("Failed to send owner cancellation notice:", err));
     }
 
     return NextResponse.json({ booking: data });
