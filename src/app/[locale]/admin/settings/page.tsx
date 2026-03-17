@@ -21,9 +21,13 @@ interface Settings {
   noshow_fee_flat: number;
   noshow_fee_percent: number;
   zelle_handle: string;
+  zelle_enabled: boolean;
   venmo_handle: string;
+  venmo_enabled: boolean;
   cashapp_handle: string;
+  cashapp_enabled: boolean;
   paypal_email: string;
+  paypal_enabled: boolean;
   cash_auto_cancel_hours: number;
   cash_deposit_percent: number;
 }
@@ -63,9 +67,13 @@ export default function AdminSettingsPage() {
     noshow_fee_flat: 100,
     noshow_fee_percent: 50,
     zelle_handle: "(562) 746-3998",
+    zelle_enabled: true,
     venmo_handle: "",
+    venmo_enabled: true,
     cashapp_handle: "",
+    cashapp_enabled: true,
     paypal_email: "",
+    paypal_enabled: true,
     cash_auto_cancel_hours: 48,
     cash_deposit_percent: 10,
   });
@@ -406,34 +414,40 @@ export default function AdminSettingsPage() {
                     className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors" />
                   <p className="text-xs text-cream/40 mt-1">{t("settings.cashAutoCancelHoursHint")}</p>
                 </div>
-                <div>
-                  <label className="block text-sm text-cream/70 mb-1.5">{t("settings.zelleHandle")}</label>
-                  <input type="text" value={settings.zelle_handle}
-                    onChange={(e) => setSettings({ ...settings, zelle_handle: e.target.value })}
-                    placeholder="(562) 746-3998"
-                    className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream placeholder:text-cream/30 focus:outline-none focus:border-amber/50 transition-colors" />
-                </div>
-                <div>
-                  <label className="block text-sm text-cream/70 mb-1.5">{t("settings.paypalEmail")}</label>
-                  <input type="email" value={settings.paypal_email}
-                    onChange={(e) => setSettings({ ...settings, paypal_email: e.target.value })}
-                    placeholder="paypal@example.com"
-                    className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream placeholder:text-cream/30 focus:outline-none focus:border-amber/50 transition-colors" />
-                </div>
-                <div>
-                  <label className="block text-sm text-cream/70 mb-1.5">{t("settings.cashappHandle")}</label>
-                  <input type="text" value={settings.cashapp_handle}
-                    onChange={(e) => setSettings({ ...settings, cashapp_handle: e.target.value })}
-                    placeholder="$yourtag"
-                    className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream placeholder:text-cream/30 focus:outline-none focus:border-amber/50 transition-colors" />
-                </div>
-                <div>
-                  <label className="block text-sm text-cream/70 mb-1.5">{t("settings.venmoHandle")}</label>
-                  <input type="text" value={settings.venmo_handle}
-                    onChange={(e) => setSettings({ ...settings, venmo_handle: e.target.value })}
-                    placeholder="@yourhandle"
-                    className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream placeholder:text-cream/30 focus:outline-none focus:border-amber/50 transition-colors" />
-                </div>
+                {/* Payment Method Toggles */}
+                {([
+                  { key: "zelle" as const, label: "Zelle", icon: "💸", enabledKey: "zelle_enabled" as const, handleKey: "zelle_handle" as const, placeholder: "(562) 746-3998", inputType: "text" },
+                  { key: "paypal" as const, label: "PayPal", icon: "🅿️", enabledKey: "paypal_enabled" as const, handleKey: "paypal_email" as const, placeholder: "paypal@example.com", inputType: "email" },
+                  { key: "cashapp" as const, label: "Cash App", icon: "💵", enabledKey: "cashapp_enabled" as const, handleKey: "cashapp_handle" as const, placeholder: "$yourtag", inputType: "text" },
+                  { key: "venmo" as const, label: "Venmo", icon: "✌️", enabledKey: "venmo_enabled" as const, handleKey: "venmo_handle" as const, placeholder: "@yourhandle", inputType: "text" },
+                ] as const).map((method) => (
+                  <div key={method.key} className={`p-4 rounded-xl border transition-all duration-200 ${settings[method.enabledKey] ? 'border-amber/30 bg-amber/5' : 'border-cream/10 bg-cream/5 opacity-60'}`}>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">{method.icon}</span>
+                        <span className="text-cream font-medium">{method.label}</span>
+                      </div>
+                      <button
+                        type="button"
+                        role="switch"
+                        aria-checked={settings[method.enabledKey]}
+                        onClick={() => setSettings({ ...settings, [method.enabledKey]: !settings[method.enabledKey] })}
+                        className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-amber/50 ${settings[method.enabledKey] ? 'bg-amber' : 'bg-cream/20'}`}
+                      >
+                        <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-md transition-transform duration-200 ${settings[method.enabledKey] ? 'translate-x-6' : 'translate-x-1'}`} />
+                      </button>
+                    </div>
+                    {settings[method.enabledKey] && (
+                      <input
+                        type={method.inputType}
+                        value={settings[method.handleKey]}
+                        onChange={(e) => setSettings({ ...settings, [method.handleKey]: e.target.value })}
+                        placeholder={method.placeholder}
+                        className="w-full px-4 py-2.5 bg-navy-light border border-cream/10 rounded-lg text-cream text-sm placeholder:text-cream/30 focus:outline-none focus:border-amber/50 transition-colors"
+                      />
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
 

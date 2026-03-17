@@ -16,6 +16,12 @@ interface ReviewStepProps {
   onPaymentMethodChange: (method: "card" | "cash") => void;
   onCashPaymentOptionChange: (option: "deposit" | "full") => void;
   onCashPaymentMethodChange: (method: "zelle" | "paypal" | "cashapp" | "venmo" | "cash_in_person") => void;
+  enabledPaymentMethods: {
+    zelle: boolean;
+    paypal: boolean;
+    cashapp: boolean;
+    venmo: boolean;
+  };
 }
 
 export default function ReviewStep({
@@ -30,6 +36,7 @@ export default function ReviewStep({
   onPaymentMethodChange,
   onCashPaymentOptionChange,
   onCashPaymentMethodChange,
+  enabledPaymentMethods,
 }: ReviewStepProps) {
   const t = useTranslations("booking");
   const tMenu = useTranslations("menu.meats");
@@ -306,7 +313,7 @@ export default function ReviewStep({
                       { id: "paypal" as const, label: "PayPal", icon: "🅿️" },
                       { id: "cashapp" as const, label: "Cash App", icon: "💵" },
                       { id: "venmo" as const, label: "Venmo", icon: "✌️" },
-                    ] as const).map((m) => (
+                    ] as const).filter((m) => enabledPaymentMethods[m.id]).map((m) => (
                       <button
                         key={m.id}
                         type="button"

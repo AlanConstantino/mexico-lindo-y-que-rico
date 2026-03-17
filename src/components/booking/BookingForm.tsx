@@ -57,6 +57,10 @@ export default function BookingForm() {
     cash_deposit_percent: 50,
     stripe_fee_percent: 2.9,
     stripe_fee_flat: 30,
+    zelle_enabled: true,
+    paypal_enabled: true,
+    cashapp_enabled: true,
+    venmo_enabled: true,
   });
 
   useEffect(() => {
@@ -308,6 +312,12 @@ export default function BookingForm() {
             onPaymentMethodChange={(method: "card" | "cash") => updateData({ paymentMethod: method, cashPaymentMethod: null, cashPaymentOption: null })}
             onCashPaymentOptionChange={(option: 'deposit' | 'full') => updateData({ cashPaymentOption: option })}
             onCashPaymentMethodChange={(method: 'zelle' | 'paypal' | 'cashapp' | 'venmo' | 'cash_in_person') => updateData({ cashPaymentMethod: method })}
+            enabledPaymentMethods={{
+              zelle: paymentSettings.zelle_enabled,
+              paypal: paymentSettings.paypal_enabled,
+              cashapp: paymentSettings.cashapp_enabled,
+              venmo: paymentSettings.venmo_enabled,
+            }}
           />
         )}
       </div>
