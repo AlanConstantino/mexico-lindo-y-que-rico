@@ -15,6 +15,7 @@ interface Booking {
   event_date: string;
   total_price: number;
   stripe_payment_status: string;
+  status: string;
 }
 
 const COLORS = {
@@ -35,7 +36,7 @@ export default function RevenueChart({
   title: string;
 }) {
   const data = useMemo(() => {
-    const paid = bookings.filter((b) => b.stripe_payment_status === "paid");
+    const paid = bookings.filter((b) => b.status !== "cancelled" && b.stripe_payment_status === "paid");
     const map = new Map<string, number>();
     paid.forEach((b) => {
       const d = new Date(b.event_date + "T12:00:00");

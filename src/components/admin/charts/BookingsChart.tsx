@@ -13,6 +13,7 @@ import {
 
 interface Booking {
   created_at: string;
+  status: string;
 }
 
 const COLORS = {
@@ -33,7 +34,7 @@ export default function BookingsChart({
 }) {
   const data = useMemo(() => {
     const map = new Map<string, number>();
-    bookings.forEach((b) => {
+    bookings.filter((b) => b.status !== "cancelled").forEach((b) => {
       const d = new Date(b.created_at);
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
       map.set(key, (map.get(key) || 0) + 1);

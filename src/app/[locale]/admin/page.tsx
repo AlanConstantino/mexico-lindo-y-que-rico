@@ -290,13 +290,14 @@ export default function AdminPage() {
     URL.revokeObjectURL(url);
   };
 
-  // Stats
-  const totalBookings = bookings.length;
-  const upcomingEvents = bookings.filter(
-    (b) => new Date(b.event_date + "T12:00:00") >= new Date() && b.status !== "cancelled"
+  // Stats (exclude cancelled bookings)
+  const activeBookings = bookings.filter((b) => b.status !== "cancelled");
+  const totalBookings = activeBookings.length;
+  const upcomingEvents = activeBookings.filter(
+    (b) => new Date(b.event_date + "T12:00:00") >= new Date()
   ).length;
-  const totalRevenue = bookings
-    .filter((b) => b.stripe_payment_status === "paid")
+  const totalRevenue = activeBookings
+    .filter((b) => b.stripe_payment_status === "paid" || (b.payment_type === "cash" && b.deposit_confirmed))
     .reduce((sum, b) => sum + b.total_price, 0);
   const avgBookingValue =
     totalBookings > 0 ? totalRevenue / totalBookings : 0;

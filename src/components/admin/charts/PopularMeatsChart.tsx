@@ -13,6 +13,7 @@ import {
 
 interface Booking {
   meats: string[];
+  status: string;
 }
 
 const BAR_COLORS = [
@@ -42,7 +43,7 @@ export default function PopularMeatsChart({
 }) {
   const data = useMemo(() => {
     const map = new Map<string, number>();
-    bookings.forEach((b) => {
+    bookings.filter((b) => b.status !== "cancelled").forEach((b) => {
       (b.meats || []).forEach((m) => {
         const name = m.charAt(0).toUpperCase() + m.slice(1);
         map.set(name, (map.get(name) || 0) + 1);

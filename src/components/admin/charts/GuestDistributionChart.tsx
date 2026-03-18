@@ -12,6 +12,7 @@ import {
 
 interface Booking {
   service_type: string;
+  status: string;
 }
 
 const PIE_COLORS = ["#E8A935", "#C45A3C", "#7A8B6F", "#F0BD55"];
@@ -30,7 +31,7 @@ export default function GuestDistributionChart({
 }) {
   const data = useMemo(() => {
     const map = new Map<string, number>();
-    bookings.forEach((b) => {
+    bookings.filter((b) => b.status !== "cancelled").forEach((b) => {
       const label = b.service_type || "Unknown";
       map.set(label, (map.get(label) || 0) + 1);
     });
