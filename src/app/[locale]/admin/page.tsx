@@ -121,6 +121,8 @@ export default function AdminPage() {
   const [confirmDialogBookingId, setConfirmDialogBookingId] = useState<string | null>(null);
   const [cancelDialogBookingId, setCancelDialogBookingId] = useState<string | null>(null);
   const [deleteDialogBookingId, setDeleteDialogBookingId] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   // Check for existing token on mount
@@ -319,6 +321,18 @@ export default function AdminPage() {
     return result;
   }, [bookings, searchQuery, filterPayment]);
 
+  // Pagination
+  const totalPages = Math.max(1, Math.ceil(filteredBookings.length / pageSize));
+  const paginatedBookings = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filteredBookings.slice(start, start + pageSize);
+  }, [filteredBookings, currentPage, pageSize]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, filterPayment, filterStatus, pageSize]);
+
   const statusColor = (status: string) => {
     switch (status) {
       case "confirmed":
@@ -476,25 +490,6 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* ─── Charts Row 1 ─── */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <RevenueChart bookings={bookings} title={t("charts.revenue")} />
-          <BookingsChart bookings={bookings} title={t("charts.bookings")} />
-        </div>
-
-        {/* ─── Charts Row 2 + Upcoming Events ─── */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <PopularMeatsChart bookings={bookings} title={t("charts.popularMeats")} />
-          <GuestDistributionChart bookings={bookings} title={t("charts.guestDistribution")} />
-          <UpcomingEvents
-            bookings={bookings}
-            title={t("dashboard.upcomingEvents")}
-            noEventsText={t("dashboard.noUpcoming")}
-            guestsLabel={t("table.guests").toLowerCase()}
-            locale={locale}
-          />
-        </div>
-
         {/* ─── Bookings Table Section ─── */}
         <div className="bg-navy-light rounded-2xl border border-cream/5 overflow-hidden">
           {/* Table header with search & filters */}
@@ -605,7 +600,7 @@ export default function AdminPage() {
                   <span>{t("table.status")}</span>
                 </div>
 
-                {filteredBookings.map((booking) => (
+                {paginatedBookings.map((booking) => (
                   <div key={booking.id}>
                     {/* Row */}
                     <div
@@ -847,7 +842,103 @@ export default function AdminPage() {
                 ))}
               </div>
             )}
+
+            {/* Pagination */}
+            {filteredBookings.length > 0 && (
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-cream/5 mt-4">
+                {/* Left: showing info + page size */}
+                <div className="flex items-center gap-3 text-sm text-cream/50">
+                  <span>
+                    {t("pagination.showing")} {Math.min((currentPage - 1) * pageSize + 1, filteredBookings.length)}–{Math.min(currentPage * pageSize, filteredBookings.length)} {t("pagination.of")} {filteredBookings.length}
+                  </span>
+                  <select
+                    value={pageSize}
+                    onChange={(e) => setPageSize(parseInt(e.target.value))}
+                    className="px-2 py-1 bg-navy border border-cream/10 rounded-lg text-xs text-cream focus:outline-none focus:border-amber/50"
+                  >
+                    {[10, 15, 20, 25, 50].map((n) => (
+                      <option key={n} value={n}>{n} / {t("pagination.page")}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Right: page buttons */}
+                {totalPages > 1 && (
+                  <div className="flex items-center gap-1">
+                    {/* Previous */}
+                    <button
+                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                      className="px-2.5 py-1.5 rounded-lg text-sm text-cream/50 hover:text-cream hover:bg-cream/5 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      ‹
+                    </button>
+
+                    {/* Page numbers */}
+                    {(() => {
+                      const pages: (number | "...")[] = [];
+                      if (totalPages <= 7) {
+                        for (let i = 1; i <= totalPages; i++) pages.push(i);
+                      } else {
+                        pages.push(1);
+                        if (currentPage > 3) pages.push("...");
+                        const start = Math.max(2, currentPage - 1);
+                        const end = Math.min(totalPages - 1, currentPage + 1);
+                        for (let i = start; i <= end; i++) pages.push(i);
+                        if (currentPage < totalPages - 2) pages.push("...");
+                        pages.push(totalPages);
+                      }
+                      return pages.map((p, i) =>
+                        p === "..." ? (
+                          <span key={`dots-${i}`} className="px-2 text-cream/30 text-sm">…</span>
+                        ) : (
+                          <button
+                            key={p}
+                            onClick={() => setCurrentPage(p)}
+                            className={`min-w-[32px] px-2 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                              currentPage === p
+                                ? "bg-amber/20 text-amber border border-amber/30"
+                                : "text-cream/50 hover:text-cream hover:bg-cream/5"
+                            }`}
+                          >
+                            {p}
+                          </button>
+                        )
+                      );
+                    })()}
+
+                    {/* Next */}
+                    <button
+                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                      disabled={currentPage === totalPages}
+                      className="px-2.5 py-1.5 rounded-lg text-sm text-cream/50 hover:text-cream hover:bg-cream/5 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      ›
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
+        </div>
+
+        {/* ─── Charts Row 1 ─── */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <RevenueChart bookings={bookings} title={t("charts.revenue")} />
+          <BookingsChart bookings={bookings} title={t("charts.bookings")} />
+        </div>
+
+        {/* ─── Charts Row 2 + Upcoming Events ─── */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <PopularMeatsChart bookings={bookings} title={t("charts.popularMeats")} />
+          <GuestDistributionChart bookings={bookings} title={t("charts.guestDistribution")} />
+          <UpcomingEvents
+            bookings={bookings}
+            title={t("dashboard.upcomingEvents")}
+            noEventsText={t("dashboard.noUpcoming")}
+            guestsLabel={t("table.guests").toLowerCase()}
+            locale={locale}
+          />
         </div>
       </div>
 

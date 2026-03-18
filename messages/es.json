@@ -488,6 +488,11 @@
       "paid": "Pagado",
       "not_applicable": "N/A",
       "card_on_file": "Tarjeta Registrada"
+    },
+    "pagination": {
+      "showing": "Mostrando",
+      "of": "de",
+      "page": "página"
     }
   },
   "metadata": {
