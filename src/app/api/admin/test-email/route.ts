@@ -13,6 +13,9 @@ import {
   sendRescheduleConfirmation,
   sendOwnerRescheduleNotice,
   sendOwnerInitiatedCancellation,
+  sendEventConfirmedEmail,
+  sendAutoConfirmRequest,
+  sendOwnerNoResponseNotice,
   sendAutoCancelEmail,
   mapExtrasForEmail,
 } from "@/lib/notifications";
@@ -249,6 +252,35 @@ export async function POST(request: NextRequest) {
           ...sample,
           amountDue: depositAmount,
         }, emailLocale);
+        break;
+
+      case "event_confirmed":
+        await sendEventConfirmedEmail({
+          ...sample,
+          depositAmount,
+          extras: sample.dbExtras as { id: string; quantity: number; flavors?: Record<string, number> }[],
+        }, emailLocale);
+        break;
+
+      case "auto_confirm_request":
+        await sendAutoConfirmRequest({
+          ...sample,
+          confirmUrl: `${process.env.NEXT_PUBLIC_SITE_URL || "https://que.rico.catering"}/api/booking/confirm-event?token=test-token`,
+          daysUntilEvent: settings?.free_cancellation_days ?? 7,
+          extras: sample.dbExtras as { id: string; quantity: number; flavors?: Record<string, number> }[],
+        }, emailLocale);
+        break;
+
+      case "owner_no_response":
+        await sendOwnerNoResponseNotice({
+          customerName: sample.customerName,
+          customerEmail: sample.customerEmail,
+          customerPhone: sample.customerPhone,
+          eventDate: sample.eventDate,
+          bookingId: sample.bookingId,
+          bookingNumber: sample.bookingNumber,
+          ownerEmail: targetEmail,
+        });
         break;
 
       default:

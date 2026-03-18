@@ -473,7 +473,11 @@
       "testFieldPrice": "Total Price ($)",
       "testFieldAddress": "Event Address",
       "testFieldService": "Service Type",
-      "testFieldServiceAuto": "Auto (random)"
+      "testFieldServiceAuto": "Auto (random)",
+      "testCategoryConfirmation": "Event Confirmation",
+      "testEventConfirmed": "Event Confirmed",
+      "testAutoConfirmRequest": "Auto-Confirm Request",
+      "testOwnerNoResponse": "Owner: No Response"
     },
     "paidInFull": "Paid in Full",
     "depositPaid": "Deposit Paid",

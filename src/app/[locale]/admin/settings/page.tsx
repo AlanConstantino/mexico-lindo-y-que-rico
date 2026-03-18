@@ -521,6 +521,14 @@ function TestEmailsSection({ t }: { t: (key: string) => string }) {
         { key: "owner_reschedule", label: t("settings.testOwnerReschedule"), icon: "🔄" },
       ],
     },
+    {
+      title: t("settings.testCategoryConfirmation"),
+      emails: [
+        { key: "event_confirmed", label: t("settings.testEventConfirmed"), icon: "🎉" },
+        { key: "auto_confirm_request", label: t("settings.testAutoConfirmRequest"), icon: "📋" },
+        { key: "owner_no_response", label: t("settings.testOwnerNoResponse"), icon: "⚠️" },
+      ],
+    },
   ];
 
   const buildCustomData = () => {

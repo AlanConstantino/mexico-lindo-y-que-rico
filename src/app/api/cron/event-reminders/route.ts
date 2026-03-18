@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+import { randomUUID } from "crypto";
 import { supabaseAdmin } from "@/lib/supabase";
 import {
   sendEventReminder,
   sendOwnerReminder,
   sendDayBeforeReminder,
+  sendAutoConfirmRequest,
+  sendEventConfirmedEmail,
+  sendOwnerNoResponseNotice,
+  mapExtrasForEmail,
 } from "@/lib/notifications";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://que.rico.catering";
@@ -192,13 +197,154 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // ── Part 3: Auto-confirm request for unconfirmed events at threshold ──
+    const autoConfirmDateStr = addDaysPST(freeCancellationDays);
+
+    const { data: unconfirmedBookings, error: unconfirmedErr } = await supabaseAdmin
+      .from("bookings")
+      .select("*")
+      .eq("event_date", autoConfirmDateStr)
+      .eq("event_status", "unconfirmed")
+      .neq("status", "cancelled")
+      .is("auto_confirm_sent_at", null);
+
+    if (unconfirmedErr) console.error("❌ Auto-confirm query error:", unconfirmedErr);
+
+    const autoConfirmResults = [];
+    for (const booking of unconfirmedBookings || []) {
+      try {
+        // Generate confirm event token
+        const confirmToken = randomUUID();
+        const cancelToken = (booking.cancel_token as string) || randomUUID();
+
+        await supabaseAdmin
+          .from("bookings")
+          .update({
+            confirm_event_token: confirmToken,
+            cancel_token: cancelToken,
+            auto_confirm_sent_at: new Date().toISOString(),
+          })
+          .eq("id", booking.id);
+
+        const bookingLocale = (booking.locale || "en") as "en" | "es";
+        const confirmUrl = `${BASE_URL}/api/booking/confirm-event?token=${confirmToken}`;
+        const cancelUrl = `${BASE_URL}/${bookingLocale}/booking/cancel/${cancelToken}`;
+
+        await sendAutoConfirmRequest({
+          bookingId: booking.id,
+          bookingNumber: booking.booking_number,
+          customerName: booking.customer_name,
+          customerEmail: booking.customer_email,
+          eventDate: booking.event_date,
+          eventTime: (booking.event_time as string | null) ?? undefined,
+          serviceType: booking.service_type,
+          guestCount: booking.guest_count,
+          meats: booking.meats as string[],
+          eventAddress: booking.event_address,
+          totalPrice: booking.total_price,
+          confirmUrl,
+          cancelUrl,
+          daysUntilEvent: freeCancellationDays,
+          extras: booking.extras as { id: string; quantity: number; flavors?: Record<string, number> }[] | undefined,
+        }, bookingLocale);
+
+        autoConfirmResults.push({ bookingId: booking.id, status: "sent" });
+      } catch (err) {
+        console.error(`❌ Failed auto-confirm request for ${booking.id}:`, err);
+        autoConfirmResults.push({ bookingId: booking.id, status: "failed" });
+      }
+    }
+
+    // ── Part 3b: Reminder email for already-confirmed events at threshold ──
+    const { data: confirmedAtThreshold } = await supabaseAdmin
+      .from("bookings")
+      .select("*")
+      .eq("event_date", autoConfirmDateStr)
+      .eq("event_status", "confirmed")
+      .neq("status", "cancelled")
+      .eq("reminder_sent", false);
+
+    const confirmedReminderResults = [];
+    for (const booking of confirmedAtThreshold || []) {
+      try {
+        const bookingLocale = (booking.locale || "en") as "en" | "es";
+        const cancelToken = (booking.cancel_token as string) || randomUUID();
+        const rescheduleToken = (booking.reschedule_token as string) || randomUUID();
+        const cancelUrl = `${BASE_URL}/${bookingLocale}/booking/cancel/${cancelToken}`;
+        const rescheduleUrl = `${BASE_URL}/${bookingLocale}/booking/reschedule/${rescheduleToken}`;
+
+        // Send as "event confirmed" reminder (no confirm/cancel buttons, just details)
+        await sendEventConfirmedEmail({
+          customerName: booking.customer_name,
+          customerEmail: booking.customer_email,
+          eventDate: booking.event_date,
+          eventTime: (booking.event_time as string | null) ?? undefined,
+          serviceType: booking.service_type,
+          guestCount: booking.guest_count,
+          meats: booking.meats as string[],
+          eventAddress: booking.event_address,
+          totalPrice: booking.total_price,
+          bookingId: booking.id,
+          bookingNumber: booking.booking_number,
+          depositAmount: booking.deposit_amount,
+          cancelUrl,
+          rescheduleUrl,
+          extras: booking.extras as { id: string; quantity: number; flavors?: Record<string, number> }[] | undefined,
+        }, bookingLocale);
+
+        await supabaseAdmin
+          .from("bookings")
+          .update({ reminder_sent: true })
+          .eq("id", booking.id);
+
+        confirmedReminderResults.push({ bookingId: booking.id, status: "sent" });
+      } catch (err) {
+        console.error(`❌ Failed confirmed reminder for ${booking.id}:`, err);
+        confirmedReminderResults.push({ bookingId: booking.id, status: "failed" });
+      }
+    }
+
+    // ── Part 4: Owner no-response notification (2 days after auto-confirm sent, still unconfirmed) ──
+    const noResponseDateStr = addDaysPST(freeCancellationDays - 2); // Events in freeCancellationDays-2 days
+
+    const { data: noResponseBookings } = await supabaseAdmin
+      .from("bookings")
+      .select("*")
+      .eq("event_date", noResponseDateStr)
+      .eq("event_status", "unconfirmed")
+      .neq("status", "cancelled")
+      .not("auto_confirm_sent_at", "is", null);
+
+    const noResponseResults = [];
+    for (const booking of noResponseBookings || []) {
+      try {
+        await sendOwnerNoResponseNotice({
+          customerName: booking.customer_name,
+          customerEmail: booking.customer_email,
+          customerPhone: booking.customer_phone,
+          eventDate: booking.event_date,
+          bookingId: booking.id,
+          bookingNumber: booking.booking_number,
+          ownerEmail,
+        });
+        noResponseResults.push({ bookingId: booking.id, status: "sent" });
+      } catch (err) {
+        console.error(`❌ Failed no-response notice for ${booking.id}:`, err);
+        noResponseResults.push({ bookingId: booking.id, status: "failed" });
+      }
+    }
+
     return NextResponse.json({
-      message: `Processed ${firstResults.length} first reminder(s) and ${dayBeforeResults.length} day-before reminder(s)`,
+      message: `Processed ${firstResults.length} reminder(s), ${dayBeforeResults.length} day-before(s), ${autoConfirmResults.length} auto-confirm(s), ${confirmedReminderResults.length} confirmed reminder(s), ${noResponseResults.length} no-response notice(s)`,
       targetDate: targetDateStr,
       tomorrowDate: tomorrowStr,
+      autoConfirmDate: autoConfirmDateStr,
       reminderDays,
       firstResults,
       dayBeforeResults,
+      autoConfirmResults,
+      confirmedReminderResults,
+      noResponseResults,
     });
   } catch (err) {
     console.error("❌ Cron error:", err);

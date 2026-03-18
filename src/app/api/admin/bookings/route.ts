@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { supabaseAdmin } from "@/lib/supabase";
 import { isValidToken } from "../auth/route";
-import { sendCustomerConfirmation, sendOwnerInitiatedCancellation, sendOwnerCancellationNotice, mapExtrasForEmail } from "@/lib/notifications";
+import { sendCustomerConfirmation, sendOwnerInitiatedCancellation, sendOwnerCancellationNotice, sendEventConfirmedEmail, mapExtrasForEmail } from "@/lib/notifications";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2026-01-28.clover",
@@ -160,28 +160,30 @@ export async function PATCH(request: NextRequest) {
     // Determine effective event status
     const effectiveEventStatus = event_status || (status === "cancelled" ? "cancelled" : null);
 
-    // Send confirmation email when event is confirmed (cash bookings)
-    if (effectiveEventStatus === "confirmed" && current.event_status !== "confirmed" && data.payment_type === "cash") {
+    // Send event confirmed email when event is confirmed (both card and cash)
+    if (effectiveEventStatus === "confirmed" && current.event_status !== "confirmed") {
       const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://que.rico.catering";
-      const locale = data.locale || "en";
+      const locale = (data.locale || "en") as "en" | "es";
       const cancelUrl = data.cancel_token ? `${BASE_URL}/${locale}/booking/cancel/${data.cancel_token}` : undefined;
       const rescheduleUrl = data.reschedule_token ? `${BASE_URL}/${locale}/booking/reschedule/${data.reschedule_token}` : undefined;
 
-      await sendCustomerConfirmation({
+      await sendEventConfirmedEmail({
         bookingId: data.id,
+        bookingNumber: data.booking_number,
         customerName: data.customer_name,
         customerEmail: data.customer_email,
-        customerPhone: data.customer_phone,
         eventDate: data.event_date,
+        eventTime: (data.event_time as string | null) ?? undefined,
         serviceType: data.service_type,
         guestCount: data.guest_count,
         meats: data.meats as string[],
-        extras: mapExtrasForEmail(data.extras as { id: string; quantity: number; flavors?: Record<string, number> }[] | undefined, locale as "en" | "es"),
         eventAddress: data.event_address,
         totalPrice: data.total_price,
+        depositAmount: data.deposit_amount,
         cancelUrl,
         rescheduleUrl,
-      }).catch((err) => console.error("Failed to send confirmation email:", err));
+        extras: data.extras as { id: string; quantity: number; flavors?: Record<string, number> }[] | undefined,
+      }, locale).catch((err) => console.error("Failed to send event confirmed email:", err));
     }
 
     // Auto-refund via Stripe when cancelled

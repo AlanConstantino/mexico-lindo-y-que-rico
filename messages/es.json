@@ -473,7 +473,11 @@
       "testFieldPrice": "Precio Total ($)",
       "testFieldAddress": "Dirección del Evento",
       "testFieldService": "Tipo de Servicio",
-      "testFieldServiceAuto": "Auto (aleatorio)"
+      "testFieldServiceAuto": "Auto (aleatorio)",
+      "testCategoryConfirmation": "Confirmación de Evento",
+      "testEventConfirmed": "Evento Confirmado",
+      "testAutoConfirmRequest": "Solicitud de Auto-Confirmación",
+      "testOwnerNoResponse": "Dueño: Sin Respuesta"
     },
     "paidInFull": "Pagado",
     "depositPaid": "Depósito Pagado",

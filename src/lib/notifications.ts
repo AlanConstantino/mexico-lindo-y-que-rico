@@ -1587,3 +1587,239 @@ export async function sendAutoCancelEmail(data: {
     console.error("❌ Failed to send auto-cancel email:", error);
   }
 }
+
+// ─── Event Confirmed Email (sent to customer when event is confirmed) ────────
+
+export async function sendEventConfirmedEmail(data: {
+  customerName: string;
+  customerEmail: string;
+  eventDate: string;
+  eventTime?: string;
+  serviceType: string;
+  guestCount: number;
+  meats: string[];
+  eventAddress?: string | null;
+  totalPrice: number;
+  bookingId: string;
+  bookingNumber?: string | null;
+  depositAmount?: number;
+  cancelUrl?: string;
+  rescheduleUrl?: string;
+  extras?: { id: string; quantity: number; flavors?: Record<string, number> }[];
+}, locale: SupportedLocale = "en"): Promise<void> {
+  const t = getTranslations(locale);
+  const formattedDate = emailTranslations.formatDate(data.eventDate, locale);
+  const timeDisplay = data.eventTime ? formatTime(data.eventTime) : null;
+  const depositDisplay = data.depositAmount ? `$${(data.depositAmount / 100).toFixed(2)}` : null;
+  const emailExtras = mapExtrasForEmail(data.extras, locale);
+
+  const htmlMessage = `
+    <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
+      <div style="background: #1B2A4A; padding: 40px 30px; text-align: center;">
+        <img src="https://que.rico.catering/images/logo.png" alt="México Lindo Y Que Rico" width="80" height="80" style="display: block; margin: 0 auto 16px; border-radius: 8px;" />
+        <h1 style="color: #E8A935; margin: 0; font-size: 28px;">México Lindo Y Que Rico</h1>
+      </div>
+      <div style="padding: 30px;">
+        <h2 style="color: #1B2A4A; margin: 0 0 8px;">${t.eventConfirmed.heading}</h2>
+        <p style="color: #555; margin: 0 0 24px; line-height: 1.6;">${t.eventConfirmed.message(data.customerName, formattedDate)}</p>
+
+        <div style="background: #1B2A4A10; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+          <h3 style="color: #1B2A4A; margin: 0 0 12px; font-size: 16px;">📅 ${t.confirmation.eventDetails}</h3>
+          <p style="color: #555; margin: 4px 0;"><strong>${t.confirmation.date}:</strong> ${formattedDate}${timeDisplay ? ` · ${timeDisplay}` : ""}</p>
+          ${data.eventAddress ? `<p style="color: #555; margin: 4px 0;"><strong>${t.confirmation.address}:</strong> ${data.eventAddress}</p>` : ""}
+          <p style="color: #555; margin: 4px 0;"><strong>${t.confirmation.package}:</strong> ${emailTranslations.serviceLabel(data.serviceType, locale)}</p>
+          <p style="color: #555; margin: 4px 0;"><strong>${t.confirmation.guests}:</strong> ${data.guestCount}</p>
+        </div>
+
+        <div style="background: #1B2A4A10; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+          <h3 style="color: #1B2A4A; margin: 0 0 12px; font-size: 16px;">${t.confirmation.yourMeats}</h3>
+          <p style="color: #555; margin: 0;">${data.meats.join(", ")}</p>
+        </div>
+
+        ${emailExtras.length > 0 ? `
+        <div style="background: #1B2A4A10; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+          <h3 style="color: #1B2A4A; margin: 0 0 12px; font-size: 16px;">${t.confirmation.extras}</h3>
+          ${emailExtras.map((e) => `<p style="color: #555; margin: 4px 0;">• ${e.name}${e.quantity > 1 ? ` x${e.quantity}` : ""}${e.flavors && e.flavors.length > 0 ? ` (${e.flavors.map(f => f.name).join(", ")})` : ""}</p>`).join("")}
+        </div>
+        ` : ""}
+
+        <p style="color: #555; line-height: 1.6;">${t.eventConfirmed.setupNote}</p>
+
+        ${depositDisplay ? `
+        <div style="background: #CC2D2D10; border: 1px solid #CC2D2D30; border-radius: 12px; padding: 16px; margin: 20px 0;">
+          <p style="color: #CC2D2D; margin: 0; font-size: 14px;">${t.eventConfirmed.cancelWarning(depositDisplay)}</p>
+        </div>
+        ` : `
+        <p style="color: #888; font-size: 13px; margin: 16px 0;">${t.eventConfirmed.cancelNote}</p>
+        `}
+
+        ${data.cancelUrl ? `
+        <div style="text-align: center; margin: 24px 0;">
+          ${data.rescheduleUrl ? `<a href="${data.rescheduleUrl}" style="display: inline-block; padding: 12px 24px; background: #E8A935; color: #1B2A4A; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 0 8px;">${t.confirmation.reschedule}</a>` : ""}
+          <a href="${data.cancelUrl}" style="display: inline-block; padding: 12px 24px; background: #FAF5EF; color: #CC2D2D; text-decoration: none; border-radius: 8px; font-weight: 600; border: 1px solid #CC2D2D30; margin: 0 8px;">${t.confirmation.cancelBooking}</a>
+        </div>
+        ` : ""}
+
+        <p style="color: #555; font-size: 14px;">${t.eventConfirmed.questionsCall} <a href="tel:5622359361" style="color: #CC2D2D;">(562) 235-9361</a> or <a href="tel:5627463998" style="color: #CC2D2D;">(562) 746-3998</a>.</p>
+      </div>
+      <div style="background: #1B2A4A; padding: 20px 30px; text-align: center;">
+        <p style="margin: 0; color: #FAF5EF44; font-size: 11px;">${data.bookingNumber ? `Ref: ${data.bookingNumber} · ` : ""}Booking ID: ${data.bookingId}</p>
+      </div>
+    </div>
+  `;
+
+  try {
+    await resend.emails.send({
+      from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
+      to: data.customerEmail,
+      subject: t.eventConfirmed.subject(formattedDate),
+      text: `${t.eventConfirmed.heading} — ${formattedDate}. ${data.meats.join(", ")}. ${t.eventConfirmed.questionsCall} (562) 235-9361 or (562) 746-3998.`,
+      html: htmlMessage,
+    });
+    console.log(`✅ Event confirmed email sent to ${data.customerEmail}`);
+  } catch (error) {
+    console.error("❌ Failed to send event confirmed email:", error);
+  }
+}
+
+// ─── Auto-Confirm Request Email (sent N days before event to unconfirmed bookings) ────
+
+export async function sendAutoConfirmRequest(data: {
+  customerName: string;
+  customerEmail: string;
+  eventDate: string;
+  eventTime?: string;
+  serviceType: string;
+  guestCount: number;
+  meats: string[];
+  eventAddress?: string | null;
+  totalPrice: number;
+  bookingId: string;
+  bookingNumber?: string | null;
+  confirmUrl: string;
+  cancelUrl: string;
+  daysUntilEvent: number;
+  extras?: { id: string; quantity: number; flavors?: Record<string, number> }[];
+}, locale: SupportedLocale = "en"): Promise<void> {
+  const t = getTranslations(locale);
+  const formattedDate = emailTranslations.formatDate(data.eventDate, locale);
+  const timeDisplay = data.eventTime ? formatTime(data.eventTime) : null;
+  const emailExtras = mapExtrasForEmail(data.extras, locale);
+
+  const htmlMessage = `
+    <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
+      <div style="background: #1B2A4A; padding: 40px 30px; text-align: center;">
+        <img src="https://que.rico.catering/images/logo.png" alt="México Lindo Y Que Rico" width="80" height="80" style="display: block; margin: 0 auto 16px; border-radius: 8px;" />
+        <h1 style="color: #E8A935; margin: 0; font-size: 28px;">México Lindo Y Que Rico</h1>
+      </div>
+      <div style="padding: 30px;">
+        <h2 style="color: #1B2A4A; margin: 0 0 8px;">${t.autoConfirmRequest.heading(data.daysUntilEvent)}</h2>
+        <p style="color: #555; margin: 0 0 24px; line-height: 1.6;">${t.autoConfirmRequest.message(data.customerName, formattedDate)}</p>
+
+        <div style="background: #1B2A4A10; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+          <h3 style="color: #1B2A4A; margin: 0 0 12px; font-size: 16px;">📅 ${t.confirmation.eventDetails}</h3>
+          <p style="color: #555; margin: 4px 0;"><strong>${t.confirmation.date}:</strong> ${formattedDate}${timeDisplay ? ` · ${timeDisplay}` : ""}</p>
+          ${data.eventAddress ? `<p style="color: #555; margin: 4px 0;"><strong>${t.confirmation.address}:</strong> ${data.eventAddress}</p>` : ""}
+          <p style="color: #555; margin: 4px 0;"><strong>${t.confirmation.package}:</strong> ${emailTranslations.serviceLabel(data.serviceType, locale)}</p>
+          <p style="color: #555; margin: 4px 0;"><strong>${t.confirmation.guests}:</strong> ${data.guestCount}</p>
+          <p style="color: #555; margin: 4px 0;"><strong>${t.confirmation.totalPaid}:</strong> $${(data.totalPrice / 100).toFixed(2)}</p>
+        </div>
+
+        <div style="background: #1B2A4A10; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+          <h3 style="color: #1B2A4A; margin: 0 0 12px; font-size: 16px;">${t.confirmation.yourMeats}</h3>
+          <p style="color: #555; margin: 0;">${data.meats.join(", ")}</p>
+        </div>
+
+        ${emailExtras.length > 0 ? `
+        <div style="background: #1B2A4A10; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+          <h3 style="color: #1B2A4A; margin: 0 0 12px; font-size: 16px;">${t.confirmation.extras}</h3>
+          ${emailExtras.map((e) => `<p style="color: #555; margin: 4px 0;">• ${e.name}${e.quantity > 1 ? ` x${e.quantity}` : ""}${e.flavors && e.flavors.length > 0 ? ` (${e.flavors.map(f => f.name).join(", ")})` : ""}</p>`).join("")}
+        </div>
+        ` : ""}
+
+        <div style="text-align: center; margin: 32px 0;">
+          <a href="${data.confirmUrl}" style="display: inline-block; padding: 16px 40px; background: #2D8B4E; color: white; text-decoration: none; border-radius: 12px; font-weight: 700; font-size: 16px; margin-bottom: 12px;">${t.autoConfirmRequest.confirmButton}</a>
+          <br/><br/>
+          <a href="${data.cancelUrl}" style="display: inline-block; padding: 12px 30px; background: #FAF5EF; color: #CC2D2D; text-decoration: none; border-radius: 8px; font-weight: 600; border: 1px solid #CC2D2D30;">${t.autoConfirmRequest.cancelButton}</a>
+        </div>
+
+        <p style="color: #888; font-size: 13px; text-align: center;">${t.autoConfirmRequest.noResponseNote}</p>
+        <p style="color: #555; font-size: 14px; margin-top: 16px;">${t.autoConfirmRequest.questionsCall} <a href="tel:5622359361" style="color: #CC2D2D;">(562) 235-9361</a> or <a href="tel:5627463998" style="color: #CC2D2D;">(562) 746-3998</a>.</p>
+      </div>
+      <div style="background: #1B2A4A; padding: 20px 30px; text-align: center;">
+        <p style="margin: 0; color: #FAF5EF44; font-size: 11px;">${data.bookingNumber ? `Ref: ${data.bookingNumber} · ` : ""}Booking ID: ${data.bookingId}</p>
+      </div>
+    </div>
+  `;
+
+  try {
+    await resend.emails.send({
+      from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
+      to: data.customerEmail,
+      subject: t.autoConfirmRequest.subject(formattedDate, data.daysUntilEvent),
+      text: `${t.autoConfirmRequest.heading(data.daysUntilEvent)} — ${formattedDate}. Confirm: ${data.confirmUrl} | Cancel: ${data.cancelUrl}`,
+      html: htmlMessage,
+    });
+    console.log(`✅ Auto-confirm request email sent to ${data.customerEmail}`);
+  } catch (error) {
+    console.error("❌ Failed to send auto-confirm request email:", error);
+  }
+}
+
+// ─── Owner No-Response Notification ────────────────────────────
+
+export async function sendOwnerNoResponseNotice(data: {
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  eventDate: string;
+  bookingId: string;
+  bookingNumber?: string | null;
+  ownerEmail: string;
+}): Promise<void> {
+  const formattedDate = new Date(data.eventDate).toLocaleDateString("es-US", {
+    weekday: "long", year: "numeric", month: "long", day: "numeric",
+  });
+
+  const htmlMessage = `
+    <div style="font-family: 'DM Sans', sans-serif; max-width: 600px; margin: 0 auto; background: #FAF5EF; border-radius: 16px; overflow: hidden;">
+      <div style="background: #1B2A4A; padding: 40px 30px; text-align: center;">
+        <img src="https://que.rico.catering/images/logo.png" alt="México Lindo Y Que Rico" width="80" height="80" style="display: block; margin: 0 auto 16px; border-radius: 8px;" />
+        <h1 style="color: #E8A935; margin: 0; font-size: 28px;">México Lindo Y Que Rico</h1>
+      </div>
+      <div style="padding: 30px;">
+        <div style="background: #E8A93520; border: 2px solid #E8A935; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px;">
+          <p style="margin: 0; font-size: 18px; font-weight: bold; color: #856404;">⚠️ Sin Respuesta del Cliente</p>
+        </div>
+        <p style="color: #555; line-height: 1.6;">El correo de auto-confirmación fue enviado a <strong>${data.customerName}</strong> para su evento el <strong>${formattedDate}</strong>, pero no ha respondido.</p>
+        <div style="background: white; border-radius: 12px; padding: 16px; margin: 16px 0;">
+          <p style="color: #555; margin: 4px 0;"><strong>Cliente:</strong> ${data.customerName}</p>
+          <p style="color: #555; margin: 4px 0;"><strong>Correo:</strong> ${data.customerEmail}</p>
+          <p style="color: #555; margin: 4px 0;"><strong>Teléfono:</strong> ${data.customerPhone}</p>
+          <p style="color: #555; margin: 4px 0;"><strong>Fecha:</strong> ${formattedDate}</p>
+          ${data.bookingNumber ? `<p style="color: #555; margin: 4px 0;"><strong>Ref:</strong> ${data.bookingNumber}</p>` : ""}
+        </div>
+        <p style="color: #555; line-height: 1.6;"><strong>Por favor comunícate con el cliente para confirmar el evento manualmente.</strong></p>
+        <div style="text-align: center; margin: 20px 0;">
+          <a href="https://que.rico.catering/es/admin" style="display: inline-block; padding: 12px 24px; background: #E8A935; color: #1B2A4A; text-decoration: none; border-radius: 8px; font-weight: 600;">Panel de Admin</a>
+        </div>
+      </div>
+      <div style="background: #1B2A4A; padding: 20px 30px; text-align: center;">
+        <p style="margin: 0; color: #FAF5EF44; font-size: 11px;">Booking ID: ${data.bookingId}</p>
+      </div>
+    </div>
+  `;
+
+  try {
+    await resend.emails.send({
+      from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
+      to: data.ownerEmail,
+      subject: `⚠️ Sin Respuesta: Evento de ${data.customerName} el ${formattedDate}`,
+      text: `El cliente ${data.customerName} no ha respondido al correo de confirmación para su evento el ${formattedDate}. Teléfono: ${data.customerPhone}. Correo: ${data.customerEmail}.`,
+      html: htmlMessage,
+    });
+    console.log(`✅ Owner no-response notice sent to ${data.ownerEmail}`);
+  } catch (error) {
+    console.error("❌ Failed to send owner no-response notice:", error);
+  }
+}
