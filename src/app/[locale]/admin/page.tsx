@@ -925,10 +925,10 @@ function PipelineSection({
                   <span>{booking.service_type}</span>
                   <span className="text-cream font-medium">${(booking.total_price / 100).toFixed(2)}</span>
                   {booking.payment_type === "cash" && booking.cash_payment_method && (
-                    <span className="text-cream/30 text-xs">{t("admin.via")} {booking.cash_payment_method}</span>
+                    <span className="text-cream/30 text-xs">{t("via")} {booking.cash_payment_method}</span>
                   )}
                   {booking.balance_due > 0 && booking.payment_status !== "paid_in_full" && (
-                    <span className="text-amber text-xs">{t("admin.balanceDue", { amount: (booking.balance_due / 100).toFixed(2) })}</span>
+                    <span className="text-amber text-xs">{t("balanceDue", { amount: (booking.balance_due / 100).toFixed(2) })}</span>
                   )}
                 </div>
 
