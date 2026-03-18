@@ -84,6 +84,7 @@ export async function POST(request: NextRequest) {
       .from("bookings")
       .update({
         status: "cancelled",
+        event_status: "cancelled",
         cancelled_at: new Date().toISOString(),
         cancellation_fee_charged: cancellationFee,
         refund_amount: refundAmount,

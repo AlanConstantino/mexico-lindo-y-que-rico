@@ -16,6 +16,16 @@ function getToken(request: NextRequest): string | null {
   return null;
 }
 
+// Map event_status back to legacy status for backward compat
+function legacyStatus(eventStatus: string): string {
+  switch (eventStatus) {
+    case "cancelled": return "cancelled";
+    case "confirmed":
+    case "completed": return "confirmed";
+    default: return "pending";
+  }
+}
+
 export async function GET(request: NextRequest) {
   const token = getToken(request);
   if (!token || !isValidToken(token)) {
@@ -32,8 +42,13 @@ export async function GET(request: NextRequest) {
     .select("*")
     .order("event_date", { ascending: false });
 
+  // Support both old status filter and new event_status filter
   if (status && status !== "all") {
-    query = query.eq("status", status);
+    if (["unconfirmed", "confirmed", "completed"].includes(status)) {
+      query = query.eq("event_status", status);
+    } else {
+      query = query.eq("status", status);
+    }
   }
   if (dateFrom) {
     query = query.gte("event_date", dateFrom);
@@ -58,25 +73,82 @@ export async function PATCH(request: NextRequest) {
   }
 
   try {
-    const { id, status } = await request.json();
+    const body = await request.json();
+    const { id, status, event_status, payment_status } = body;
 
-    if (!id || !status) {
-      return NextResponse.json(
-        { error: "Missing id or status" },
-        { status: 400 }
-      );
+    if (!id) {
+      return NextResponse.json({ error: "Missing id" }, { status: 400 });
     }
 
-    if (!["pending", "confirmed", "cancelled"].includes(status)) {
-      return NextResponse.json(
-        { error: "Invalid status" },
-        { status: 400 }
-      );
+    // Fetch current booking
+    const { data: current, error: fetchErr } = await supabaseAdmin
+      .from("bookings")
+      .select("*")
+      .eq("id", id)
+      .single();
+
+    if (fetchErr || !current) {
+      return NextResponse.json({ error: "Booking not found" }, { status: 404 });
+    }
+
+    const update: Record<string, unknown> = {};
+
+    // Handle new two-track updates
+    if (event_status) {
+      const validEventStatuses = ["unconfirmed", "confirmed", "completed", "cancelled"];
+      if (!validEventStatuses.includes(event_status)) {
+        return NextResponse.json({ error: "Invalid event_status" }, { status: 400 });
+      }
+      update.event_status = event_status;
+      update.status = legacyStatus(event_status); // keep legacy in sync
+    }
+
+    if (payment_status) {
+      const validPaymentStatuses = ["unpaid", "deposit_received", "paid_in_full"];
+      if (!validPaymentStatuses.includes(payment_status)) {
+        return NextResponse.json({ error: "Invalid payment_status" }, { status: 400 });
+      }
+      update.payment_status = payment_status;
+
+      // Keep legacy deposit_confirmed in sync
+      if (payment_status === "unpaid") {
+        update.deposit_confirmed = false;
+      } else {
+        update.deposit_confirmed = true;
+      }
+
+      // Update balance_due
+      if (payment_status === "paid_in_full") {
+        update.balance_due = 0;
+      } else if (payment_status === "deposit_received") {
+        update.balance_due = Math.max(0, (current.total_price || 0) - (current.deposit_amount || 0));
+      } else {
+        // unpaid — restore full balance
+        update.balance_due = current.cash_payment_option === "deposit"
+          ? Math.max(0, (current.total_price || 0) - (current.deposit_amount || 0))
+          : current.total_price || 0;
+      }
+    }
+
+    // Legacy status update (for backward compat with old UI if needed)
+    if (status && !event_status) {
+      if (!["pending", "confirmed", "cancelled"].includes(status)) {
+        return NextResponse.json({ error: "Invalid status" }, { status: 400 });
+      }
+      update.status = status;
+      // Sync event_status from legacy
+      if (status === "cancelled") update.event_status = "cancelled";
+      else if (status === "confirmed") update.event_status = "confirmed";
+      else update.event_status = "unconfirmed";
+    }
+
+    if (Object.keys(update).length === 0) {
+      return NextResponse.json({ error: "Nothing to update" }, { status: 400 });
     }
 
     const { data, error } = await supabaseAdmin
       .from("bookings")
-      .update({ status })
+      .update(update)
       .eq("id", id)
       .select()
       .single();
@@ -85,8 +157,11 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    // Send confirmation email when a pending booking (cash) is confirmed by the owner
-    if (status === "confirmed" && data.payment_type === "cash") {
+    // Determine effective event status
+    const effectiveEventStatus = event_status || (status === "cancelled" ? "cancelled" : null);
+
+    // Send confirmation email when event is confirmed (cash bookings)
+    if (effectiveEventStatus === "confirmed" && current.event_status !== "confirmed" && data.payment_type === "cash") {
       const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://que.rico.catering";
       const locale = data.locale || "en";
       const cancelUrl = data.cancel_token ? `${BASE_URL}/${locale}/booking/cancel/${data.cancel_token}` : undefined;
@@ -109,23 +184,22 @@ export async function PATCH(request: NextRequest) {
       }).catch((err) => console.error("Failed to send confirmation email:", err));
     }
 
-    // Auto-refund via Stripe when owner cancels a card booking
-    if (status === "cancelled" && data.stripe_session_id && data.stripe_payment_status === "paid") {
-      try {
-        const session = await stripe.checkout.sessions.retrieve(data.stripe_session_id);
-        const paymentIntentId = session.payment_intent as string;
-        if (paymentIntentId) {
-          await stripe.refunds.create({ payment_intent: paymentIntentId });
-          console.log(`✅ Full refund issued for booking ${data.id}`);
+    // Auto-refund via Stripe when cancelled
+    if (effectiveEventStatus === "cancelled" && current.event_status !== "cancelled") {
+      if (data.stripe_session_id && data.stripe_payment_status === "paid") {
+        try {
+          const session = await stripe.checkout.sessions.retrieve(data.stripe_session_id);
+          const paymentIntentId = session.payment_intent as string;
+          if (paymentIntentId) {
+            await stripe.refunds.create({ payment_intent: paymentIntentId });
+            console.log(`✅ Full refund issued for booking ${data.id}`);
+          }
+        } catch (stripeErr) {
+          console.error("❌ Stripe refund error on admin cancel:", stripeErr);
         }
-      } catch (stripeErr) {
-        console.error("❌ Stripe refund error on admin cancel:", stripeErr);
-        // Don't block the cancellation — log the error, owner can refund manually
       }
-    }
 
-    // Send cancellation email when owner cancels a booking
-    if (status === "cancelled") {
+      // Send cancellation emails
       const locale = (data.locale || "en") as "en" | "es";
       await sendOwnerInitiatedCancellation({
         customerName: data.customer_name,
@@ -138,7 +212,6 @@ export async function PATCH(request: NextRequest) {
         totalPrice: data.total_price,
       }, locale).catch((err) => console.error("Failed to send cancellation email:", err));
 
-      // Also notify the owner
       const { data: settings } = await supabaseAdmin
         .from("settings")
         .select("notification_email")
@@ -150,7 +223,7 @@ export async function PATCH(request: NextRequest) {
         customerEmail: data.customer_email,
         customerPhone: data.customer_phone,
         eventDate: data.event_date,
-        refundAmount: data.total_price, // full refund on admin cancel
+        refundAmount: data.total_price,
         cancellationFee: 0,
         bookingId: data.id,
         ownerEmail,

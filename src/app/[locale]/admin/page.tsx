@@ -40,6 +40,8 @@ interface Booking {
   deposit_amount: number;
   balance_due: number;
   event_address: string | null;
+  event_status: string;
+  payment_status: string;
 }
 
 function getToken(): string | null {
@@ -198,7 +200,7 @@ export default function AdminPage() {
     setBookings([]);
   };
 
-  const updateStatus = async (id: string, newStatus: string) => {
+  const updateBooking = async (id: string, updates: Record<string, string>) => {
     const token = getToken();
     if (!token) return;
     setUpdatingId(id);
@@ -209,23 +211,42 @@ export default function AdminPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ id, status: newStatus }),
+        body: JSON.stringify({ id, ...updates }),
       });
       if (res.ok) {
-        setBookings((prev) =>
-          prev.map((b) => (b.id === id ? { ...b, status: newStatus } : b))
-        );
+        const data = await res.json();
+        if (data.booking) {
+          setBookings((prev) =>
+            prev.map((b) => (b.id === id ? { ...b, ...data.booking } : b))
+          );
+        } else {
+          fetchBookings();
+        }
       }
     } catch {
-      console.error("Failed to update status");
+      console.error("Failed to update booking");
     } finally {
       setUpdatingId(null);
     }
   };
 
+  // Legacy wrapper
+  const updateStatus = async (id: string, newStatus: string) => {
+    await updateBooking(id, { status: newStatus });
+  };
+
+  const updateEventStatus = async (id: string, eventStatus: string) => {
+    await updateBooking(id, { event_status: eventStatus });
+  };
+
+  const updatePaymentStatus = async (id: string, paymentStatus: string) => {
+    await updateBooking(id, { payment_status: paymentStatus });
+  };
+
   const confirmCashPayment = async (id: string) => {
     const token = getToken();
     if (!token) return;
+    setUpdatingId(id);
     try {
       const res = await fetch("/api/admin/bookings/confirm-payment", {
         method: "POST",
@@ -240,6 +261,8 @@ export default function AdminPage() {
       }
     } catch {
       console.error("Failed to confirm payment");
+    } finally {
+      setUpdatingId(null);
     }
   };
 
@@ -290,21 +313,64 @@ export default function AdminPage() {
     URL.revokeObjectURL(url);
   };
 
+  // Derive event_status/payment_status for bookings that don't have them yet (backward compat)
+  const normalizedBookings = useMemo(() => bookings.map((b) => ({
+    ...b,
+    event_status: b.event_status || (b.status === "cancelled" ? "cancelled" : b.status === "confirmed" ? "confirmed" : "unconfirmed"),
+    payment_status: b.payment_status || (
+      b.stripe_payment_status === "paid" ? "paid_in_full"
+      : b.deposit_confirmed && b.cash_payment_option === "full" ? "paid_in_full"
+      : b.deposit_confirmed ? "deposit_received"
+      : "unpaid"
+    ),
+  })), [bookings]);
+
+  // Pipeline categories
+  const pipelineBookings = useMemo(() => {
+    const needsAction = normalizedBookings.filter(
+      (b) => b.event_status !== "cancelled" && b.event_status !== "completed" &&
+        (b.event_status !== "confirmed" || b.payment_status !== "paid_in_full")
+    );
+    const readyToGo = normalizedBookings.filter(
+      (b) => b.event_status === "confirmed" && b.payment_status === "paid_in_full"
+    );
+    const completed = normalizedBookings.filter((b) => b.event_status === "completed");
+    const cancelled = normalizedBookings.filter((b) => b.event_status === "cancelled");
+    return { needsAction, readyToGo, completed, cancelled };
+  }, [normalizedBookings]);
+
   // Stats (exclude cancelled bookings)
-  const activeBookings = bookings.filter((b) => b.status !== "cancelled");
+  const activeBookings = normalizedBookings.filter((b) => b.event_status !== "cancelled");
   const totalBookings = activeBookings.length;
   const upcomingEvents = activeBookings.filter(
-    (b) => new Date(b.event_date + "T12:00:00") >= new Date()
+    (b) => new Date(b.event_date + "T12:00:00") >= new Date() && b.event_status !== "completed"
   ).length;
   const totalRevenue = activeBookings
-    .filter((b) => b.stripe_payment_status === "paid" || (b.payment_type === "cash" && b.deposit_confirmed))
-    .reduce((sum, b) => sum + b.total_price, 0);
+    .filter((b) => b.payment_status === "paid_in_full" || b.payment_status === "deposit_received")
+    .reduce((sum, b) => {
+      if (b.payment_status === "paid_in_full") return sum + b.total_price;
+      return sum + (b.deposit_amount || 0); // Only count what's been received
+    }, 0);
   const avgBookingValue =
     totalBookings > 0 ? totalRevenue / totalBookings : 0;
 
+  // Summary counts for banner
+  const awaitingPayment = normalizedBookings.filter(
+    (b) => b.event_status !== "cancelled" && b.event_status !== "completed" && b.payment_status === "unpaid"
+  ).length;
+  const unconfirmedCount = normalizedBookings.filter(
+    (b) => b.event_status === "unconfirmed"
+  ).length;
+  const eventsThisWeek = activeBookings.filter((b) => {
+    const d = new Date(b.event_date + "T12:00:00");
+    const now = new Date();
+    const weekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    return d >= now && d <= weekFromNow && b.event_status !== "completed";
+  }).length;
+
   // Filtered bookings for table (by search query)
   const filteredBookings = useMemo(() => {
-    let result = bookings;
+    let result = normalizedBookings;
     if (filterPayment === "card") {
       result = result.filter((b) => b.stripe_payment_status !== "not_applicable");
     } else if (filterPayment === "cash") {
@@ -491,437 +557,141 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* ─── Bookings Table Section ─── */}
-        <div className="bg-navy-light rounded-2xl border border-cream/5 overflow-hidden">
-          {/* Table header with search & filters */}
-          <div className="px-5 py-4 border-b border-cream/5">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-              <h3 className="text-cream text-sm font-medium">
-                {t("dashboard.bookingsTable")}
-              </h3>
-              <div className="flex flex-col gap-3 sm:ml-auto w-full sm:w-auto px-2 sm:px-0">
-                {/* Row 1: Search + Status */}
-                <div className="flex gap-2">
-                  <div className="flex-1">
-                    <label className="block text-cream/40 text-xs uppercase tracking-wider mb-1.5">Search Customer</label>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-cream/30 flex items-center justify-center w-5 h-5">
-                        <IconSearch />
-                      </span>
-                      <input
-                        type="text"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder={t("dashboard.searchPlaceholder")}
-                        className="w-full pl-10 pr-3 py-2.5 bg-navy border border-cream/10 rounded-lg text-sm text-cream placeholder:text-cream/30 focus:outline-none focus:border-amber/50 transition-colors"
-                      />
-                    </div>
-                  </div>
-                  <div className="shrink-0">
-                    <label className="block text-cream/40 text-xs uppercase tracking-wider mb-1.5">Status</label>
-                    <select
-                      value={filterStatus}
-                      onChange={(e) => setFilterStatus(e.target.value)}
-                      className="px-3 py-2.5 bg-navy border border-cream/10 rounded-lg text-sm text-cream focus:outline-none focus:border-amber/50"
-                    >
-                      <option value="all">{t("filters.all")}</option>
-                      <option value="pending">{t("filters.pending")}</option>
-                      <option value="confirmed">{t("filters.confirmed")}</option>
-                      <option value="cancelled">{t("filters.cancelled")}</option>
-                    </select>
-                  </div>
-                  <div className="shrink-0">
-                    <label className="block text-cream/40 text-xs uppercase tracking-wider mb-1.5">{t("filters.paymentType")}</label>
-                    <select
-                      value={filterPayment}
-                      onChange={(e) => setFilterPayment(e.target.value)}
-                      className="px-3 py-2.5 bg-navy border border-cream/10 rounded-lg text-sm text-cream focus:outline-none focus:border-amber/50"
-                    >
-                      <option value="all">{t("filters.all")}</option>
-                      <option value="card">{t("filters.card")}</option>
-                      <option value="cash">{t("filters.cash")}</option>
-                    </select>
-                  </div>
-                </div>
-                {/* Row 2: Date range (from — to) */}
-                <div>
-                  <label className="block text-cream/40 text-xs uppercase tracking-wider mb-1.5">Date Range</label>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="date"
-                      value={dateFrom}
-                      onChange={(e) => setDateFrom(e.target.value)}
-                      className="flex-1 min-w-0 px-3 py-2.5 bg-navy border border-cream/10 rounded-lg text-sm text-cream focus:outline-none focus:border-amber/50"
-                    />
-                    <span className="text-cream/30 text-xs shrink-0">—</span>
-                    <input
-                      type="date"
-                      value={dateTo}
-                      onChange={(e) => setDateTo(e.target.value)}
-                      className="flex-1 min-w-0 px-3 py-2.5 bg-navy border border-cream/10 rounded-lg text-sm text-cream focus:outline-none focus:border-amber/50"
-                    />
-                  </div>
-                </div>
-                {/* Row 3: Apply button */}
-                <button
-                  onClick={fetchBookings}
-                  className="w-full sm:w-auto px-4 py-2.5 bg-amber/10 text-amber text-sm rounded-lg hover:bg-amber/20 transition-colors"
-                >
-                  {t("filters.apply")}
-                </button>
-                <button
-                  onClick={downloadCSV}
-                  className="px-4 py-2 bg-cream/5 text-cream/60 text-sm rounded-lg hover:bg-cream/10 hover:text-cream transition-colors"
-                >
-                  {t("filters.csv")}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Table content */}
-          <div className="p-4">
-            {loading ? (
-              <div className="text-center py-12 text-cream/50">{t("loading")}</div>
-            ) : filteredBookings.length === 0 ? (
-              <div className="text-center py-12 text-cream/40">
-                {t("dashboard.noBookings")}
-              </div>
-            ) : (
-              <div className="space-y-1.5">
-                {/* Desktop header */}
-                <div className="hidden lg:grid lg:grid-cols-[110px_1fr_1fr_70px_90px_95px_90px_110px] gap-3 px-4 py-2 text-[11px] text-cream/40 uppercase tracking-wider">
-                  <span>{t("table.date")}</span>
-                  <span>{t("table.customer")}</span>
-                  <span>{t("table.contact")}</span>
-                  <span>{t("table.guests")}</span>
-                  <span>{t("table.service")}</span>
-                  <span>{t("table.total")}</span>
-                  <span>{t("table.payment")}</span>
-                  <span>{t("table.status")}</span>
-                </div>
-
-                {paginatedBookings.map((booking) => (
-                  <div key={booking.id}>
-                    {/* Row */}
-                    <div
-                      onClick={() =>
-                        setExpandedId(
-                          expandedId === booking.id ? null : booking.id
-                        )
-                      }
-                      className="rounded-xl border border-transparent hover:border-cream/8 hover:bg-cream/[0.02] transition-all duration-200 cursor-pointer group"
-                    >
-                      {/* Desktop row */}
-                      <div className="hidden lg:grid lg:grid-cols-[110px_1fr_1fr_70px_90px_95px_90px_110px] gap-3 px-4 py-3 items-center">
-                        <span className="text-sm text-cream/80">
-                          {new Date(booking.event_date + "T12:00:00").toLocaleDateString(dateLocale)}
-                          {booking.event_time && ` · ${formatTime12(booking.event_time)}`}
-                        </span>
-                        <span className="text-sm text-cream font-medium truncate">
-                          {booking.customer_name}
-                        </span>
-                        <span className="text-sm text-cream/50 truncate">
-                          {booking.customer_email}
-                        </span>
-                        <span className="text-sm text-cream/70">
-                          {booking.guest_count}
-                        </span>
-                        <span className="text-sm text-cream/70">
-                          {booking.service_type}
-                        </span>
-                        <span className="text-sm text-cream font-medium">
-                          ${(booking.total_price / 100).toFixed(2)}
-                        </span>
-                        <span>
-                          {booking.payment_type === "cash" ? (
-                            <span className="flex flex-col items-start gap-1">
-                              <span
-                                className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-medium ${
-                                  booking.deposit_confirmed && booking.cash_payment_option === "full"
-                                    ? "bg-teal/20 text-teal-light border border-teal/20"
-                                    : booking.deposit_confirmed
-                                      ? "bg-amber/15 text-amber border border-amber/20"
-                                      : "bg-terracotta/15 text-terracotta-light border border-terracotta/20"
-                                }`}
-                              >
-                                {booking.deposit_confirmed && booking.cash_payment_option === "full"
-                                  ? `🟢 ${t("admin.paidInFull")}`
-                                  : booking.deposit_confirmed
-                                    ? `🟡 ${t("admin.depositPaid")}`
-                                    : `🔴 ${t("admin.awaitingPayment")}`}
-                              </span>
-                              {booking.deposit_confirmed && booking.cash_payment_option === "deposit" && booking.balance_due > 0 && (
-                                <span className="text-[10px] text-cream/40">
-                                  {t("admin.balanceDue", { amount: (booking.balance_due / 100).toFixed(2) })}
-                                </span>
-                              )}
-                              {booking.cash_payment_method && (
-                                <span className="text-[10px] text-cream/30">
-                                  {t("admin.via")} {booking.cash_payment_method}
-                                </span>
-                              )}
-                              {!booking.deposit_confirmed && booking.status !== "cancelled" && (
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    confirmCashPayment(booking.id);
-                                  }}
-                                  className="text-[10px] px-2 py-0.5 bg-teal/20 text-teal-light rounded-full hover:bg-teal/30 transition-colors"
-                                >
-                                  ✓ {t("admin.confirmPayment")}
-                                </button>
-                              )}
-                            </span>
-                          ) : (
-                            <span
-                              className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-medium ${paymentColor(
-                                booking.stripe_payment_status
-                              )}`}
-                            >
-                              {translateStatus(booking.stripe_payment_status)}
-                            </span>
-                          )}
-                        </span>
-                        <span>
-                          <span
-                            className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-medium ${statusColor(
-                              booking.status
-                            )}`}
-                          >
-                            {translateStatus(booking.status)}
-                          </span>
-                        </span>
-                      </div>
-
-                      {/* Mobile row */}
-                      <div className="lg:hidden px-4 py-3 space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium text-cream">
-                            {booking.customer_name}
-                          </span>
-                          <span
-                            className={`text-[11px] font-medium px-2.5 py-0.5 rounded-full ${statusColor(
-                              booking.status
-                            )}`}
-                          >
-                            {translateStatus(booking.status)}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between text-sm text-cream/50">
-                          <span>
-                            {new Date(booking.event_date + "T12:00:00").toLocaleDateString(dateLocale)}{booking.event_time ? ` · ${formatTime12(booking.event_time)}` : ""} · {booking.guest_count} {t("table.guests").toLowerCase()}
-                          </span>
-                          <span className="font-medium text-cream">
-                            ${(booking.total_price / 100).toFixed(2)}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Expanded details card */}
-                    {expandedId === booking.id && (
-                      <div className="mx-2 mb-2 bg-navy rounded-xl border border-cream/8 p-5 space-y-4">
-                        {booking.booking_number && (
-                          <div className="mb-2 px-3 py-2 rounded-lg bg-amber/5 border border-amber/15 inline-block">
-                            <span className="text-cream/40 text-[10px] uppercase tracking-wider font-medium mr-2">Ref:</span>
-                            <span className="text-amber font-mono text-sm font-medium">{booking.booking_number}</span>
-                          </div>
-                        )}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                          <div>
-                            <span className="text-cream/40 text-[11px] uppercase tracking-wider font-medium block mb-1">
-                              {t("table.customer")}
-                            </span>
-                            <p className="text-cream text-sm font-medium">{booking.customer_name}</p>
-                          </div>
-                          <div>
-                            <span className="text-cream/40 text-[11px] uppercase tracking-wider font-medium block mb-1">
-                              {t("table.contact")}
-                            </span>
-                            <p className="text-cream text-sm">{booking.customer_email}</p>
-                            <p className="text-cream/60 text-sm">{booking.customer_phone}</p>
-                          </div>
-                          {booking.event_address && (
-                            <div>
-                              <span className="text-cream/40 text-[11px] uppercase tracking-wider font-medium block mb-1">
-                                {t("table.address")}
-                              </span>
-                              <p className="text-cream text-sm">{booking.event_address}</p>
-                            </div>
-                          )}
-                          <div>
-                            <span className="text-cream/40 text-[11px] uppercase tracking-wider font-medium block mb-1">
-                              {t("table.meats")}
-                            </span>
-                            <div className="flex flex-wrap gap-1">
-                              {(booking.meats || []).map((meat) => (
-                                <span
-                                  key={meat}
-                                  className="inline-block px-2 py-0.5 text-[11px] bg-amber/10 text-amber rounded-full"
-                                >
-                                  {meat}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                          <div>
-                            <span className="text-cream/40 text-[11px] uppercase tracking-wider font-medium block mb-1">
-                              {t("table.extras")}
-                            </span>
-                            {(booking.extras || []).length > 0 ? (
-                              <div className="flex flex-wrap gap-1">
-                                {booking.extras.map((e) => (
-                                  <span
-                                    key={e.id}
-                                    className="inline-block px-2 py-0.5 text-[11px] bg-cream/8 text-cream/70 rounded-full"
-                                  >
-                                    {e.id} x{e.quantity}
-                                  </span>
-                                ))}
-                              </div>
-                            ) : (
-                              <p className="text-cream/40 text-sm">{t("dashboard.noExtras")}</p>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Actions */}
-                        <div className="flex flex-wrap gap-2 pt-3 border-t border-cream/8">
-                          {booking.status !== "confirmed" && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setConfirmDialogBookingId(booking.id);
-                              }}
-                              disabled={updatingId === booking.id}
-                              className="px-4 py-1.5 bg-teal/15 text-teal-light text-xs font-medium rounded-lg hover:bg-teal/25 border border-teal/20 transition-colors disabled:opacity-50"
-                            >
-                              {t("actions.confirm")}
-                            </button>
-                          )}
-                          {booking.status !== "cancelled" && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setCancelDialogBookingId(booking.id);
-                              }}
-                              disabled={updatingId === booking.id}
-                              className="px-4 py-1.5 bg-terracotta/15 text-terracotta-light text-xs font-medium rounded-lg hover:bg-terracotta/25 border border-terracotta/20 transition-colors disabled:opacity-50"
-                            >
-                              {t("actions.cancel")}
-                            </button>
-                          )}
-                          {booking.status === "cancelled" && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setDeleteDialogBookingId(booking.id);
-                              }}
-                              disabled={deletingId === booking.id}
-                              className="px-4 py-1.5 bg-red-500/15 text-red-400 text-xs font-medium rounded-lg hover:bg-red-500/25 border border-red-500/20 transition-colors disabled:opacity-50"
-                            >
-                              {t("actions.delete")}
-                            </button>
-                          )}
-                          {booking.status !== "pending" && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                updateStatus(booking.id, "pending");
-                              }}
-                              disabled={updatingId === booking.id}
-                              className="px-4 py-1.5 bg-amber/15 text-amber text-xs font-medium rounded-lg hover:bg-amber/25 border border-amber/20 transition-colors disabled:opacity-50"
-                            >
-                              {t("actions.pending")}
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
+        {/* ─── Smart Summary Banner ─── */}
+        <div className="bg-navy-light rounded-2xl border border-cream/5 p-4">
+          <div className="flex flex-wrap gap-4 justify-center sm:justify-start">
+            {awaitingPayment > 0 && (
+              <span className="text-sm text-cream/70">💰 <strong className="text-amber">{awaitingPayment}</strong> {t("pipeline.awaitingPayment")}</span>
             )}
-
-            {/* Pagination */}
-            {filteredBookings.length > 0 && (
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-cream/5 mt-4">
-                {/* Left: showing info + page size */}
-                <div className="flex items-center gap-3 text-sm text-cream/50">
-                  <span>
-                    {t("pagination.showing")} {Math.min((currentPage - 1) * pageSize + 1, filteredBookings.length)}–{Math.min(currentPage * pageSize, filteredBookings.length)} {t("pagination.of")} {filteredBookings.length}
-                  </span>
-                  <select
-                    value={pageSize}
-                    onChange={(e) => setPageSize(parseInt(e.target.value))}
-                    className="px-2 py-1 bg-navy border border-cream/10 rounded-lg text-xs text-cream focus:outline-none focus:border-amber/50"
-                  >
-                    {[10, 15, 20, 25, 50].map((n) => (
-                      <option key={n} value={n}>{n} / {t("pagination.page")}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Right: page buttons */}
-                {totalPages > 1 && (
-                  <div className="flex items-center gap-1">
-                    {/* Previous */}
-                    <button
-                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                      disabled={currentPage === 1}
-                      className="px-2.5 py-1.5 rounded-lg text-sm text-cream/50 hover:text-cream hover:bg-cream/5 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                    >
-                      ‹
-                    </button>
-
-                    {/* Page numbers */}
-                    {(() => {
-                      const pages: (number | "...")[] = [];
-                      if (totalPages <= 7) {
-                        for (let i = 1; i <= totalPages; i++) pages.push(i);
-                      } else {
-                        pages.push(1);
-                        if (currentPage > 3) pages.push("...");
-                        const start = Math.max(2, currentPage - 1);
-                        const end = Math.min(totalPages - 1, currentPage + 1);
-                        for (let i = start; i <= end; i++) pages.push(i);
-                        if (currentPage < totalPages - 2) pages.push("...");
-                        pages.push(totalPages);
-                      }
-                      return pages.map((p, i) =>
-                        p === "..." ? (
-                          <span key={`dots-${i}`} className="px-2 text-cream/30 text-sm">…</span>
-                        ) : (
-                          <button
-                            key={p}
-                            onClick={() => setCurrentPage(p)}
-                            className={`min-w-[32px] px-2 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                              currentPage === p
-                                ? "bg-amber/20 text-amber border border-amber/30"
-                                : "text-cream/50 hover:text-cream hover:bg-cream/5"
-                            }`}
-                          >
-                            {p}
-                          </button>
-                        )
-                      );
-                    })()}
-
-                    {/* Next */}
-                    <button
-                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                      disabled={currentPage === totalPages}
-                      className="px-2.5 py-1.5 rounded-lg text-sm text-cream/50 hover:text-cream hover:bg-cream/5 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                    >
-                      ›
-                    </button>
-                  </div>
-                )}
-              </div>
+            {unconfirmedCount > 0 && (
+              <span className="text-sm text-cream/70">📋 <strong className="text-terracotta-light">{unconfirmedCount}</strong> {t("pipeline.unconfirmed")}</span>
+            )}
+            <span className="text-sm text-cream/70">✅ <strong className="text-teal-light">{pipelineBookings.readyToGo.length}</strong> {t("pipeline.readyToGo")}</span>
+            {eventsThisWeek > 0 && (
+              <span className="text-sm text-cream/70">📅 <strong className="text-cream">{eventsThisWeek}</strong> {t("pipeline.thisWeek")}</span>
             )}
           </div>
         </div>
+
+        {/* ─── Search & Filters ─── */}
+        <div className="bg-navy-light rounded-2xl border border-cream/5 p-4">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex-1 relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-cream/30 flex items-center justify-center w-5 h-5">
+                <IconSearch />
+              </span>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={t("dashboard.searchPlaceholder")}
+                className="w-full pl-10 pr-3 py-2.5 bg-navy border border-cream/10 rounded-lg text-sm text-cream placeholder:text-cream/30 focus:outline-none focus:border-amber/50 transition-colors"
+              />
+            </div>
+            <select
+              value={filterPayment}
+              onChange={(e) => setFilterPayment(e.target.value)}
+              className="px-3 py-2.5 bg-navy border border-cream/10 rounded-lg text-sm text-cream focus:outline-none focus:border-amber/50"
+            >
+              <option value="all">{t("filters.all")} {t("filters.paymentType")}</option>
+              <option value="card">{t("filters.card")}</option>
+              <option value="cash">{t("filters.cash")}</option>
+            </select>
+            <button
+              onClick={downloadCSV}
+              className="px-4 py-2.5 bg-cream/5 text-cream/60 text-sm rounded-lg hover:bg-cream/10 hover:text-cream transition-colors"
+            >
+              {t("filters.csv")}
+            </button>
+          </div>
+        </div>
+
+        {/* ─── Pipeline Sections ─── */}
+        {loading ? (
+          <div className="text-center py-12 text-cream/50">{t("loading")}</div>
+        ) : (
+          <div className="space-y-4">
+            {/* Needs Action */}
+            <PipelineSection
+              title={`📥 ${t("pipeline.needsAction")}`}
+              count={pipelineBookings.needsAction.length}
+              bookings={pipelineBookings.needsAction}
+              defaultOpen={true}
+              expandedId={expandedId}
+              setExpandedId={setExpandedId}
+              updatingId={updatingId}
+              deletingId={deletingId}
+              onUpdateEventStatus={updateEventStatus}
+              onUpdatePaymentStatus={updatePaymentStatus}
+              onConfirmCashPayment={confirmCashPayment}
+              onCancel={(id) => setCancelDialogBookingId(id)}
+              onDelete={(id) => setDeleteDialogBookingId(id)}
+              t={t}
+              dateLocale={dateLocale}
+              borderColor="border-amber/20"
+            />
+
+            {/* Ready to Go */}
+            <PipelineSection
+              title={`✅ ${t("pipeline.readyToGoTitle")}`}
+              count={pipelineBookings.readyToGo.length}
+              bookings={pipelineBookings.readyToGo}
+              defaultOpen={true}
+              expandedId={expandedId}
+              setExpandedId={setExpandedId}
+              updatingId={updatingId}
+              deletingId={deletingId}
+              onUpdateEventStatus={updateEventStatus}
+              onUpdatePaymentStatus={updatePaymentStatus}
+              onConfirmCashPayment={confirmCashPayment}
+              onCancel={(id) => setCancelDialogBookingId(id)}
+              onDelete={(id) => setDeleteDialogBookingId(id)}
+              t={t}
+              dateLocale={dateLocale}
+              borderColor="border-teal/20"
+            />
+
+            {/* Completed */}
+            <PipelineSection
+              title={`🎉 ${t("pipeline.completedTitle")}`}
+              count={pipelineBookings.completed.length}
+              bookings={pipelineBookings.completed}
+              defaultOpen={false}
+              expandedId={expandedId}
+              setExpandedId={setExpandedId}
+              updatingId={updatingId}
+              deletingId={deletingId}
+              onUpdateEventStatus={updateEventStatus}
+              onUpdatePaymentStatus={updatePaymentStatus}
+              onConfirmCashPayment={confirmCashPayment}
+              onCancel={(id) => setCancelDialogBookingId(id)}
+              onDelete={(id) => setDeleteDialogBookingId(id)}
+              t={t}
+              dateLocale={dateLocale}
+              borderColor="border-cream/10"
+            />
+
+            {/* Cancelled */}
+            <PipelineSection
+              title={`❌ ${t("pipeline.cancelledTitle")}`}
+              count={pipelineBookings.cancelled.length}
+              bookings={pipelineBookings.cancelled}
+              defaultOpen={false}
+              expandedId={expandedId}
+              setExpandedId={setExpandedId}
+              updatingId={updatingId}
+              deletingId={deletingId}
+              onUpdateEventStatus={updateEventStatus}
+              onUpdatePaymentStatus={updatePaymentStatus}
+              onConfirmCashPayment={confirmCashPayment}
+              onCancel={(id) => setCancelDialogBookingId(id)}
+              onDelete={(id) => setDeleteDialogBookingId(id)}
+              t={t}
+              dateLocale={dateLocale}
+              borderColor="border-red-500/20"
+            />
+          </div>
+        )}
 
         {/* ─── Charts Row 1 ─── */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -1037,6 +807,313 @@ export default function AdminPage() {
             </div>
           </div>
         </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Payment Status Badge ────────────────────────────────
+function PaymentBadge({ status, t }: { status: string; t: (key: string) => string }) {
+  const config = {
+    unpaid: { label: t("pipeline.payUnpaid"), color: "bg-red-500/15 text-red-400 border-red-500/20", icon: "🔴" },
+    deposit_received: { label: t("pipeline.payDeposit"), color: "bg-amber/15 text-amber border-amber/20", icon: "🟡" },
+    paid_in_full: { label: t("pipeline.payFull"), color: "bg-teal/15 text-teal-light border-teal/20", icon: "🟢" },
+  }[status] || { label: status, color: "bg-cream/10 text-cream/50 border-cream/10", icon: "⚪" };
+
+  return (
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium border ${config.color}`}>
+      {config.icon} {config.label}
+    </span>
+  );
+}
+
+// ─── Event Status Badge ──────────────────────────────────
+function EventBadge({ status, t }: { status: string; t: (key: string) => string }) {
+  const config = {
+    unconfirmed: { label: t("pipeline.eventUnconfirmed"), color: "bg-amber/15 text-amber border-amber/20", icon: "📋" },
+    confirmed: { label: t("pipeline.eventConfirmed"), color: "bg-teal/15 text-teal-light border-teal/20", icon: "✅" },
+    completed: { label: t("pipeline.eventCompleted"), color: "bg-cream/10 text-cream/60 border-cream/10", icon: "🎉" },
+    cancelled: { label: t("pipeline.eventCancelled"), color: "bg-red-500/15 text-red-400 border-red-500/20", icon: "❌" },
+  }[status] || { label: status, color: "bg-cream/10 text-cream/50 border-cream/10", icon: "⚪" };
+
+  return (
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium border ${config.color}`}>
+      {config.icon} {config.label}
+    </span>
+  );
+}
+
+// ─── Pipeline Section ────────────────────────────────────
+interface PipelineSectionProps {
+  title: string;
+  count: number;
+  bookings: Booking[];
+  defaultOpen: boolean;
+  expandedId: string | null;
+  setExpandedId: (id: string | null) => void;
+  updatingId: string | null;
+  deletingId: string | null;
+  onUpdateEventStatus: (id: string, status: string) => void;
+  onUpdatePaymentStatus: (id: string, status: string) => void;
+  onConfirmCashPayment: (id: string) => void;
+  onCancel: (id: string) => void;
+  onDelete: (id: string) => void;
+  t: (key: string, values?: Record<string, string | number>) => string;
+  dateLocale: string;
+  borderColor: string;
+}
+
+function PipelineSection({
+  title,
+  count,
+  bookings,
+  defaultOpen,
+  expandedId,
+  setExpandedId,
+  updatingId,
+  deletingId,
+  onUpdateEventStatus,
+  onUpdatePaymentStatus,
+  onConfirmCashPayment,
+  onCancel,
+  onDelete,
+  t,
+  dateLocale,
+  borderColor,
+}: PipelineSectionProps) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+
+  return (
+    <div className={`bg-navy-light rounded-2xl border ${borderColor} overflow-hidden`}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full px-5 py-4 flex items-center justify-between hover:bg-cream/[0.02] transition-colors"
+      >
+        <span className="text-cream text-sm font-medium">
+          {title} <span className="text-cream/40 ml-1">({count})</span>
+        </span>
+        <span className={`text-cream/40 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}>
+          ▾
+        </span>
+      </button>
+
+      {isOpen && count > 0 && (
+        <div className="px-4 pb-4 space-y-2">
+          {bookings.map((booking) => (
+            <div key={booking.id}>
+              {/* Booking Card */}
+              <div
+                onClick={() => setExpandedId(expandedId === booking.id ? null : booking.id)}
+                className="rounded-xl border border-cream/8 hover:border-cream/15 bg-navy/50 p-4 cursor-pointer transition-all duration-200"
+              >
+                {/* Top row: name + badges */}
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                  <span className="text-cream font-medium text-sm">{booking.customer_name}</span>
+                  <div className="flex gap-1.5">
+                    <PaymentBadge status={booking.payment_status} t={t} />
+                    <EventBadge status={booking.event_status} t={t} />
+                  </div>
+                </div>
+
+                {/* Info row */}
+                <div className="flex flex-wrap items-center gap-3 text-sm text-cream/50">
+                  <span>
+                    {new Date(booking.event_date + "T12:00:00").toLocaleDateString(dateLocale)}
+                    {booking.event_time && ` · ${formatTime12(booking.event_time)}`}
+                  </span>
+                  <span>{booking.guest_count} {t("table.guests").toLowerCase()}</span>
+                  <span>{booking.service_type}</span>
+                  <span className="text-cream font-medium">${(booking.total_price / 100).toFixed(2)}</span>
+                  {booking.payment_type === "cash" && booking.cash_payment_method && (
+                    <span className="text-cream/30 text-xs">{t("admin.via")} {booking.cash_payment_method}</span>
+                  )}
+                  {booking.balance_due > 0 && booking.payment_status !== "paid_in_full" && (
+                    <span className="text-amber text-xs">{t("admin.balanceDue", { amount: (booking.balance_due / 100).toFixed(2) })}</span>
+                  )}
+                </div>
+
+                {booking.booking_number && (
+                  <div className="mt-2 text-[10px] text-cream/30 font-mono">Ref: {booking.booking_number}</div>
+                )}
+              </div>
+
+              {/* Expanded details + actions */}
+              {expandedId === booking.id && (
+                <div className="mx-2 mb-2 bg-navy rounded-xl border border-cream/8 p-5 space-y-4">
+                  {/* Details grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div>
+                      <span className="text-cream/40 text-[11px] uppercase tracking-wider font-medium block mb-1">{t("table.customer")}</span>
+                      <p className="text-cream text-sm font-medium">{booking.customer_name}</p>
+                    </div>
+                    <div>
+                      <span className="text-cream/40 text-[11px] uppercase tracking-wider font-medium block mb-1">{t("table.contact")}</span>
+                      <p className="text-cream text-sm">{booking.customer_email}</p>
+                      <p className="text-cream/60 text-sm">{booking.customer_phone}</p>
+                    </div>
+                    {booking.event_address && (
+                      <div>
+                        <span className="text-cream/40 text-[11px] uppercase tracking-wider font-medium block mb-1">{t("table.address")}</span>
+                        <p className="text-cream text-sm">{booking.event_address}</p>
+                      </div>
+                    )}
+                    <div>
+                      <span className="text-cream/40 text-[11px] uppercase tracking-wider font-medium block mb-1">{t("table.meats")}</span>
+                      <div className="flex flex-wrap gap-1">
+                        {(booking.meats || []).map((meat) => (
+                          <span key={meat} className="inline-block px-2 py-0.5 text-[11px] bg-amber/10 text-amber rounded-full">{meat}</span>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <span className="text-cream/40 text-[11px] uppercase tracking-wider font-medium block mb-1">{t("table.extras")}</span>
+                      {(booking.extras || []).length > 0 ? (
+                        <div className="flex flex-wrap gap-1">
+                          {booking.extras.map((e) => (
+                            <span key={e.id} className="inline-block px-2 py-0.5 text-[11px] bg-cream/8 text-cream/70 rounded-full">{e.id} x{e.quantity}</span>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-cream/40 text-sm">{t("dashboard.noExtras")}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Two-track action buttons */}
+                  <div className="space-y-3 pt-3 border-t border-cream/8">
+                    {/* Payment Track */}
+                    <div>
+                      <span className="text-cream/40 text-[10px] uppercase tracking-wider font-medium block mb-2">💰 {t("pipeline.paymentTrack")}</span>
+                      <div className="flex flex-wrap gap-2">
+                        {booking.payment_status === "unpaid" && booking.event_status !== "cancelled" && (
+                          <>
+                            {booking.payment_type === "cash" && (
+                              <button
+                                onClick={(e) => { e.stopPropagation(); onConfirmCashPayment(booking.id); }}
+                                disabled={updatingId === booking.id}
+                                className="px-3 py-1.5 bg-amber/15 text-amber text-xs font-medium rounded-lg hover:bg-amber/25 border border-amber/20 transition-colors disabled:opacity-50"
+                              >
+                                {t("pipeline.confirmDeposit")}
+                              </button>
+                            )}
+                            <button
+                              onClick={(e) => { e.stopPropagation(); onUpdatePaymentStatus(booking.id, "paid_in_full"); }}
+                              disabled={updatingId === booking.id}
+                              className="px-3 py-1.5 bg-teal/15 text-teal-light text-xs font-medium rounded-lg hover:bg-teal/25 border border-teal/20 transition-colors disabled:opacity-50"
+                            >
+                              {t("pipeline.markPaidFull")}
+                            </button>
+                          </>
+                        )}
+                        {booking.payment_status === "deposit_received" && (
+                          <>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); onUpdatePaymentStatus(booking.id, "paid_in_full"); }}
+                              disabled={updatingId === booking.id}
+                              className="px-3 py-1.5 bg-teal/15 text-teal-light text-xs font-medium rounded-lg hover:bg-teal/25 border border-teal/20 transition-colors disabled:opacity-50"
+                            >
+                              {t("pipeline.markPaidFull")}
+                            </button>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); onUpdatePaymentStatus(booking.id, "unpaid"); }}
+                              disabled={updatingId === booking.id}
+                              className="px-3 py-1.5 bg-cream/5 text-cream/40 text-xs font-medium rounded-lg hover:bg-cream/10 border border-cream/10 transition-colors disabled:opacity-50"
+                            >
+                              ← {t("pipeline.revertUnpaid")}
+                            </button>
+                          </>
+                        )}
+                        {booking.payment_status === "paid_in_full" && booking.payment_type === "cash" && (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); onUpdatePaymentStatus(booking.id, "deposit_received"); }}
+                            disabled={updatingId === booking.id}
+                            className="px-3 py-1.5 bg-cream/5 text-cream/40 text-xs font-medium rounded-lg hover:bg-cream/10 border border-cream/10 transition-colors disabled:opacity-50"
+                          >
+                            ← {t("pipeline.revertDeposit")}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Event Track */}
+                    <div>
+                      <span className="text-cream/40 text-[10px] uppercase tracking-wider font-medium block mb-2">📋 {t("pipeline.eventTrack")}</span>
+                      <div className="flex flex-wrap gap-2">
+                        {booking.event_status === "unconfirmed" && (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); onUpdateEventStatus(booking.id, "confirmed"); }}
+                            disabled={updatingId === booking.id}
+                            className="px-3 py-1.5 bg-teal/15 text-teal-light text-xs font-medium rounded-lg hover:bg-teal/25 border border-teal/20 transition-colors disabled:opacity-50"
+                          >
+                            {t("pipeline.confirmEvent")}
+                          </button>
+                        )}
+                        {booking.event_status === "confirmed" && (
+                          <>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); onUpdateEventStatus(booking.id, "completed"); }}
+                              disabled={updatingId === booking.id}
+                              className="px-3 py-1.5 bg-cream/10 text-cream/70 text-xs font-medium rounded-lg hover:bg-cream/15 border border-cream/15 transition-colors disabled:opacity-50"
+                            >
+                              🎉 {t("pipeline.markCompleted")}
+                            </button>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); onUpdateEventStatus(booking.id, "unconfirmed"); }}
+                              disabled={updatingId === booking.id}
+                              className="px-3 py-1.5 bg-cream/5 text-cream/40 text-xs font-medium rounded-lg hover:bg-cream/10 border border-cream/10 transition-colors disabled:opacity-50"
+                            >
+                              ← {t("pipeline.revertUnconfirmed")}
+                            </button>
+                          </>
+                        )}
+                        {booking.event_status === "completed" && (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); onUpdateEventStatus(booking.id, "confirmed"); }}
+                            disabled={updatingId === booking.id}
+                            className="px-3 py-1.5 bg-cream/5 text-cream/40 text-xs font-medium rounded-lg hover:bg-cream/10 border border-cream/10 transition-colors disabled:opacity-50"
+                          >
+                            ← {t("pipeline.revertConfirmed")}
+                          </button>
+                        )}
+                        {booking.event_status !== "cancelled" && (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); onCancel(booking.id); }}
+                            disabled={updatingId === booking.id}
+                            className="px-3 py-1.5 bg-red-500/10 text-red-400 text-xs font-medium rounded-lg hover:bg-red-500/20 border border-red-500/20 transition-colors disabled:opacity-50"
+                          >
+                            {t("actions.cancel")}
+                          </button>
+                        )}
+                        {booking.event_status === "cancelled" && (
+                          <>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); onUpdateEventStatus(booking.id, "unconfirmed"); }}
+                              disabled={updatingId === booking.id}
+                              className="px-3 py-1.5 bg-amber/15 text-amber text-xs font-medium rounded-lg hover:bg-amber/25 border border-amber/20 transition-colors disabled:opacity-50"
+                            >
+                              ↩ {t("pipeline.restore")}
+                            </button>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); onDelete(booking.id); }}
+                              disabled={deletingId === booking.id}
+                              className="px-3 py-1.5 bg-red-500/15 text-red-400 text-xs font-medium rounded-lg hover:bg-red-500/25 border border-red-500/20 transition-colors disabled:opacity-50"
+                            >
+                              {t("actions.delete")}
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {isOpen && count === 0 && (
+        <div className="px-5 pb-4 text-cream/30 text-sm">{t("pipeline.empty")}</div>
       )}
     </div>
   );

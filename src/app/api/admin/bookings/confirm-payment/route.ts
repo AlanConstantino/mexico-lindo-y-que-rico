@@ -45,8 +45,12 @@ export async function POST(request: NextRequest) {
       status: "confirmed",
     };
 
+    // Set new payment_status based on payment option
     if (booking.cash_payment_option === "full") {
       update.balance_due = 0;
+      update.payment_status = "paid_in_full";
+    } else {
+      update.payment_status = "deposit_received";
     }
 
     const { error: updateError } = await supabaseAdmin

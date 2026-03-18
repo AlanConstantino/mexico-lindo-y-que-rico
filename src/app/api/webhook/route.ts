@@ -46,6 +46,8 @@ export async function POST(request: NextRequest) {
     const updatePayload: Record<string, unknown> = {
       stripe_payment_status: isSetupMode ? "card_on_file" : "paid",
       status: "confirmed",
+      event_status: "unconfirmed",
+      payment_status: isSetupMode ? "unpaid" : "paid_in_full",
       cancel_token: cancelToken,
       reschedule_token: rescheduleToken,
     };

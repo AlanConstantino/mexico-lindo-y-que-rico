@@ -247,6 +247,8 @@ export async function POST(request: NextRequest) {
           locale,
           stripe_payment_status: "not_applicable",
           status: "pending",
+          event_status: "unconfirmed",
+          payment_status: "unpaid",
           cancel_token: cancelToken,
           reschedule_token: rescheduleToken,
           booking_number: bookingNumber,
@@ -365,6 +367,8 @@ export async function POST(request: NextRequest) {
         stripe_session_id: session.id,
         stripe_payment_status: "unpaid",
         status: "pending",
+        event_status: "unconfirmed",
+        payment_status: "unpaid",
         booking_number: cardBookingNumber,
       })
       .select("id, booking_number")

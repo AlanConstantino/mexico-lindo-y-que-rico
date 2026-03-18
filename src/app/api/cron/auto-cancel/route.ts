@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
       try {
         await supabaseAdmin
           .from("bookings")
-          .update({ status: "cancelled" })
+          .update({ status: "cancelled", event_status: "cancelled" })
           .eq("id", booking.id);
 
         const locale = (booking.locale || "en") as "en" | "es";
