@@ -8,6 +8,12 @@ import {
   sendOwnerReminder,
   sendDayBeforeReminder,
   sendCashPendingConfirmation,
+  sendCancellationConfirmation,
+  sendOwnerCancellationNotice,
+  sendRescheduleConfirmation,
+  sendOwnerRescheduleNotice,
+  sendOwnerInitiatedCancellation,
+  sendAutoCancelEmail,
   mapExtrasForEmail,
 } from "@/lib/notifications";
 
@@ -18,7 +24,7 @@ function getToken(request: NextRequest): string | null {
 }
 
 // Randomized sample data for realistic test emails
-function getSampleBooking(targetEmail: string) {
+function getSampleBooking(targetEmail: string, customData?: Record<string, unknown>) {
   const firstNames = ["María", "Carlos", "Jessica", "Roberto", "Ana", "David", "Sofia", "Miguel"];
   const lastNames = ["García", "Rodriguez", "Martinez", "Lopez", "Hernandez", "Rivera", "Torres", "Ramirez"];
   const streets = ["123 Sunset Blvd", "456 Whittier Blvd", "789 Atlantic Ave", "321 Pacific Coast Hwy", "555 Olvera St", "1200 Spring St"];
@@ -45,7 +51,7 @@ function getSampleBooking(targetEmail: string) {
   const guestCount = pick(guestCounts);
   const eventTime = pick(times);
 
-  // Random extras in DB format (for reminder emails)
+  // Random extras in DB format
   const dbExtras = [
     { id: "rice", quantity: 1 },
     { id: "beans", quantity: 1 },
@@ -59,8 +65,12 @@ function getSampleBooking(targetEmail: string) {
   const extrasPrice = 40 + 40 + 75; // rice + beans + 3 aguas
   const totalPrice = (basePrice + extrasPrice) * 100; // in cents
 
-  return {
+  const bookingNumber = `QR-${dateStr.replace(/-/g, "")}-${Math.random().toString(16).slice(2, 8).toUpperCase()}`;
+
+  // Build base sample, then override with custom data
+  const sample = {
     bookingId: `test-${crypto.randomUUID().slice(0, 8)}`,
+    bookingNumber,
     customerName,
     customerEmail: targetEmail,
     customerPhone: phone,
@@ -73,9 +83,22 @@ function getSampleBooking(targetEmail: string) {
     totalPrice,
     cancelUrl: "https://que.rico.catering/en/booking/cancel/test-token",
     rescheduleUrl: "https://que.rico.catering/en/booking/reschedule/test-token",
-    // DB-format extras for reminder functions
     dbExtras,
   };
+
+  // Apply custom overrides
+  if (customData) {
+    if (customData.customerName) sample.customerName = customData.customerName as string;
+    if (customData.customerPhone) sample.customerPhone = customData.customerPhone as string;
+    if (customData.eventDate) sample.eventDate = customData.eventDate as string;
+    if (customData.eventTime) sample.eventTime = customData.eventTime as string;
+    if (customData.guestCount) sample.guestCount = customData.guestCount as number;
+    if (customData.eventAddress) sample.eventAddress = customData.eventAddress as string;
+    if (customData.totalPrice) sample.totalPrice = (customData.totalPrice as number) * 100; // convert dollars to cents
+    if (customData.serviceType) sample.serviceType = customData.serviceType as string;
+  }
+
+  return sample;
 }
 
 export async function POST(request: NextRequest) {
@@ -85,23 +108,31 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { emailType, locale = "en", recipientEmail } = await request.json();
+    const { emailType, locale = "en", recipientEmail, customData } = await request.json();
     const emailLocale = (locale === "es" ? "es" : "en") as "en" | "es";
 
     // Get notification email from settings
     const { data: settings } = await supabaseAdmin
       .from("settings")
-      .select("notification_email, reminder_days, cancellation_fee_type, cancellation_fee_flat, cancellation_fee_percent")
+      .select("notification_email, reminder_days, cancellation_fee_type, cancellation_fee_flat, cancellation_fee_percent, free_cancellation_days, cash_deposit_percent")
       .single();
 
     const notificationEmail = settings?.notification_email || "mx.lindo.y.que.rico.catering@gmail.com";
     const targetEmail = recipientEmail?.trim() || notificationEmail;
     const reminderDays = settings?.reminder_days ?? 5;
-    const sample = getSampleBooking(targetEmail);
+    const sample = getSampleBooking(targetEmail, customData);
 
     // Mapped extras for confirmation/notification emails (display format)
     const emailExtras = mapExtrasForEmail(sample.dbExtras as { id: string; quantity: number; flavors?: Record<string, number> }[], emailLocale);
     const ownerExtras = mapExtrasForEmail(sample.dbExtras as { id: string; quantity: number; flavors?: Record<string, number> }[], "es");
+
+    // Calculate cancellation fee
+    const feeType = settings?.cancellation_fee_type || "flat";
+    const cancellationFee = feeType === "flat"
+      ? (settings?.cancellation_fee_flat || 50) * 100
+      : Math.round(sample.totalPrice * ((settings?.cancellation_fee_percent || 25) / 100));
+    const depositPercent = settings?.cash_deposit_percent || 10;
+    const depositAmount = Math.round(sample.totalPrice * (depositPercent / 100));
 
     switch (emailType) {
       case "owner_booking":
@@ -138,17 +169,12 @@ export async function POST(request: NextRequest) {
         break;
 
       case "day_before": {
-        const dayBeforeFeeType = settings?.cancellation_fee_type || "flat";
-        const dayBeforeFee = dayBeforeFeeType === "flat"
-          ? (settings?.cancellation_fee_flat || 50) * 100
-          : Math.round(sample.totalPrice * ((settings?.cancellation_fee_percent || 25) / 100));
-
         await sendDayBeforeReminder({
           ...sample,
           extras: sample.dbExtras,
           reminderDays: 1,
           cancelUrl: sample.cancelUrl,
-          cancellationFee: dayBeforeFee,
+          cancellationFee,
         }, emailLocale);
         break;
       }
@@ -158,6 +184,70 @@ export async function POST(request: NextRequest) {
           ...sample,
           extras: emailExtras,
           paymentType: "cash",
+        }, emailLocale);
+        break;
+
+      case "customer_cancellation":
+        await sendCancellationConfirmation({
+          ...sample,
+          refundAmount: Math.max(0, sample.totalPrice - cancellationFee),
+          cancellationFee,
+          paymentType: Math.random() > 0.5 ? "card" : "cash",
+          depositAmount,
+          cashPaymentMethod: "zelle",
+        }, emailLocale);
+        break;
+
+      case "owner_cancellation":
+        await sendOwnerCancellationNotice({
+          ...sample,
+          refundAmount: Math.max(0, sample.totalPrice - cancellationFee),
+          cancellationFee,
+          ownerEmail: targetEmail,
+        });
+        break;
+
+      case "customer_reschedule": {
+        // Generate a different date for the "new" date
+        const newDate = new Date(sample.eventDate);
+        newDate.setDate(newDate.getDate() + 7);
+        await sendRescheduleConfirmation({
+          ...sample,
+          oldDate: sample.eventDate,
+          oldTime: sample.eventTime,
+          newDate: newDate.toISOString().split("T")[0],
+          newTime: "15:00",
+        }, emailLocale);
+        break;
+      }
+
+      case "owner_reschedule": {
+        const newDate2 = new Date(sample.eventDate);
+        newDate2.setDate(newDate2.getDate() + 7);
+        await sendOwnerRescheduleNotice({
+          ...sample,
+          oldDate: sample.eventDate,
+          oldTime: sample.eventTime,
+          newDate: newDate2.toISOString().split("T")[0],
+          newTime: "15:00",
+          ownerEmail: targetEmail,
+        });
+        break;
+      }
+
+      case "owner_initiated_cancel":
+        await sendOwnerInitiatedCancellation({
+          ...sample,
+          paymentType: Math.random() > 0.5 ? "card" : "cash",
+          depositAmount,
+          totalPrice: sample.totalPrice,
+        }, emailLocale);
+        break;
+
+      case "auto_cancel":
+        await sendAutoCancelEmail({
+          ...sample,
+          amountDue: depositAmount,
         }, emailLocale);
         break;
 

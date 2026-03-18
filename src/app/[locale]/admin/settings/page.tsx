@@ -476,15 +476,66 @@ export default function AdminSettingsPage() {
 
 function TestEmailsSection({ t }: { t: (key: string) => string }) {
   const [testEmail, setTestEmail] = useState("");
+  const [dataMode, setDataMode] = useState<"random" | "custom">("random");
+  const [customFields, setCustomFields] = useState({
+    customerName: "",
+    customerPhone: "",
+    eventDate: "",
+    eventTime: "",
+    guestCount: "",
+    eventAddress: "",
+    totalPrice: "",
+    serviceType: "",
+  });
 
-  const emailTypes = [
-    { key: "owner_booking", label: t("settings.testOwnerBooking") },
-    { key: "customer_confirmation", label: t("settings.testCustomerConfirmation") },
-    { key: "customer_reminder", label: t("settings.testCustomerReminder") },
-    { key: "owner_reminder", label: t("settings.testOwnerReminder") },
-    { key: "day_before", label: t("settings.testDayBefore") },
-    { key: "cash_pending", label: t("settings.testCashPending") },
+  const emailCategories = [
+    {
+      title: t("settings.testCategoryBooking"),
+      emails: [
+        { key: "owner_booking", label: t("settings.testOwnerBooking"), icon: "📩" },
+        { key: "customer_confirmation", label: t("settings.testCustomerConfirmation"), icon: "✅" },
+        { key: "cash_pending", label: t("settings.testCashPending"), icon: "💵" },
+      ],
+    },
+    {
+      title: t("settings.testCategoryReminders"),
+      emails: [
+        { key: "customer_reminder", label: t("settings.testCustomerReminder"), icon: "🔔" },
+        { key: "owner_reminder", label: t("settings.testOwnerReminder"), icon: "📋" },
+        { key: "day_before", label: t("settings.testDayBefore"), icon: "⏰" },
+      ],
+    },
+    {
+      title: t("settings.testCategoryCancellation"),
+      emails: [
+        { key: "customer_cancellation", label: t("settings.testCustomerCancellation"), icon: "❌" },
+        { key: "owner_cancellation", label: t("settings.testOwnerCancellation"), icon: "📣" },
+        { key: "owner_initiated_cancel", label: t("settings.testOwnerInitiatedCancel"), icon: "🚫" },
+        { key: "auto_cancel", label: t("settings.testAutoCancel"), icon: "⏳" },
+      ],
+    },
+    {
+      title: t("settings.testCategoryReschedule"),
+      emails: [
+        { key: "customer_reschedule", label: t("settings.testCustomerReschedule"), icon: "📅" },
+        { key: "owner_reschedule", label: t("settings.testOwnerReschedule"), icon: "🔄" },
+      ],
+    },
   ];
+
+  const buildCustomData = () => {
+    if (dataMode === "random") return undefined;
+    const data: Record<string, unknown> = {};
+    if (customFields.customerName.trim()) data.customerName = customFields.customerName.trim();
+    if (customFields.customerPhone.trim()) data.customerPhone = customFields.customerPhone.trim();
+    if (customFields.eventDate) data.eventDate = customFields.eventDate;
+    if (customFields.eventTime) data.eventTime = customFields.eventTime;
+    if (customFields.guestCount) data.guestCount = parseInt(customFields.guestCount);
+    if (customFields.eventAddress.trim()) data.eventAddress = customFields.eventAddress.trim();
+    if (customFields.totalPrice) data.totalPrice = parseFloat(customFields.totalPrice);
+    if (customFields.serviceType) data.serviceType = customFields.serviceType;
+    return Object.keys(data).length > 0 ? data : undefined;
+  };
 
   return (
     <div className="mt-10 pt-8 border-t border-cream/10">
@@ -507,21 +558,123 @@ function TestEmailsSection({ t }: { t: (key: string) => string }) {
         />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {emailTypes.map((email) => (
-          <TestEmailButton
-            key={email.key}
-            emailType={email.key}
-            label={email.label}
-            recipientEmail={testEmail}
-          />
-        ))}
+      {/* Data Mode Toggle */}
+      <div className="mb-6">
+        <label className="block text-sm text-cream/70 mb-2">{t("settings.testDataMode")}</label>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => setDataMode("random")}
+            className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 border ${
+              dataMode === "random"
+                ? "bg-amber/15 border-amber/40 text-amber"
+                : "bg-navy-light border-cream/10 text-cream/50 hover:border-cream/20"
+            }`}
+          >
+            🎲 {t("settings.testDataRandom")}
+          </button>
+          <button
+            type="button"
+            onClick={() => setDataMode("custom")}
+            className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 border ${
+              dataMode === "custom"
+                ? "bg-amber/15 border-amber/40 text-amber"
+                : "bg-navy-light border-cream/10 text-cream/50 hover:border-cream/20"
+            }`}
+          >
+            ✏️ {t("settings.testDataCustom")}
+          </button>
+        </div>
       </div>
+
+      {/* Custom Data Fields */}
+      {dataMode === "custom" && (
+        <div className="mb-6 p-4 rounded-xl border border-cream/10 bg-navy-light/50 space-y-3">
+          <p className="text-cream/40 text-xs">{t("settings.testCustomHint")}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs text-cream/50 mb-1">{t("settings.testFieldName")}</label>
+              <input type="text" value={customFields.customerName}
+                onChange={(e) => setCustomFields({ ...customFields, customerName: e.target.value })}
+                placeholder="María García"
+                className="w-full px-3 py-2 bg-navy border border-cream/10 rounded-lg text-cream text-sm placeholder:text-cream/20 focus:outline-none focus:border-amber/50" />
+            </div>
+            <div>
+              <label className="block text-xs text-cream/50 mb-1">{t("settings.testFieldPhone")}</label>
+              <input type="text" value={customFields.customerPhone}
+                onChange={(e) => setCustomFields({ ...customFields, customerPhone: e.target.value })}
+                placeholder="(562) 555-1234"
+                className="w-full px-3 py-2 bg-navy border border-cream/10 rounded-lg text-cream text-sm placeholder:text-cream/20 focus:outline-none focus:border-amber/50" />
+            </div>
+            <div>
+              <label className="block text-xs text-cream/50 mb-1">{t("settings.testFieldDate")}</label>
+              <input type="date" value={customFields.eventDate}
+                onChange={(e) => setCustomFields({ ...customFields, eventDate: e.target.value })}
+                className="w-full px-3 py-2 bg-navy border border-cream/10 rounded-lg text-cream text-sm focus:outline-none focus:border-amber/50" />
+            </div>
+            <div>
+              <label className="block text-xs text-cream/50 mb-1">{t("settings.testFieldTime")}</label>
+              <input type="time" value={customFields.eventTime}
+                onChange={(e) => setCustomFields({ ...customFields, eventTime: e.target.value })}
+                className="w-full px-3 py-2 bg-navy border border-cream/10 rounded-lg text-cream text-sm focus:outline-none focus:border-amber/50" />
+            </div>
+            <div>
+              <label className="block text-xs text-cream/50 mb-1">{t("settings.testFieldGuests")}</label>
+              <input type="number" value={customFields.guestCount}
+                onChange={(e) => setCustomFields({ ...customFields, guestCount: e.target.value })}
+                placeholder="100"
+                className="w-full px-3 py-2 bg-navy border border-cream/10 rounded-lg text-cream text-sm placeholder:text-cream/20 focus:outline-none focus:border-amber/50" />
+            </div>
+            <div>
+              <label className="block text-xs text-cream/50 mb-1">{t("settings.testFieldPrice")}</label>
+              <input type="number" step="0.01" value={customFields.totalPrice}
+                onChange={(e) => setCustomFields({ ...customFields, totalPrice: e.target.value })}
+                placeholder="695.00"
+                className="w-full px-3 py-2 bg-navy border border-cream/10 rounded-lg text-cream text-sm placeholder:text-cream/20 focus:outline-none focus:border-amber/50" />
+            </div>
+            <div>
+              <label className="block text-xs text-cream/50 mb-1">{t("settings.testFieldAddress")}</label>
+              <input type="text" value={customFields.eventAddress}
+                onChange={(e) => setCustomFields({ ...customFields, eventAddress: e.target.value })}
+                placeholder="123 Main St, Los Angeles, CA"
+                className="w-full px-3 py-2 bg-navy border border-cream/10 rounded-lg text-cream text-sm placeholder:text-cream/20 focus:outline-none focus:border-amber/50" />
+            </div>
+            <div>
+              <label className="block text-xs text-cream/50 mb-1">{t("settings.testFieldService")}</label>
+              <select value={customFields.serviceType}
+                onChange={(e) => setCustomFields({ ...customFields, serviceType: e.target.value })}
+                className="w-full px-3 py-2 bg-navy border border-cream/10 rounded-lg text-cream text-sm focus:outline-none focus:border-amber/50">
+                <option value="">{t("settings.testFieldServiceAuto")}</option>
+                <option value="2hr">2 Hour</option>
+                <option value="3hr">3 Hour</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Email Categories */}
+      {emailCategories.map((category) => (
+        <div key={category.title} className="mb-6">
+          <h3 className="text-cream/60 text-xs uppercase tracking-wider mb-2">{category.title}</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {category.emails.map((email) => (
+              <TestEmailButton
+                key={email.key}
+                emailType={email.key}
+                label={`${email.icon} ${email.label}`}
+                recipientEmail={testEmail}
+                customData={buildCustomData()}
+              />
+            ))}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
 
-function TestEmailButton({ emailType, label, recipientEmail }: { emailType: string; label: string; recipientEmail: string }) {
+function TestEmailButton({ emailType, label, recipientEmail, customData }: { emailType: string; label: string; recipientEmail: string; customData?: Record<string, unknown> }) {
   const [sending, setSending] = useState(false);
   const [result, setResult] = useState<"success" | "error" | null>(null);
 
@@ -541,6 +694,7 @@ function TestEmailButton({ emailType, label, recipientEmail }: { emailType: stri
         body: JSON.stringify({
           emailType,
           ...(recipientEmail.trim() && { recipientEmail: recipientEmail.trim() }),
+          ...(customData && { customData }),
         }),
       });
       setResult(res.ok ? "success" : "error");
@@ -556,7 +710,7 @@ function TestEmailButton({ emailType, label, recipientEmail }: { emailType: stri
     <button
       onClick={handleSend}
       disabled={sending}
-      className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 disabled:opacity-50 border ${
+      className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 disabled:opacity-50 border text-left ${
         result === "success"
           ? "bg-green-500/10 border-green-500/30 text-green-400"
           : result === "error"
