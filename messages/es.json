@@ -220,7 +220,7 @@
     "selectDate": "Seleccione la Fecha",
     "selectDateDesc": "Elija una fecha para su evento. Aceptamos hasta 3 eventos por día.",
     "selectTime": "Selecciona una Hora",
-    "selectTimeDesc": "¿A qué hora debemos llegar para comenzar a preparar?",
+    "selectTimeDesc": "¿A qué hora debe comenzar el evento?",
     "eventTime": "Hora del Evento",
     "timeRequired": "Por favor selecciona una hora para tu evento",
     "setupArrivalNote": "Nuestro equipo llegará a las {arrivalTime} para preparar todo — esta hora no se cobra.",
