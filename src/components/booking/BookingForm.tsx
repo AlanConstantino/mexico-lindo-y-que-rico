@@ -236,12 +236,12 @@ export default function BookingForm() {
                 }}
               >
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold transition-all duration-300 ${
+                  className={`w-10 h-10 rounded-full flex items-center justify-center text-base font-semibold transition-all duration-300 ${
                     isActive
                       ? "bg-amber text-navy scale-110"
                       : isComplete
                         ? "bg-amber/20 text-amber border border-amber/40 hover:bg-amber/30 hover:scale-105"
-                        : "bg-gradient-to-r from-amber/10 to-terracotta/10 text-cream/30 border border-amber/20"
+                        : "bg-gradient-to-r from-amber/10 to-terracotta/10 text-cream/80 border border-amber/20"
                   }`}
                 >
                   {isComplete ? (
@@ -263,12 +263,12 @@ export default function BookingForm() {
                   )}
                 </div>
                 <span
-                  className={`text-[10px] mt-1.5 transition-colors duration-300 hidden sm:block ${
+                  className={`text-sm mt-2 text-center px-1 transition-colors duration-300 hidden sm:block ${
                     isActive
                       ? "text-amber font-medium"
                       : isComplete
-                        ? "text-amber/50"
-                        : "text-cream/25"
+                        ? "text-amber"
+                        : "text-cream/80"
                   }`}
                 >
                   {t(label)}
@@ -289,7 +289,7 @@ export default function BookingForm() {
       {/* Running total (show from step 2 onwards) */}
       {total !== null && step >= 2 && (
         <div className="mb-6 flex items-center justify-between px-4 py-3 rounded-xl bg-gradient-to-r from-amber/10 to-terracotta/10 border border-amber/20">
-          <span className="text-cream/40 text-sm">{t("total")}</span>
+          <span className="text-cream/80 text-base">{t("total")}</span>
           <span className="font-heading text-2xl text-amber">
             ${total.toFixed(2)}
           </span>
@@ -328,17 +328,17 @@ export default function BookingForm() {
 
       {/* Error message */}
       {error && (
-        <div className="mt-4 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+        <div className="mt-4 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-base">
           {error}
         </div>
       )}
 
       {/* Navigation buttons */}
-      <div className="flex justify-between mt-8 gap-4">
+      <div className="flex flex-wrap justify-between mt-8 gap-4">
         {step > 1 ? (
           <button
             onClick={handleBack}
-            className="px-6 py-3 border border-cream/10 text-cream/50 rounded-full hover:border-cream/30 hover:text-cream transition-all duration-300 text-sm"
+            className="px-6 py-3 border border-cream/10 text-cream/80 rounded-full hover:border-cream/30 hover:text-cream transition-all duration-300 text-base"
           >
             {t("back")}
           </button>
@@ -350,7 +350,7 @@ export default function BookingForm() {
           <button
             onClick={handleNext}
             disabled={!isStepValid()}
-            className="px-8 py-3 bg-amber text-navy font-semibold rounded-full hover:bg-amber-light transition-all duration-300 hover:shadow-lg hover:shadow-amber/20 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-amber disabled:hover:shadow-none text-sm"
+            className="px-8 py-3 bg-amber text-navy font-semibold rounded-full hover:bg-amber-light transition-all duration-300 hover:shadow-lg hover:shadow-amber/20 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-amber disabled:hover:shadow-none text-base"
           >
             {t("next")}
           </button>
@@ -358,7 +358,7 @@ export default function BookingForm() {
           <button
             onClick={handlePayment}
             disabled={isSubmitting || (data.paymentMethod === "cash" && (!data.cashPaymentOption || !data.cashPaymentMethod))}
-            className="px-8 py-3 bg-amber text-navy font-semibold rounded-full hover:bg-amber-light transition-all duration-300 hover:shadow-lg hover:shadow-amber/20 disabled:opacity-50 disabled:cursor-not-allowed text-sm flex items-center gap-2"
+            className="px-8 py-3 bg-amber text-navy font-semibold rounded-full hover:bg-amber-light transition-all duration-300 hover:shadow-lg hover:shadow-amber/20 disabled:opacity-50 disabled:cursor-not-allowed text-base flex items-center gap-2"
           >
             {isSubmitting ? (
               <>

@@ -87,7 +87,7 @@ export default function ExtrasStep({ data, updateData }: ExtrasStepProps) {
       <h2 className="font-heading text-3xl text-cream mb-2">
         {t("selectExtras")}
       </h2>
-      <p className="text-cream/40 text-sm mb-8">{t("selectExtrasDesc")}</p>
+      <p className="text-cream/80 text-base mb-8">{t("selectExtrasDesc")}</p>
 
       <div className="space-y-3">
         {BOOKING_EXTRA_OPTIONS.map((extra) => {
@@ -100,30 +100,30 @@ export default function ExtrasStep({ data, updateData }: ExtrasStepProps) {
           return (
             <div key={extra.id} className="space-y-0">
               <div
-                className={`flex items-center justify-between p-4 rounded-xl border transition-all duration-300 ${
+                className={`flex flex-wrap items-center justify-between gap-3 p-4 rounded-xl border transition-all duration-300 ${
                 hasQty
                   ? "border-amber/20 bg-amber/5"
                   : "border-amber/20 bg-gradient-to-r from-amber/10 to-terracotta/10"
               } ${hasSubPicker ? "rounded-b-none border-b-0" : ""}`}
             >
-              <div className="flex-1 min-w-0">
+              <div className="w-full sm:flex-1 min-w-0">
                 <div
-                  className={`font-medium text-sm ${hasQty ? "text-amber" : "text-cream"}`}
+                  className={`font-medium text-base ${hasQty ? "text-amber" : "text-cream"}`}
                 >
                   {tExtras(extra.id)}
                 </div>
-                <div className="text-cream/30 text-xs mt-0.5">
+                <div className="text-cream/80 text-sm mt-0.5">
                   <span className="text-amber">${extra.price}</span>
                   {extra.id === "extraTime" ? ` ${t("perHour")}` : extra.perUnit ? ` ${t("each")}` : ` · ${t("servesNote")}`}
                 </div>
                 {isAgua && (
-                  <div className="text-cream/40 text-xs mt-1">{tExtras("aguaNote")}</div>
+                  <div className="text-cream/80 text-sm mt-1">{tExtras("aguaNote")}</div>
                 )}
                 {extra.id === "extraTime" && (
-                  <div className="text-cream/20 text-[10px] mt-0.5">{tExtras("extraTimeNote")}</div>
+                  <div className="text-cream/80 text-sm mt-0.5">{tExtras("extraTimeNote")}</div>
                 )}
                 {extra.id === "extraMeat" && (
-                  <div className="text-cream/20 text-[10px] mt-0.5">{tExtras("extraMeatNote")}</div>
+                  <div className="text-cream/80 text-sm mt-0.5">{tExtras("extraMeatNote")}</div>
                 )}
               </div>
 
@@ -133,7 +133,7 @@ export default function ExtrasStep({ data, updateData }: ExtrasStepProps) {
                   aria-label={t("decreaseExtra", { name: tExtras(extra.id) })}
                   onClick={() => updateQuantity(extra.id, -1)}
                   disabled={qty === 0}
-                  className="w-8 h-8 rounded-full border border-cream/10 flex items-center justify-center text-cream/50 hover:border-cream/30 hover:text-cream transition-all disabled:opacity-20 disabled:cursor-not-allowed"
+                  className="w-8 h-8 rounded-full border border-cream/10 flex items-center justify-center text-cream/80 hover:border-cream/30 hover:text-cream transition-all disabled:opacity-20 disabled:cursor-not-allowed"
                 >
                   <svg
                     className="w-4 h-4"
@@ -150,14 +150,14 @@ export default function ExtrasStep({ data, updateData }: ExtrasStepProps) {
                   </svg>
                 </button>
                 <span
-                  className={`w-8 text-center text-sm font-medium ${hasQty ? "text-amber" : "text-cream/30"}`}
+                  className={`w-8 text-center text-base font-medium ${hasQty ? "text-amber" : "text-cream/80"}`}
                 >
                   {qty}
                 </span>
                 <button
                   aria-label={t("increaseExtra", { name: tExtras(extra.id) })}
                   onClick={() => updateQuantity(extra.id, 1)}
-                  className="w-8 h-8 rounded-full border border-cream/10 flex items-center justify-center text-cream/50 hover:border-amber/30 hover:text-amber transition-all"
+                  className="w-8 h-8 rounded-full border border-cream/10 flex items-center justify-center text-cream/80 hover:border-amber/30 hover:text-amber transition-all"
                 >
                   <svg
                     className="w-4 h-4"
@@ -177,7 +177,7 @@ export default function ExtrasStep({ data, updateData }: ExtrasStepProps) {
 
               {/* Line total */}
               {hasQty && (
-                <div className="text-amber text-sm font-medium ml-3 w-16 text-right">
+                <div className="text-amber text-base font-medium shrink-0 text-right">
                   ${(qty * extra.price).toFixed(2)}
                 </div>
               )}
@@ -187,8 +187,8 @@ export default function ExtrasStep({ data, updateData }: ExtrasStepProps) {
             {isExtraMeat && hasQty && (
               <div className="px-4 pb-4 pt-3 rounded-b-xl border border-t-0 border-amber/20 bg-amber/5">
                 <div className="flex items-center justify-between mb-3">
-                  <p className="text-cream/50 text-xs">{t("chooseMeats")}</p>
-                  <span className={`text-xs font-medium ${totalMeatAssigned === extraMeatCount ? "text-green-400" : "text-amber"}`}>
+                  <p className="text-cream/80 text-sm">{t("chooseMeats")}</p>
+                  <span className={`text-sm font-medium ${totalMeatAssigned === extraMeatCount ? "text-green-400" : "text-amber"}`}>
                     {t("meatsAssigned", { assigned: totalMeatAssigned, total: extraMeatCount })}
                   </span>
                 </div>
@@ -198,26 +198,26 @@ export default function ExtrasStep({ data, updateData }: ExtrasStepProps) {
                     const hasMeatQty = meatQty > 0;
                     return (
                       <div key={meatId} className="flex items-center justify-between py-1.5">
-                        <span className={`text-xs font-medium ${hasMeatQty ? "text-amber" : "text-cream/50"}`}>
+                        <span className={`text-sm font-medium ${hasMeatQty ? "text-amber" : "text-cream/80"}`}>
                           {tMenu(`${meatId}.name`)}
                         </span>
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => updateMeatQty(meatId, -1)}
                             disabled={meatQty === 0}
-                            className="w-7 h-7 rounded-full border border-cream/10 flex items-center justify-center text-cream/50 hover:border-cream/30 hover:text-cream transition-all disabled:opacity-20 disabled:cursor-not-allowed"
+                            className="w-7 h-7 rounded-full border border-cream/10 flex items-center justify-center text-cream/80 hover:border-cream/30 hover:text-cream transition-all disabled:opacity-20 disabled:cursor-not-allowed"
                           >
                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
                             </svg>
                           </button>
-                          <span className={`w-6 text-center text-xs font-medium ${hasMeatQty ? "text-amber" : "text-cream/30"}`}>
+                          <span className={`w-6 text-center text-sm font-medium ${hasMeatQty ? "text-amber" : "text-cream/80"}`}>
                             {meatQty}
                           </span>
                           <button
                             onClick={() => updateMeatQty(meatId, 1)}
                             disabled={totalMeatAssigned >= extraMeatCount}
-                            className="w-7 h-7 rounded-full border border-cream/10 flex items-center justify-center text-cream/50 hover:border-amber/30 hover:text-amber transition-all disabled:opacity-20 disabled:cursor-not-allowed"
+                            className="w-7 h-7 rounded-full border border-cream/10 flex items-center justify-center text-cream/80 hover:border-amber/30 hover:text-amber transition-all disabled:opacity-20 disabled:cursor-not-allowed"
                           >
                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -235,8 +235,8 @@ export default function ExtrasStep({ data, updateData }: ExtrasStepProps) {
             {isAgua && hasQty && (
               <div className="px-4 pb-4 pt-3 rounded-b-xl border border-t-0 border-amber/20 bg-amber/5">
                 <div className="flex items-center justify-between mb-3">
-                  <p className="text-cream/50 text-xs">{t("chooseFlavors")}</p>
-                  <span className={`text-xs font-medium ${totalAssigned === aguaCount ? "text-green-400" : "text-amber"}`}>
+                  <p className="text-cream/80 text-sm">{t("chooseFlavors")}</p>
+                  <span className={`text-sm font-medium ${totalAssigned === aguaCount ? "text-green-400" : "text-amber"}`}>
                     {t("flavorsAssigned", { assigned: totalAssigned, total: aguaCount })}
                   </span>
                 </div>
@@ -246,26 +246,26 @@ export default function ExtrasStep({ data, updateData }: ExtrasStepProps) {
                     const hasFlavorQty = flavorQty > 0;
                     return (
                       <div key={flavor} className="flex items-center justify-between py-1.5">
-                        <span className={`text-xs font-medium ${hasFlavorQty ? "text-amber" : "text-cream/50"}`}>
+                        <span className={`text-sm font-medium ${hasFlavorQty ? "text-amber" : "text-cream/80"}`}>
                           {tExtras(`aguaFlavors.${flavor}`)}
                         </span>
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => updateFlavorQty(flavor, -1)}
                             disabled={flavorQty === 0}
-                            className="w-7 h-7 rounded-full border border-cream/10 flex items-center justify-center text-cream/50 hover:border-cream/30 hover:text-cream transition-all disabled:opacity-20 disabled:cursor-not-allowed"
+                            className="w-7 h-7 rounded-full border border-cream/10 flex items-center justify-center text-cream/80 hover:border-cream/30 hover:text-cream transition-all disabled:opacity-20 disabled:cursor-not-allowed"
                           >
                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
                             </svg>
                           </button>
-                          <span className={`w-6 text-center text-xs font-medium ${hasFlavorQty ? "text-amber" : "text-cream/30"}`}>
+                          <span className={`w-6 text-center text-sm font-medium ${hasFlavorQty ? "text-amber" : "text-cream/80"}`}>
                             {flavorQty}
                           </span>
                           <button
                             onClick={() => updateFlavorQty(flavor, 1)}
                             disabled={totalAssigned >= aguaCount}
-                            className="w-7 h-7 rounded-full border border-cream/10 flex items-center justify-center text-cream/50 hover:border-amber/30 hover:text-amber transition-all disabled:opacity-20 disabled:cursor-not-allowed"
+                            className="w-7 h-7 rounded-full border border-cream/10 flex items-center justify-center text-cream/80 hover:border-amber/30 hover:text-amber transition-all disabled:opacity-20 disabled:cursor-not-allowed"
                           >
                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />

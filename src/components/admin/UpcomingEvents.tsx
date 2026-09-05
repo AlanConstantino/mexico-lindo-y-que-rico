@@ -49,9 +49,9 @@ export default function UpcomingEvents({
 
   return (
     <div className="bg-gradient-to-r from-amber/10 to-terracotta/10 rounded-2xl border border-amber/20 p-6">
-      <h3 className="text-cream text-sm font-medium mb-4">{title}</h3>
+      <h3 className="text-cream text-base font-medium mb-4">{title}</h3>
       {upcoming.length === 0 ? (
-        <div className="py-8 text-center text-cream/30 text-sm">
+        <div className="py-8 text-center text-cream/80 text-base">
           {noEventsText}
         </div>
       ) : (
@@ -73,10 +73,10 @@ export default function UpcomingEvents({
               >
                 {/* Date badge */}
                 <div className="flex-shrink-0 w-14 text-center">
-                  <div className="text-[10px] uppercase tracking-wider text-cream/40">
+                  <div className="text-sm uppercase tracking-wider text-cream/80">
                     {dayName}
                   </div>
-                  <div className={`text-sm font-semibold ${i === 0 ? "text-amber" : "text-cream"}`}>
+                  <div className={`text-base font-semibold ${i === 0 ? "text-amber" : "text-cream"}`}>
                     {monthDay}
                   </div>
                 </div>
@@ -86,10 +86,10 @@ export default function UpcomingEvents({
 
                 {/* Info */}
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm text-cream truncate">
+                  <div className="text-base text-cream truncate">
                     {event.customer_name}
                   </div>
-                  <div className="text-xs text-cream/40">
+                  <div className="text-sm text-cream/80">
                     {event.guest_count} {guestsLabel} · {event.service_type}
                   </div>
                 </div>

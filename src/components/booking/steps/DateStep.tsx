@@ -210,7 +210,7 @@ export default function DateStep({ data, updateData }: DateStepProps) {
       <h2 className="font-heading text-3xl text-cream mb-2">
         {t("selectDate")}
       </h2>
-      <p className="text-cream/40 text-sm mb-8">{t("selectDateDesc")}</p>
+      <p className="text-cream/80 text-base mb-8">{t("selectDateDesc")}</p>
 
       {/* Calendar */}
       <div className="rounded-2xl bg-gradient-to-r from-amber/10 to-terracotta/10 border border-amber/20 p-4 sm:p-6">
@@ -219,7 +219,7 @@ export default function DateStep({ data, updateData }: DateStepProps) {
           <button
             onClick={goToPrevMonth}
             disabled={!canGoPrev}
-            className="w-10 h-10 rounded-full flex items-center justify-center text-cream/40 hover:text-cream hover:bg-cream/5 transition-all disabled:opacity-20 disabled:cursor-not-allowed"
+            className="w-10 h-10 rounded-full flex items-center justify-center text-cream/80 hover:text-cream hover:bg-cream/5 transition-all disabled:opacity-20 disabled:cursor-not-allowed"
             aria-label={t("prevMonth")}
           >
             <svg
@@ -241,7 +241,7 @@ export default function DateStep({ data, updateData }: DateStepProps) {
           </h3>
           <button
             onClick={goToNextMonth}
-            className="w-10 h-10 rounded-full flex items-center justify-center text-cream/40 hover:text-cream hover:bg-cream/5 transition-all"
+            className="w-10 h-10 rounded-full flex items-center justify-center text-cream/80 hover:text-cream hover:bg-cream/5 transition-all"
             aria-label={t("nextMonth")}
           >
             <svg
@@ -265,7 +265,7 @@ export default function DateStep({ data, updateData }: DateStepProps) {
           {dayHeaders.map((day) => (
             <div
               key={day}
-              className="text-center text-cream/30 text-xs font-medium py-2"
+              className="text-center text-cream/80 text-sm font-medium py-2"
             >
               {day}
             </div>
@@ -304,12 +304,12 @@ export default function DateStep({ data, updateData }: DateStepProps) {
                       ? t("spotsLeft", { count: spotsLeft })
                       : undefined
                 }
-                className={`aspect-square rounded-lg flex flex-col items-center justify-center text-sm transition-all duration-200 relative ${
+                className={`aspect-square rounded-lg flex flex-col items-center justify-center text-base transition-all duration-200 relative ${
                   isSelected
                     ? "bg-amber text-navy font-bold shadow-lg shadow-amber/20"
                     : disabled
                       ? "text-cream/15 cursor-not-allowed"
-                      : "text-cream/70 hover:bg-cream/5 hover:text-cream"
+                      : "text-cream/90 hover:bg-cream/5 hover:text-cream"
                 }`}
               >
                 {day}
@@ -330,7 +330,7 @@ export default function DateStep({ data, updateData }: DateStepProps) {
       </div>
 
       {/* Calendar legend */}
-      <div className="flex items-center gap-4 mt-3 px-2 text-[10px] text-cream/30">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-3 px-2 text-sm text-cream/80">
         <div className="flex items-center gap-1.5">
           <span className="w-1 h-1 rounded-full bg-amber/50" />
           <span>{t("legendPartiallyBooked")}</span>
@@ -347,7 +347,7 @@ export default function DateStep({ data, updateData }: DateStepProps) {
           <h3 className="font-heading text-xl text-cream mb-1">
             {t("selectTime")}
           </h3>
-          <p className="text-cream/40 text-sm mb-4">{t("selectTimeDesc")}</p>
+          <p className="text-cream/80 text-base mb-4">{t("selectTimeDesc")}</p>
           <EventTimePicker
             value={data.eventTime}
             onChange={(eventTime) => updateData({ eventTime })}
@@ -355,7 +355,7 @@ export default function DateStep({ data, updateData }: DateStepProps) {
           {data.eventTime && (() => {
             const arrivalTime = setupArrivalTime(data.eventTime);
             return (
-              <p className="text-cream/40 text-xs italic mt-3">
+              <p className="text-cream/80 text-sm italic mt-3">
                 ⏰ {t("setupArrivalNote", { arrivalTime })}
               </p>
             );
@@ -379,7 +379,7 @@ export default function DateStep({ data, updateData }: DateStepProps) {
               d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"
             />
           </svg>
-          <span className="text-amber text-sm font-medium">
+          <span className="text-amber text-base font-medium">
             {selectedDateFormatted}
             {selectedTimeFormatted && ` · ${selectedTimeFormatted}`}
           </span>

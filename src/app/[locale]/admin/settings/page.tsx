@@ -154,7 +154,7 @@ export default function AdminSettingsPage() {
   if (checking) {
     return (
       <div className="min-h-screen bg-navy flex items-center justify-center">
-        <div className="text-cream/50">{t("loading")}</div>
+        <div className="text-cream/80">{t("loading")}</div>
       </div>
     );
   }
@@ -177,12 +177,12 @@ export default function AdminSettingsPage() {
         </h1>
 
         {loading ? (
-          <div className="text-center py-12 text-cream/50">{t("loading")}</div>
+          <div className="text-center py-12 text-cream/80">{t("loading")}</div>
         ) : (
           <>
           <form onSubmit={handleSave} className="space-y-5">
             <div>
-              <label className="block text-sm text-cream/70 mb-1.5">
+              <label className="block text-base text-cream/90 mb-1.5">
                 {t("settings.maxEvents")}
               </label>
               <input
@@ -198,13 +198,13 @@ export default function AdminSettingsPage() {
                 }
                 className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors"
               />
-              <p className="text-xs text-cream/40 mt-1">
+              <p className="text-sm text-cream/80 mt-1">
                 {t("settings.maxEventsHint")}
               </p>
             </div>
 
             <div>
-              <label className="block text-sm text-cream/70 mb-1.5">
+              <label className="block text-base text-cream/90 mb-1.5">
                 {t("settings.minNotice")}
               </label>
               <input
@@ -220,13 +220,13 @@ export default function AdminSettingsPage() {
                 }
                 className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors"
               />
-              <p className="text-xs text-cream/40 mt-1">
+              <p className="text-sm text-cream/80 mt-1">
                 {t("settings.minNoticeHint")}
               </p>
             </div>
 
             <div>
-              <label className="block text-sm text-cream/70 mb-1.5">
+              <label className="block text-base text-cream/90 mb-1.5">
                 {t("settings.reminderDays")}
               </label>
               <input
@@ -242,13 +242,13 @@ export default function AdminSettingsPage() {
                 }
                 className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors"
               />
-              <p className="text-xs text-cream/40 mt-1">
+              <p className="text-sm text-cream/80 mt-1">
                 {t("settings.reminderDaysHint")}
               </p>
             </div>
 
             <div>
-              <label className="block text-sm text-cream/70 mb-1.5">
+              <label className="block text-base text-cream/90 mb-1.5">
                 {t("settings.email")}
               </label>
               <input
@@ -260,13 +260,13 @@ export default function AdminSettingsPage() {
                     notification_email: e.target.value,
                   })
                 }
-                className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream placeholder:text-cream/30 focus:outline-none focus:border-amber/50 transition-colors"
+                className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream placeholder:text-cream/70 focus:outline-none focus:border-amber/50 transition-colors"
                 placeholder="email@example.com"
               />
             </div>
 
             <div>
-              <label className="block text-sm text-cream/70 mb-1.5">
+              <label className="block text-base text-cream/90 mb-1.5">
                 {t("settings.phone")}
               </label>
               <input
@@ -278,82 +278,82 @@ export default function AdminSettingsPage() {
                     notification_phone: e.target.value,
                   })
                 }
-                className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream placeholder:text-cream/30 focus:outline-none focus:border-amber/50 transition-colors"
+                className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream placeholder:text-cream/70 focus:outline-none focus:border-amber/50 transition-colors"
                 placeholder="(555) 123-4567"
               />
             </div>
 
             {/* Payment Fee Settings */}
             <div className="border-t border-cream/10 pt-5 mt-2">
-              <h3 className="text-cream/60 text-xs uppercase tracking-wider mb-4">
+              <h3 className="text-cream/90 text-sm uppercase tracking-wider mb-4">
                 {t("settings.paymentFeesTitle")}
               </h3>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm text-cream/70 mb-1.5">{t("settings.ccSurchargeLabel")}</label>
+                  <label className="block text-base text-cream/90 mb-1.5">{t("settings.ccSurchargeLabel")}</label>
                   <input type="number" min={0} max={100} value={settings.cc_surcharge_percent}
                     onChange={(e) => setSettings({ ...settings, cc_surcharge_percent: parseInt(e.target.value) || 0 })}
                     className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors" />
-                  <p className="text-xs text-cream/40 mt-1">{t("settings.ccSurchargeHint")}</p>
+                  <p className="text-sm text-cream/80 mt-1">{t("settings.ccSurchargeHint")}</p>
                 </div>
                 <div>
-                  <label className="block text-sm text-cream/70 mb-1.5">{t("settings.stripeFeePercentLabel")}</label>
+                  <label className="block text-base text-cream/90 mb-1.5">{t("settings.stripeFeePercentLabel")}</label>
                   <input type="number" min={0} max={20} step={0.1} value={settings.stripe_fee_percent}
                     onChange={(e) => setSettings({ ...settings, stripe_fee_percent: parseFloat(e.target.value) || 0 })}
                     className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors" />
                 </div>
                 <div>
-                  <label className="block text-sm text-cream/70 mb-1.5">{t("settings.stripeFeeFlatLabel")}</label>
+                  <label className="block text-base text-cream/90 mb-1.5">{t("settings.stripeFeeFlatLabel")}</label>
                   <input type="number" min={0} max={100} value={settings.stripe_fee_flat}
                     onChange={(e) => setSettings({ ...settings, stripe_fee_flat: parseInt(e.target.value) || 0 })}
                     className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors" />
-                  <p className="text-xs text-cream/40 mt-1">{t("settings.stripeFeeHint")}</p>
+                  <p className="text-sm text-cream/80 mt-1">{t("settings.stripeFeeHint")}</p>
                 </div>
               </div>
             </div>
 
             {/* Cancellation Settings */}
             <div className="border-t border-cream/10 pt-5 mt-2">
-              <h3 className="text-cream/60 text-xs uppercase tracking-wider mb-4">
+              <h3 className="text-cream/90 text-sm uppercase tracking-wider mb-4">
                 {t("settings.cancellationTitle")}
               </h3>
               <div className="space-y-5">
                 <div>
-                  <label className="block text-sm text-cream/70 mb-1.5">{t("settings.cancellationFeeType")}</label>
+                  <label className="block text-base text-cream/90 mb-1.5">{t("settings.cancellationFeeType")}</label>
                   <div className="flex gap-3">
                     <button type="button" onClick={() => setSettings({ ...settings, cancellation_fee_type: "flat" })}
-                      className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-colors ${settings.cancellation_fee_type === "flat" ? "bg-amber text-navy" : "bg-navy-light border border-cream/10 text-cream/50"}`}>
+                      className={`flex-1 py-2.5 rounded-lg text-base font-medium transition-colors ${settings.cancellation_fee_type === "flat" ? "bg-amber text-navy" : "bg-navy-light border border-cream/10 text-cream/80"}`}>
                       {t("settings.flatRate")}
                     </button>
                     <button type="button" onClick={() => setSettings({ ...settings, cancellation_fee_type: "percentage" })}
-                      className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-colors ${settings.cancellation_fee_type === "percentage" ? "bg-amber text-navy" : "bg-navy-light border border-cream/10 text-cream/50"}`}>
+                      className={`flex-1 py-2.5 rounded-lg text-base font-medium transition-colors ${settings.cancellation_fee_type === "percentage" ? "bg-amber text-navy" : "bg-navy-light border border-cream/10 text-cream/80"}`}>
                       {t("settings.percentage")}
                     </button>
                   </div>
                 </div>
                 {settings.cancellation_fee_type === "flat" ? (
                   <div>
-                    <label className="block text-sm text-cream/70 mb-1.5">{t("settings.flatRateAmount")}</label>
+                    <label className="block text-base text-cream/90 mb-1.5">{t("settings.flatRateAmount")}</label>
                     <input type="number" min={0} max={1000} value={settings.cancellation_fee_flat}
                       onChange={(e) => setSettings({ ...settings, cancellation_fee_flat: parseInt(e.target.value) || 0 })}
                       className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors" />
-                    <p className="text-xs text-cream/40 mt-1">{t("settings.flatRateHint")}</p>
+                    <p className="text-sm text-cream/80 mt-1">{t("settings.flatRateHint")}</p>
                   </div>
                 ) : (
                   <div>
-                    <label className="block text-sm text-cream/70 mb-1.5">{t("settings.percentageAmount")}</label>
+                    <label className="block text-base text-cream/90 mb-1.5">{t("settings.percentageAmount")}</label>
                     <input type="number" min={0} max={100} value={settings.cancellation_fee_percent}
                       onChange={(e) => setSettings({ ...settings, cancellation_fee_percent: parseInt(e.target.value) || 0 })}
                       className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors" />
-                    <p className="text-xs text-cream/40 mt-1">{t("settings.percentageHint")}</p>
+                    <p className="text-sm text-cream/80 mt-1">{t("settings.percentageHint")}</p>
                   </div>
                 )}
                 <div>
-                  <label className="block text-sm text-cream/70 mb-1.5">{t("settings.freeCancellationDays")}</label>
+                  <label className="block text-base text-cream/90 mb-1.5">{t("settings.freeCancellationDays")}</label>
                   <input type="number" min={0} max={30} value={settings.free_cancellation_days}
                     onChange={(e) => setSettings({ ...settings, free_cancellation_days: parseInt(e.target.value) || 0 })}
                     className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors" />
-                  <p className="text-xs text-cream/40 mt-1">{t("settings.freeCancellationHint")}</p>
+                  <p className="text-sm text-cream/80 mt-1">{t("settings.freeCancellationHint")}</p>
                 </div>
               </div>
             </div>
@@ -363,56 +363,56 @@ export default function AdminSettingsPage() {
               <h3 className="text-cream font-medium mb-4">{t("settings.noshowFeeTitle")}</h3>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm text-cream/70 mb-1.5">{t("settings.feeType")}</label>
+                  <label className="block text-base text-cream/90 mb-1.5">{t("settings.feeType")}</label>
                   <div className="flex gap-2">
                     <button type="button" onClick={() => setSettings({ ...settings, noshow_fee_type: "flat" })}
-                      className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-colors ${settings.noshow_fee_type === "flat" ? "bg-amber text-navy" : "bg-navy-light border border-cream/10 text-cream/50"}`}>
+                      className={`flex-1 py-2.5 rounded-lg text-base font-medium transition-colors ${settings.noshow_fee_type === "flat" ? "bg-amber text-navy" : "bg-navy-light border border-cream/10 text-cream/80"}`}>
                       {t("settings.flatRate")}
                     </button>
                     <button type="button" onClick={() => setSettings({ ...settings, noshow_fee_type: "percentage" })}
-                      className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-colors ${settings.noshow_fee_type === "percentage" ? "bg-amber text-navy" : "bg-navy-light border border-cream/10 text-cream/50"}`}>
+                      className={`flex-1 py-2.5 rounded-lg text-base font-medium transition-colors ${settings.noshow_fee_type === "percentage" ? "bg-amber text-navy" : "bg-navy-light border border-cream/10 text-cream/80"}`}>
                       {t("settings.percentage")}
                     </button>
                   </div>
                 </div>
                 {settings.noshow_fee_type === "flat" ? (
                   <div>
-                    <label className="block text-sm text-cream/70 mb-1.5">{t("settings.noshowFeeFlat")}</label>
+                    <label className="block text-base text-cream/90 mb-1.5">{t("settings.noshowFeeFlat")}</label>
                     <input type="number" min={0} max={5000} value={settings.noshow_fee_flat}
                       onChange={(e) => setSettings({ ...settings, noshow_fee_flat: parseInt(e.target.value) || 0 })}
                       className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors" />
                   </div>
                 ) : (
                   <div>
-                    <label className="block text-sm text-cream/70 mb-1.5">{t("settings.noshowFeePercent")}</label>
+                    <label className="block text-base text-cream/90 mb-1.5">{t("settings.noshowFeePercent")}</label>
                     <input type="number" min={0} max={100} value={settings.noshow_fee_percent}
                       onChange={(e) => setSettings({ ...settings, noshow_fee_percent: parseInt(e.target.value) || 0 })}
                       className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors" />
                   </div>
                 )}
-                <p className="text-xs text-cream/40">{t("settings.noshowFeeHint")}</p>
+                <p className="text-sm text-cream/80">{t("settings.noshowFeeHint")}</p>
               </div>
             </div>
 
             {/* Cash / Alternative Payments */}
             <div className="pt-6 border-t border-cream/10">
-              <h3 className="text-cream/60 text-xs uppercase tracking-wider mb-4">
+              <h3 className="text-cream/90 text-sm uppercase tracking-wider mb-4">
                 {t("settings.cashPaymentsTitle")}
               </h3>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm text-cream/70 mb-1.5">{t("settings.cashDepositPercent")}</label>
+                  <label className="block text-base text-cream/90 mb-1.5">{t("settings.cashDepositPercent")}</label>
                   <input type="number" min={0} max={100} value={settings.cash_deposit_percent}
                     onChange={(e) => setSettings({ ...settings, cash_deposit_percent: parseInt(e.target.value) || 0 })}
                     className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors" />
-                  <p className="text-xs text-cream/40 mt-1">{t("settings.cashDepositPercentHint")}</p>
+                  <p className="text-sm text-cream/80 mt-1">{t("settings.cashDepositPercentHint")}</p>
                 </div>
                 <div>
-                  <label className="block text-sm text-cream/70 mb-1.5">{t("settings.cashAutoCancelHours")}</label>
+                  <label className="block text-base text-cream/90 mb-1.5">{t("settings.cashAutoCancelHours")}</label>
                   <input type="number" min={1} max={168} value={settings.cash_auto_cancel_hours}
                     onChange={(e) => setSettings({ ...settings, cash_auto_cancel_hours: parseInt(e.target.value) || 48 })}
                     className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors" />
-                  <p className="text-xs text-cream/40 mt-1">{t("settings.cashAutoCancelHoursHint")}</p>
+                  <p className="text-sm text-cream/80 mt-1">{t("settings.cashAutoCancelHoursHint")}</p>
                 </div>
                 {/* Payment Method Toggles */}
                 {([
@@ -443,7 +443,7 @@ export default function AdminSettingsPage() {
                         value={settings[method.handleKey]}
                         onChange={(e) => setSettings({ ...settings, [method.handleKey]: e.target.value })}
                         placeholder={method.placeholder}
-                        className="w-full px-4 py-2.5 bg-navy-light border border-cream/10 rounded-lg text-cream text-sm placeholder:text-cream/30 focus:outline-none focus:border-amber/50 transition-colors"
+                        className="w-full px-4 py-2.5 bg-navy-light border border-cream/10 rounded-lg text-cream text-base placeholder:text-cream/70 focus:outline-none focus:border-amber/50 transition-colors"
                       />
                     )}
                   </div>
@@ -451,9 +451,9 @@ export default function AdminSettingsPage() {
               </div>
             </div>
 
-            {error && <p className="text-terracotta text-sm">{error}</p>}
+            {error && <p className="text-red-400 text-base">{error}</p>}
             {saved && (
-              <p className="text-teal-light text-sm">{t("settings.saved")}</p>
+              <p className="text-blue-300 text-base">{t("settings.saved")}</p>
             )}
 
             <button
@@ -550,33 +550,33 @@ function TestEmailsSection({ t }: { t: (key: string) => string }) {
       <h2 className="font-heading text-amber text-xl mb-4">
         {t("settings.testEmails")}
       </h2>
-      <p className="text-cream/40 text-sm mb-4">
+      <p className="text-cream/80 text-base mb-4">
         {t("settings.testEmailsHint")}
       </p>
 
       {/* Recipient email input */}
       <div className="mb-6">
-        <label className="block text-sm text-cream/70 mb-1.5">{t("settings.testEmailRecipient")}</label>
+        <label className="block text-base text-cream/90 mb-1.5">{t("settings.testEmailRecipient")}</label>
         <input
           type="email"
           value={testEmail}
           onChange={(e) => setTestEmail(e.target.value)}
           placeholder={t("settings.testEmailPlaceholder")}
-          className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors placeholder:text-cream/25"
+          className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream focus:outline-none focus:border-amber/50 transition-colors placeholder:text-cream/70"
         />
       </div>
 
       {/* Data Mode Toggle */}
       <div className="mb-6">
-        <label className="block text-sm text-cream/70 mb-2">{t("settings.testDataMode")}</label>
+        <label className="block text-base text-cream/90 mb-2">{t("settings.testDataMode")}</label>
         <div className="flex gap-2">
           <button
             type="button"
             onClick={() => setDataMode("random")}
-            className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 border ${
+            className={`flex-1 px-4 py-2.5 rounded-lg text-base font-medium transition-all duration-200 border ${
               dataMode === "random"
                 ? "bg-amber/15 border-amber/40 text-amber"
-                : "bg-navy-light border-cream/10 text-cream/50 hover:border-cream/20"
+                : "bg-navy-light border-cream/10 text-cream/80 hover:border-cream/20"
             }`}
           >
             🎲 {t("settings.testDataRandom")}
@@ -584,10 +584,10 @@ function TestEmailsSection({ t }: { t: (key: string) => string }) {
           <button
             type="button"
             onClick={() => setDataMode("custom")}
-            className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 border ${
+            className={`flex-1 px-4 py-2.5 rounded-lg text-base font-medium transition-all duration-200 border ${
               dataMode === "custom"
                 ? "bg-amber/15 border-amber/40 text-amber"
-                : "bg-navy-light border-cream/10 text-cream/50 hover:border-cream/20"
+                : "bg-navy-light border-cream/10 text-cream/80 hover:border-cream/20"
             }`}
           >
             ✏️ {t("settings.testDataCustom")}
@@ -598,60 +598,60 @@ function TestEmailsSection({ t }: { t: (key: string) => string }) {
       {/* Custom Data Fields */}
       {dataMode === "custom" && (
         <div className="mb-6 p-4 rounded-xl border border-cream/10 bg-navy-light/50 space-y-3">
-          <p className="text-cream/40 text-xs">{t("settings.testCustomHint")}</p>
+          <p className="text-cream/80 text-sm">{t("settings.testCustomHint")}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs text-cream/50 mb-1">{t("settings.testFieldName")}</label>
+              <label className="block text-sm text-cream/80 mb-1">{t("settings.testFieldName")}</label>
               <input type="text" value={customFields.customerName}
                 onChange={(e) => setCustomFields({ ...customFields, customerName: e.target.value })}
                 placeholder="María García"
-                className="w-full px-3 py-2 bg-navy border border-cream/10 rounded-lg text-cream text-sm placeholder:text-cream/20 focus:outline-none focus:border-amber/50" />
+                className="w-full px-3 py-2 bg-navy border border-cream/10 rounded-lg text-cream text-base placeholder:text-cream/70 focus:outline-none focus:border-amber/50" />
             </div>
             <div>
-              <label className="block text-xs text-cream/50 mb-1">{t("settings.testFieldPhone")}</label>
+              <label className="block text-sm text-cream/80 mb-1">{t("settings.testFieldPhone")}</label>
               <input type="text" value={customFields.customerPhone}
                 onChange={(e) => setCustomFields({ ...customFields, customerPhone: e.target.value })}
                 placeholder="(562) 555-1234"
-                className="w-full px-3 py-2 bg-navy border border-cream/10 rounded-lg text-cream text-sm placeholder:text-cream/20 focus:outline-none focus:border-amber/50" />
+                className="w-full px-3 py-2 bg-navy border border-cream/10 rounded-lg text-cream text-base placeholder:text-cream/70 focus:outline-none focus:border-amber/50" />
             </div>
             <div>
-              <label className="block text-xs text-cream/50 mb-1">{t("settings.testFieldDate")}</label>
+              <label className="block text-sm text-cream/80 mb-1">{t("settings.testFieldDate")}</label>
               <input type="date" value={customFields.eventDate}
                 onChange={(e) => setCustomFields({ ...customFields, eventDate: e.target.value })}
-                className="w-full px-3 py-2 bg-navy border border-cream/10 rounded-lg text-cream text-sm focus:outline-none focus:border-amber/50" />
+                className="w-full px-3 py-2 bg-navy border border-cream/10 rounded-lg text-cream text-base focus:outline-none focus:border-amber/50" />
             </div>
             <div>
-              <label className="block text-xs text-cream/50 mb-1">{t("settings.testFieldTime")}</label>
+              <label className="block text-sm text-cream/80 mb-1">{t("settings.testFieldTime")}</label>
               <input type="time" value={customFields.eventTime}
                 onChange={(e) => setCustomFields({ ...customFields, eventTime: e.target.value })}
-                className="w-full px-3 py-2 bg-navy border border-cream/10 rounded-lg text-cream text-sm focus:outline-none focus:border-amber/50" />
+                className="w-full px-3 py-2 bg-navy border border-cream/10 rounded-lg text-cream text-base focus:outline-none focus:border-amber/50" />
             </div>
             <div>
-              <label className="block text-xs text-cream/50 mb-1">{t("settings.testFieldGuests")}</label>
+              <label className="block text-sm text-cream/80 mb-1">{t("settings.testFieldGuests")}</label>
               <input type="number" value={customFields.guestCount}
                 onChange={(e) => setCustomFields({ ...customFields, guestCount: e.target.value })}
                 placeholder="100"
-                className="w-full px-3 py-2 bg-navy border border-cream/10 rounded-lg text-cream text-sm placeholder:text-cream/20 focus:outline-none focus:border-amber/50" />
+                className="w-full px-3 py-2 bg-navy border border-cream/10 rounded-lg text-cream text-base placeholder:text-cream/70 focus:outline-none focus:border-amber/50" />
             </div>
             <div>
-              <label className="block text-xs text-cream/50 mb-1">{t("settings.testFieldPrice")}</label>
+              <label className="block text-sm text-cream/80 mb-1">{t("settings.testFieldPrice")}</label>
               <input type="number" step="0.01" value={customFields.totalPrice}
                 onChange={(e) => setCustomFields({ ...customFields, totalPrice: e.target.value })}
                 placeholder="695.00"
-                className="w-full px-3 py-2 bg-navy border border-cream/10 rounded-lg text-cream text-sm placeholder:text-cream/20 focus:outline-none focus:border-amber/50" />
+                className="w-full px-3 py-2 bg-navy border border-cream/10 rounded-lg text-cream text-base placeholder:text-cream/70 focus:outline-none focus:border-amber/50" />
             </div>
             <div>
-              <label className="block text-xs text-cream/50 mb-1">{t("settings.testFieldAddress")}</label>
+              <label className="block text-sm text-cream/80 mb-1">{t("settings.testFieldAddress")}</label>
               <input type="text" value={customFields.eventAddress}
                 onChange={(e) => setCustomFields({ ...customFields, eventAddress: e.target.value })}
                 placeholder="123 Main St, Los Angeles, CA"
-                className="w-full px-3 py-2 bg-navy border border-cream/10 rounded-lg text-cream text-sm placeholder:text-cream/20 focus:outline-none focus:border-amber/50" />
+                className="w-full px-3 py-2 bg-navy border border-cream/10 rounded-lg text-cream text-base placeholder:text-cream/70 focus:outline-none focus:border-amber/50" />
             </div>
             <div>
-              <label className="block text-xs text-cream/50 mb-1">{t("settings.testFieldService")}</label>
+              <label className="block text-sm text-cream/80 mb-1">{t("settings.testFieldService")}</label>
               <select value={customFields.serviceType}
                 onChange={(e) => setCustomFields({ ...customFields, serviceType: e.target.value })}
-                className="w-full px-3 py-2 bg-navy border border-cream/10 rounded-lg text-cream text-sm focus:outline-none focus:border-amber/50">
+                className="w-full px-3 py-2 bg-navy border border-cream/10 rounded-lg text-cream text-base focus:outline-none focus:border-amber/50">
                 <option value="">{t("settings.testFieldServiceAuto")}</option>
                 <option value="2hr">2 Hour</option>
                 <option value="3hr">3 Hour</option>
@@ -664,7 +664,7 @@ function TestEmailsSection({ t }: { t: (key: string) => string }) {
       {/* Email Categories */}
       {emailCategories.map((category) => (
         <div key={category.title} className="mb-6">
-          <h3 className="text-cream/60 text-xs uppercase tracking-wider mb-2">{category.title}</h3>
+          <h3 className="text-cream/90 text-sm uppercase tracking-wider mb-2">{category.title}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {category.emails.map((email) => (
               <TestEmailButton
@@ -718,12 +718,12 @@ function TestEmailButton({ emailType, label, recipientEmail, customData }: { ema
     <button
       onClick={handleSend}
       disabled={sending}
-      className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 disabled:opacity-50 border text-left ${
+      className={`px-4 py-3 rounded-lg text-base font-medium transition-all duration-200 disabled:opacity-50 border text-left ${
         result === "success"
           ? "bg-green-500/10 border-green-500/30 text-green-400"
           : result === "error"
             ? "bg-red-500/10 border-red-500/30 text-red-400"
-            : "bg-navy-light border-cream/10 text-cream/70 hover:border-amber/30 hover:text-amber"
+            : "bg-navy-light border-cream/10 text-cream/90 hover:border-amber/30 hover:text-amber"
       }`}
     >
       {sending ? "Sending..." : result === "success" ? "✓ Sent!" : result === "error" ? "✗ Failed" : label}

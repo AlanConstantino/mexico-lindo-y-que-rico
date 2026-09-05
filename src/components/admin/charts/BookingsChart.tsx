@@ -21,7 +21,7 @@ const COLORS = {
   terracottaLight: "#D46E52",
   navyLight: "#243658",
   cream: "#FAF5EF",
-  creamMuted: "rgba(250,245,239,0.4)",
+  creamMuted: "rgba(250,245,239,0.85)",
   gridLine: "rgba(250,245,239,0.06)",
 };
 
@@ -53,8 +53,8 @@ export default function BookingsChart({
   if (data.length === 0) {
     return (
       <div className="bg-gradient-to-r from-amber/10 to-terracotta/10 rounded-2xl border border-amber/20 p-6">
-        <h3 className="text-cream text-sm font-medium mb-4">{title}</h3>
-        <div className="h-[250px] flex items-center justify-center text-cream/30 text-sm">
+        <h3 className="text-cream text-base font-medium mb-4">{title}</h3>
+        <div className="h-[250px] flex items-center justify-center text-cream/80 text-base">
           No booking data
         </div>
       </div>
@@ -63,19 +63,19 @@ export default function BookingsChart({
 
   return (
     <div className="bg-gradient-to-r from-amber/10 to-terracotta/10 rounded-2xl border border-amber/20 p-6">
-      <h3 className="text-cream text-sm font-medium mb-4">{title}</h3>
+      <h3 className="text-cream text-base font-medium mb-4">{title}</h3>
       <div className="h-[250px]">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" stroke={COLORS.gridLine} vertical={false} />
             <XAxis
               dataKey="month"
-              tick={{ fill: COLORS.creamMuted, fontSize: 11 }}
+              tick={{ fill: COLORS.creamMuted, fontSize: 14 }}
               axisLine={{ stroke: COLORS.gridLine }}
               tickLine={false}
             />
             <YAxis
-              tick={{ fill: COLORS.creamMuted, fontSize: 11 }}
+              tick={{ fill: COLORS.creamMuted, fontSize: 14 }}
               axisLine={false}
               tickLine={false}
               allowDecimals={false}
@@ -86,7 +86,7 @@ export default function BookingsChart({
                 border: `1px solid rgba(250,245,239,0.1)`,
                 borderRadius: "12px",
                 color: COLORS.cream,
-                fontSize: 13,
+                fontSize: 14,
               }}
               formatter={(value) => [value, "Bookings"]}
               cursor={{ stroke: COLORS.terracottaLight, strokeDasharray: "4 4" }}

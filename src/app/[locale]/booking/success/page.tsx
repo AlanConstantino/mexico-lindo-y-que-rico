@@ -86,7 +86,7 @@ export default function BookingSuccessPage() {
         {/* Success icon */}
         <div className={`w-20 h-20 rounded-full ${isCash ? "bg-amber/10 border border-amber/20" : "bg-teal/10 border border-teal/20"} flex items-center justify-center mx-auto mb-8`}>
           <svg
-            className={`w-10 h-10 ${isCash ? "text-amber" : "text-teal"}`}
+            className={`w-10 h-10 ${isCash ? "text-amber" : "text-blue-300"}`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -103,14 +103,14 @@ export default function BookingSuccessPage() {
         <h1 className="font-heading text-4xl text-cream mb-3">
           {isCash ? t("cashSuccessTitle") : t("successTitle")}
         </h1>
-        <p className="text-amber text-sm mb-4">
+        <p className="text-amber text-base mb-4">
           {isCash ? t("cashSuccessSubtitle") : t("successSubtitle")}
         </p>
 
         {/* Booking reference number */}
         {bookingRef && (
           <div className="mb-6 px-5 py-4 rounded-xl bg-navy-light/40 border border-cream/10 inline-block">
-            <p className="text-cream/40 text-xs uppercase tracking-wider mb-1">
+            <p className="text-cream/80 text-sm uppercase tracking-wider mb-1">
               {t("successBookingId")}
             </p>
             <p className="font-heading text-2xl text-amber tracking-wide">
@@ -122,19 +122,19 @@ export default function BookingSuccessPage() {
         {/* Cash Payment Instructions */}
         {isCash && cashDetails && cashDetails.cash_payment_method && (
           <div className="mb-6 text-left p-5 rounded-xl bg-navy-light/40 border border-cream/10 space-y-4">
-            <h3 className="text-cream font-medium text-sm uppercase tracking-wider">
+            <h3 className="text-cream font-medium text-base uppercase tracking-wider">
               {t("cashPaymentInstructions")}
             </h3>
 
             {/* Amount to send */}
             <div className="flex justify-between items-center">
-              <span className="text-cream/50 text-sm">{t("amountToSend")}</span>
+              <span className="text-cream/80 text-base">{t("amountToSend")}</span>
               <span className="font-heading text-xl text-amber">${amountDue.toFixed(2)}</span>
             </div>
 
             {/* Payment method details */}
             <div className="p-3 rounded-lg bg-navy-light/60 border border-cream/5">
-              <div className="text-cream/50 text-xs mb-1">{t("sendVia")} {getMethodLabel(cashDetails.cash_payment_method)}</div>
+              <div className="text-cream/80 text-sm mb-1">{t("sendVia")} {getMethodLabel(cashDetails.cash_payment_method)}</div>
               <div className="text-cream font-medium">
                 {cashDetails.cash_payment_method === "zelle" && getPaymentHandle("zelle") && (
                   <a href={`sms:${getPaymentHandle("zelle")}`} className="text-amber hover:underline">{getPaymentHandle("zelle")}</a>
@@ -152,21 +152,21 @@ export default function BookingSuccessPage() {
             </div>
 
             {/* Memo instruction */}
-            <div className="text-cream/50 text-xs">
+            <div className="text-cream/80 text-sm">
               {t("cashMemoInstruction", { ref: bookingRef || "" })}
             </div>
 
             {/* Balance due if deposit */}
             {cashDetails.cash_payment_option === "deposit" && (
-              <div className="flex justify-between text-xs">
-                <span className="text-cream/50">{t("balanceDueOnEventLabel")}</span>
-                <span className="text-cream/70">${(cashDetails.balance_due / 100).toFixed(2)}</span>
+              <div className="flex justify-between text-sm">
+                <span className="text-cream/80">{t("balanceDueOnEventLabel")}</span>
+                <span className="text-cream/90">${(cashDetails.balance_due / 100).toFixed(2)}</span>
               </div>
             )}
 
             {/* Auto-cancel warning */}
             <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-              <p className="text-red-400 text-xs">
+              <p className="text-red-400 text-sm">
                 ⚠️ {t("cashAutoCancelWarning")}
               </p>
             </div>
@@ -175,21 +175,21 @@ export default function BookingSuccessPage() {
 
         {/* Non-cash success message */}
         {!isCash && (
-          <p className="text-cream/40 text-sm mb-10 leading-relaxed">
+          <p className="text-cream/80 text-base mb-10 leading-relaxed">
             {t("successDesc")}
           </p>
         )}
 
         {/* Cash without details - fallback */}
         {isCash && !cashDetails && (
-          <p className="text-cream/40 text-sm mb-10 leading-relaxed">
+          <p className="text-cream/80 text-base mb-10 leading-relaxed">
             {t("cashSuccessDesc")}
           </p>
         )}
 
         <Link
           href="/"
-          className="inline-block px-8 py-3 bg-amber text-navy font-semibold rounded-full hover:bg-amber-light transition-all duration-300 hover:shadow-lg hover:shadow-amber/20 text-sm"
+          className="inline-block px-8 py-3 bg-amber text-navy font-semibold rounded-full hover:bg-amber-light transition-all duration-300 hover:shadow-lg hover:shadow-amber/20 text-base"
         >
           {t("returnHome")}
         </Link>

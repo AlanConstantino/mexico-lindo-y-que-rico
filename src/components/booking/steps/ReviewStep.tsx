@@ -77,12 +77,12 @@ export default function ReviewStep({
       <h2 className="font-heading text-3xl text-cream mb-2">
         {t("reviewOrder")}
       </h2>
-      <p className="text-cream/40 text-sm mb-8">{t("reviewDesc")}</p>
+      <p className="text-cream/80 text-base mb-8">{t("reviewDesc")}</p>
 
-      <div className="space-y-4">
+      <div className="space-y-4 break-words">
         {/* Event Date */}
         <div className="p-4 rounded-xl bg-gradient-to-r from-amber/10 to-terracotta/10 border border-amber/20">
-          <div className="text-cream/40 text-xs uppercase tracking-wider mb-1">
+          <div className="text-cream/80 text-sm uppercase tracking-wider mb-1">
             {t("eventDate")}
           </div>
           <div className="text-cream font-medium">
@@ -92,7 +92,7 @@ export default function ReviewStep({
 
         {/* Package */}
         <div className="p-4 rounded-xl bg-gradient-to-r from-amber/10 to-terracotta/10 border border-amber/20">
-          <div className="text-cream/40 text-xs uppercase tracking-wider mb-1">
+          <div className="text-cream/80 text-sm uppercase tracking-wider mb-1">
             {t("package")}
           </div>
           <div className="text-cream font-medium">
@@ -102,14 +102,14 @@ export default function ReviewStep({
 
         {/* Meats */}
         <div className="p-4 rounded-xl bg-gradient-to-r from-amber/10 to-terracotta/10 border border-amber/20">
-          <div className="text-cream/40 text-xs uppercase tracking-wider mb-2">
+          <div className="text-cream/80 text-sm uppercase tracking-wider mb-2">
             {t("meats")}
           </div>
           <div className="flex flex-wrap gap-2">
             {data.meats.map((id, idx) => (
               <span
                 key={`${id}-${idx}`}
-                className="px-3 py-1 rounded-full bg-amber/10 text-amber text-xs font-medium border border-amber/20"
+                className="px-3 py-1 rounded-full bg-amber/10 text-amber text-sm font-medium border border-amber/20"
               >
                 {tMenu(`${id}.name`)}
               </span>
@@ -119,7 +119,7 @@ export default function ReviewStep({
 
         {/* Extras */}
         <div className="p-4 rounded-xl bg-gradient-to-r from-amber/10 to-terracotta/10 border border-amber/20">
-          <div className="text-cream/40 text-xs uppercase tracking-wider mb-2">
+          <div className="text-cream/80 text-sm uppercase tracking-wider mb-2">
             {t("extras")}
           </div>
           {activeExtras.length > 0 ? (
@@ -128,14 +128,14 @@ export default function ReviewStep({
                 const qty = data.extras[extra.id] || 0;
                 return (
                   <div key={extra.id}>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-cream/70">
+                    <div className="flex justify-between gap-3 [&>span:last-child]:shrink-0 text-base">
+                      <span className="text-cream/90">
                         {tExtras(extra.id)}{" "}
-                        <span className="text-cream/30">
+                        <span className="text-cream/80">
                           {t("qty", { count: qty })}
                         </span>
                       </span>
-                      <span className="text-cream/50">
+                      <span className="text-cream/80">
                         ${(qty * extra.price).toFixed(2)}
                       </span>
                     </div>
@@ -146,7 +146,7 @@ export default function ReviewStep({
                           .map(([flavor, q]) => (
                           <span
                             key={flavor}
-                            className="px-2 py-0.5 rounded-full bg-amber/10 text-amber/70 text-[10px] font-medium border border-amber/15"
+                            className="px-2 py-0.5 rounded-full bg-amber/10 text-amber text-sm font-medium border border-amber/15"
                           >
                             {tExtras(`aguaFlavors.${flavor}`)} ×{q}
                           </span>
@@ -158,13 +158,13 @@ export default function ReviewStep({
               })}
             </div>
           ) : (
-            <div className="text-cream/30 text-sm">{t("noExtras")}</div>
+            <div className="text-cream/80 text-base">{t("noExtras")}</div>
           )}
         </div>
 
         {/* Event Address */}
         <div className="p-4 rounded-xl bg-gradient-to-r from-amber/10 to-terracotta/10 border border-amber/20">
-          <div className="text-cream/40 text-xs uppercase tracking-wider mb-1">
+          <div className="text-cream/80 text-sm uppercase tracking-wider mb-1">
             {t("eventAddress")}
           </div>
           <div className="text-cream font-medium">{data.eventAddress}</div>
@@ -172,22 +172,22 @@ export default function ReviewStep({
 
         {/* Contact Info */}
         <div className="p-4 rounded-xl bg-gradient-to-r from-amber/10 to-terracotta/10 border border-amber/20">
-          <div className="text-cream/40 text-xs uppercase tracking-wider mb-2">
+          <div className="text-cream/80 text-sm uppercase tracking-wider mb-2">
             {t("contact")}
           </div>
-          <div className="space-y-1 text-sm">
+          <div className="space-y-1 text-base">
             <div className="text-cream">{data.customerName}</div>
-            <div className="text-cream/50">{data.customerEmail}</div>
-            <div className="text-cream/50">{data.customerPhone}</div>
+            <div className="text-cream/80">{data.customerEmail}</div>
+            <div className="text-cream/80">{data.customerPhone}</div>
           </div>
         </div>
 
         {/* Payment Method Selection */}
         <div className="p-5 rounded-xl bg-gradient-to-r from-amber/10 to-terracotta/10 border border-amber/20">
-          <div className="text-cream/40 text-xs uppercase tracking-wider mb-4">
+          <div className="text-cream/80 text-sm uppercase tracking-wider mb-4">
             {t("paymentMethod")}
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {/* Pay with Card */}
             <button
               type="button"
@@ -202,26 +202,26 @@ export default function ReviewStep({
                 <svg className="w-5 h-5 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                 </svg>
-                <span className="text-cream font-medium text-sm">{t("payWithCard")}</span>
+                <span className="text-cream font-medium text-base">{t("payWithCard")}</span>
               </div>
               <div className="space-y-1">
-                <div className="flex justify-between text-xs">
-                  <span className="text-cream/50">{t("subtotal")}</span>
-                  <span className="text-cream/70">${total.toFixed(2)}</span>
+                <div className="flex justify-between gap-3 [&>span:last-child]:shrink-0 text-sm">
+                  <span className="text-cream/80">{t("subtotal")}</span>
+                  <span className="text-cream/90">${total.toFixed(2)}</span>
                 </div>
                 {surcharge > 0 && (
-                  <div className="flex justify-between text-xs">
-                    <span className="text-cream/50">{t("ccSurcharge", { percent: ccSurchargePercent })}</span>
-                    <span className="text-cream/70">${surcharge.toFixed(2)}</span>
+                  <div className="flex justify-between gap-3 [&>span:last-child]:shrink-0 text-sm">
+                    <span className="text-cream/80">{t("ccSurcharge", { percent: ccSurchargePercent })}</span>
+                    <span className="text-cream/90">${surcharge.toFixed(2)}</span>
                   </div>
                 )}
                 {processingFee > 0 && (
-                  <div className="flex justify-between text-xs">
-                    <span className="text-cream/50">{t("processingFee", { percent: stripeFeePercent })}</span>
-                    <span className="text-cream/70">${processingFee.toFixed(2)}</span>
+                  <div className="flex justify-between gap-3 [&>span:last-child]:shrink-0 text-sm">
+                    <span className="text-cream/80">{t("processingFee", { percent: stripeFeePercent })}</span>
+                    <span className="text-cream/90">${processingFee.toFixed(2)}</span>
                   </div>
                 )}
-                <div className="flex justify-between text-sm font-medium pt-1 border-t border-cream/5">
+                <div className="flex justify-between gap-3 [&>span:last-child]:shrink-0 text-base font-medium pt-1 border-t border-cream/5">
                   <span className="text-cream">{t("total")}</span>
                   <span className="text-amber">${cardTotal.toFixed(2)}</span>
                 </div>
@@ -242,12 +242,12 @@ export default function ReviewStep({
                 <svg className="w-5 h-5 text-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
-                <span className="text-cream font-medium text-sm">{t("payWithCash")}</span>
+                <span className="text-cream font-medium text-base">{t("payWithCash")}</span>
               </div>
               <div className="space-y-1">
-                <div className="flex justify-between text-xs">
-                  <span className="text-cream/50">{t("total")}</span>
-                  <span className="text-cream/70">${total.toFixed(2)}</span>
+                <div className="flex justify-between gap-3 [&>span:last-child]:shrink-0 text-sm">
+                  <span className="text-cream/80">{t("total")}</span>
+                  <span className="text-cream/90">${total.toFixed(2)}</span>
                 </div>
               </div>
             </button>
@@ -260,17 +260,17 @@ export default function ReviewStep({
               {/* Auto-cancel warning — always visible */}
               <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/30 flex items-start gap-2">
                 <span className="text-lg leading-none">⚠️</span>
-                <p className="text-yellow-200/90 text-xs leading-relaxed">
+                <p className="text-yellow-200/90 text-sm leading-relaxed">
                   {t("autoCancelWarning", { hours: 48 })}
                 </p>
               </div>
 
               {/* Deposit or Full Payment */}
               <div>
-                <div className="text-cream/50 text-xs uppercase tracking-wider mb-3">
+                <div className="text-cream/80 text-sm uppercase tracking-wider mb-3">
                   {t("selectPaymentOption")}
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <button
                     type="button"
                     onClick={() => onCashPaymentOptionChange("deposit")}
@@ -280,10 +280,10 @@ export default function ReviewStep({
                         : "border-cream/10 hover:border-cream/20"
                     }`}
                   >
-                    <div className="text-cream font-medium text-sm mb-1">{t("payDeposit", { percent: cashDepositPercent })}</div>
+                    <div className="text-cream font-medium text-base mb-1">{t("payDeposit", { percent: cashDepositPercent })}</div>
                     <div className="text-amber font-heading text-2xl">${depositAmount.toFixed(2)}</div>
-                    <div className="text-cream/40 text-[10px] mt-2">{t("depositNonRefundable")}</div>
-                    <div className="text-cream/30 text-[10px]">{t("balanceDueOnEvent", { amount: balanceDue.toFixed(2) })}</div>
+                    <div className="text-cream/80 text-sm mt-2">{t("depositNonRefundable")}</div>
+                    <div className="text-cream/80 text-sm">{t("balanceDueOnEvent", { amount: balanceDue.toFixed(2) })}</div>
                   </button>
                   <button
                     type="button"
@@ -294,9 +294,9 @@ export default function ReviewStep({
                         : "border-cream/10 hover:border-cream/20"
                     }`}
                   >
-                    <div className="text-cream font-medium text-sm mb-1">{t("payFull")}</div>
+                    <div className="text-cream font-medium text-base mb-1">{t("payFull")}</div>
                     <div className="text-amber font-heading text-2xl">${total.toFixed(2)}</div>
-                    <div className="text-cream/40 text-[10px] mt-2">{t("nothingDueOnEvent")}</div>
+                    <div className="text-cream/80 text-sm mt-2">{t("nothingDueOnEvent")}</div>
                   </button>
                 </div>
               </div>
@@ -304,10 +304,10 @@ export default function ReviewStep({
               {/* Payment Method Picker */}
               {data.cashPaymentOption && (
                 <div>
-                  <div className="text-cream/50 text-xs uppercase tracking-wider mb-3">
+                  <div className="text-cream/80 text-sm uppercase tracking-wider mb-3">
                     {t("selectPaymentMethod")}
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {([
                       { id: "zelle" as const, label: "Zelle", icon: "💸" },
                       { id: "paypal" as const, label: "PayPal", icon: "🅿️" },
@@ -325,7 +325,7 @@ export default function ReviewStep({
                         }`}
                       >
                         <span className="text-2xl">{m.icon}</span>
-                        <span className="text-cream font-medium text-sm">{m.label}</span>
+                        <span className="text-cream font-medium text-base">{m.label}</span>
                       </button>
                     ))}
                   </div>
@@ -337,31 +337,31 @@ export default function ReviewStep({
 
         {/* Price Breakdown */}
         <div className="p-5 rounded-xl bg-gradient-to-b from-amber/5 to-transparent border border-amber/10">
-          <div className="flex justify-between text-sm mb-2">
-            <span className="text-cream/50">{t("basePrice")}</span>
+          <div className="flex justify-between gap-3 [&>span:last-child]:shrink-0 text-base mb-2">
+            <span className="text-cream/80">{t("basePrice")}</span>
             <span className="text-cream">${basePrice.toFixed(2)}</span>
           </div>
           {extrasTotal > 0 && (
-            <div className="flex justify-between text-sm mb-2">
-              <span className="text-cream/50">{t("extrasTotal")}</span>
+            <div className="flex justify-between gap-3 [&>span:last-child]:shrink-0 text-base mb-2">
+              <span className="text-cream/80">{t("extrasTotal")}</span>
               <span className="text-cream">
                 ${extrasTotal.toFixed(2)}
               </span>
             </div>
           )}
           {data.paymentMethod === "card" && surcharge > 0 && (
-            <div className="flex justify-between text-sm mb-2">
-              <span className="text-cream/50">{t("ccSurcharge", { percent: ccSurchargePercent })}</span>
+            <div className="flex justify-between gap-3 [&>span:last-child]:shrink-0 text-base mb-2">
+              <span className="text-cream/80">{t("ccSurcharge", { percent: ccSurchargePercent })}</span>
               <span className="text-cream">${surcharge.toFixed(2)}</span>
             </div>
           )}
           {data.paymentMethod === "card" && processingFee > 0 && (
-            <div className="flex justify-between text-sm mb-2">
-              <span className="text-cream/50">{t("processingFee", { percent: stripeFeePercent })}</span>
+            <div className="flex justify-between gap-3 [&>span:last-child]:shrink-0 text-base mb-2">
+              <span className="text-cream/80">{t("processingFee", { percent: stripeFeePercent })}</span>
               <span className="text-cream">${processingFee.toFixed(2)}</span>
             </div>
           )}
-          <div className="border-t border-cream/10 mt-3 pt-3 flex justify-between">
+          <div className="border-t border-cream/10 mt-3 pt-3 flex justify-between gap-3 [&>span:last-child]:shrink-0">
             <span className="text-cream font-medium">
               {t("total")}
             </span>
@@ -371,13 +371,13 @@ export default function ReviewStep({
           </div>
           {data.paymentMethod === "cash" && data.cashPaymentOption === "deposit" && (
             <div className="mt-3 pt-3 border-t border-cream/10 space-y-1">
-              <div className="flex justify-between text-xs">
-                <span className="text-cream/50">{t("depositDueNow")}</span>
+              <div className="flex justify-between gap-3 [&>span:last-child]:shrink-0 text-sm">
+                <span className="text-cream/80">{t("depositDueNow")}</span>
                 <span className="text-amber font-medium">${depositAmount.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between text-xs">
-                <span className="text-cream/50">{t("balanceDueLabel")}</span>
-                <span className="text-cream/50">${balanceDue.toFixed(2)}</span>
+              <div className="flex justify-between gap-3 [&>span:last-child]:shrink-0 text-sm">
+                <span className="text-cream/80">{t("balanceDueLabel")}</span>
+                <span className="text-cream/80">${balanceDue.toFixed(2)}</span>
               </div>
             </div>
           )}
