@@ -5,6 +5,8 @@ import { useSearchParams } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import type { ServiceType, MeatId, ExtraId, AguaFlavorQuantities, ExtraMeatQuantities } from "@/lib/pricing";
 import { calculateTotal, getBasePrice, getExtrasTotal, calculateSurcharge, calculateProcessingFee } from "@/lib/pricing";
+import { isEventTime } from "@/lib/event-time";
+import { isValidPackage } from "@/lib/pricing";
 import DateStep from "./steps/DateStep";
 import PackageStep from "./steps/PackageStep";
 import MeatStep from "./steps/MeatStep";
@@ -47,14 +49,15 @@ export default function BookingForm() {
   const searchParams = useSearchParams();
   const preselectedService = searchParams.get("service") as ServiceType | null;
   const preselectedGuests = searchParams.get("guests");
-  const hasPreselection = preselectedService && preselectedGuests;
+  const selectedGuests = Number(preselectedGuests);
+  const hasPreselection = isValidPackage(preselectedService, selectedGuests);
 
-  const [step, setStep] = useState(hasPreselection ? 1 : 1);
+  const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [paymentSettings, setPaymentSettings] = useState({
     cc_surcharge_percent: 10,
-    cash_deposit_percent: 50,
+    cash_deposit_percent: 10,
     stripe_fee_percent: 2.9,
     stripe_fee_flat: 30,
     zelle_enabled: true,
@@ -74,7 +77,7 @@ export default function BookingForm() {
     eventDate: null,
     eventTime: null,
     serviceType: hasPreselection ? preselectedService : null,
-    guestCount: hasPreselection ? parseInt(preselectedGuests, 10) : null,
+    guestCount: hasPreselection ? selectedGuests : null,
     meats: [],
     extras: {},
     aguaFlavors: {},
@@ -95,9 +98,9 @@ export default function BookingForm() {
   const isStepValid = (): boolean => {
     switch (step) {
       case 1:
-        return data.eventDate !== null && data.eventTime !== null;
+        return data.eventDate !== null && isEventTime(data.eventTime);
       case 2:
-        return data.serviceType !== null && data.guestCount !== null;
+        return isValidPackage(data.serviceType, data.guestCount);
       case 3:
         return data.meats.length === 4;
       case 4: {
@@ -188,7 +191,8 @@ export default function BookingForm() {
       const result = await res.json();
 
       if (!res.ok) {
-        throw new Error(result.error || "Checkout failed");
+        const errorKey = { INVALID_PACKAGE: "invalidPackage", INVALID_TIME: "invalidTime", INVALID_EXTRAS: "invalidExtras", SANDBOX_STRIPE_REQUIRED: "sandboxStripeRequired" }[result.code as string];
+        throw new Error(errorKey ? t(errorKey) : t("errorGeneric"));
       }
 
       // Redirect to Stripe Checkout

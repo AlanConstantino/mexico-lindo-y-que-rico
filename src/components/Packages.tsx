@@ -1,19 +1,11 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
-const twoHour = [
-  { guests: 25, price: "$395" },
-  { guests: 50, price: "$495" },
-  { guests: 75, price: "$595" },
-];
+import { GUEST_OPTIONS, EXTRA_OPTIONS } from "@/lib/pricing";
 
-const threeHour = [
-  { guests: 100, price: "$695" },
-  { guests: 125, price: "$795" },
-  { guests: 150, price: "$895" },
-  { guests: 175, price: "$995" },
-  { guests: 200, price: "$1,095" },
-];
+const twoHour = GUEST_OPTIONS["2hr"];
+const threeHour = GUEST_OPTIONS["3hr"];
+const extraHourPrice = EXTRA_OPTIONS.find((extra) => extra.id === "extraTime")!.price;
 
 const includedKeys = [
   "tortillas",
@@ -117,13 +109,13 @@ export default function Packages() {
               {t("twoHourSub")}
             </p>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-6 max-w-3xl mx-auto stagger-children">
-            {twoHour.map((pkg, i) => (
+          <div className="grid grid-cols-2 gap-3 sm:gap-6 max-w-3xl mx-auto stagger-children">
+            {twoHour.map((pkg) => (
               <PricingCard
-                key={pkg.guests}
-                guests={pkg.guests}
-                price={pkg.price}
-                featured={i === 1}
+                key={pkg.count}
+                guests={pkg.count}
+                price={`$${pkg.price.toLocaleString("en-US")}`}
+                featured={pkg.count === 50}
                 serviceType="2hr"
                 upToLabel={t("upTo")}
                 guestsLabel={t("guests")}
@@ -147,9 +139,9 @@ export default function Packages() {
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 max-w-5xl mx-auto stagger-children">
             {threeHour.map((pkg, i) => (
               <PricingCard
-                key={pkg.guests}
-                guests={pkg.guests}
-                price={pkg.price}
+                key={pkg.count}
+                guests={pkg.count}
+                price={`$${pkg.price.toLocaleString("en-US")}`}
                 featured={i === 2}
                 serviceType="3hr"
                 upToLabel={t("upTo")}
@@ -170,7 +162,7 @@ export default function Packages() {
             </p>
             <p className="text-cream text-lg mb-2">
               {t("moreTimeText")}{" "}
-              <span className="text-amber font-bold">{t("moreTimePrice")}</span>
+              <span className="text-amber font-bold">${extraHourPrice}</span>
             </p>
             <p className="text-cream/40 text-sm">
               {t("moreTimeNote")}

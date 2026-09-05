@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslations, useLocale } from "next-intl";
+import EventTimePicker from "../EventTimePicker";
+import { setupArrivalTime } from "@/lib/event-time";
 import type { BookingData } from "../BookingForm";
 
 interface DateStepProps {
@@ -28,8 +30,11 @@ function monthKey(year: number, month: number) {
 export default function DateStep({ data, updateData }: DateStepProps) {
   const t = useTranslations("booking");
   const locale = useLocale();
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const [today] = useState(() => {
+    const date = new Date();
+    date.setHours(0, 0, 0, 0);
+    return date;
+  });
 
   const [viewYear, setViewYear] = useState(today.getFullYear());
   const [viewMonth, setViewMonth] = useState(today.getMonth());
@@ -343,21 +348,12 @@ export default function DateStep({ data, updateData }: DateStepProps) {
             {t("selectTime")}
           </h3>
           <p className="text-cream/40 text-sm mb-4">{t("selectTimeDesc")}</p>
-          <input
-            type="time"
-            value={data.eventTime ?? ""}
-            onChange={(e) =>
-              updateData({ eventTime: e.target.value || null })
-            }
-            className="block w-full min-w-0 rounded-xl bg-gradient-to-r from-amber/10 to-terracotta/10 border border-amber/20 text-cream px-4 py-3 text-sm focus:outline-none focus:border-amber/40 transition-colors cursor-pointer [color-scheme:dark] [-webkit-appearance:none] [&::-webkit-calendar-picker-indicator]:invert"
-            style={{ maxWidth: "100%" }}
+          <EventTimePicker
+            value={data.eventTime}
+            onChange={(eventTime) => updateData({ eventTime })}
           />
           {data.eventTime && (() => {
-            const [h, m] = data.eventTime.split(":").map(Number);
-            const arrivalHour = h - 1;
-            const arrivalH12 = arrivalHour % 12 || 12;
-            const arrivalAmpm = arrivalHour >= 12 ? "PM" : "AM";
-            const arrivalTime = `${arrivalH12}:${String(m).padStart(2, "0")} ${arrivalAmpm}`;
+            const arrivalTime = setupArrivalTime(data.eventTime);
             return (
               <p className="text-cream/40 text-xs italic mt-3">
                 ⏰ {t("setupArrivalNote", { arrivalTime })}

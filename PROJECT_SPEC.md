@@ -36,20 +36,19 @@
 ### 2-Hour Service
 | People | Price |
 |--------|-------|
-| 25     | $395  |
-| 50     | $495  |
-| 75     | $595  |
+| 50     | $595  |
+| 75     | $695  |
 
 ### 3-Hour Service
 | People | Price |
 |--------|-------|
-| 100    | $695  |
-| 125    | $795  |
-| 150    | $895  |
-| 175    | $995  |
-| 200    | $1,095|
+| 100    | $795  |
+| 125    | $895  |
+| 150    | $995  |
+| 175    | $1,095  |
+| 200    | $1,350|
 
-- $40 for extra hour
+- $60 for extra hour
 - Arrive 1 hour early (doesn't count toward service hours)
 
 ## Services Included
@@ -66,16 +65,20 @@
 ## Extras (each feeds 40-50 people)
 | Item | Price |
 |------|-------|
-| Rice | $40 |
-| Beans | $40 |
-| Quesadillas (Flour Tortilla) | $30 |
-| Jalapeños & Grilled Onions | $20 |
-| Fresh Guacamole & Chips | $40 |
-| Fresh Salsa & Chips | $40 |
-| Agua Fresca (Horchata, Jamaica, Lemon, Pineapple, Tamarindo, Melon) | $25 |
-| Salad | $30 |
-| Cheeseburgers | $4 each |
-| Hot Dogs | $2 each |
+| Rice | $50 |
+| Beans | $50 |
+| Quesadillas (Flour Tortilla) | $60 |
+| Jalapeños & Grilled Onions | $25 |
+| Fresh Guacamole & Chips | $60 |
+| Fresh Salsa & Chips | $60 |
+| Agua Fresca (Horchata, Jamaica, Lemon, Pineapple, Tamarindo), includes ice and cups | $35 |
+| Salad | $45 |
+| Hamburgers | $5 each |
+| Plain Hot Dogs | $3 each |
+| Hot Dogs with Bacon | $4 each |
+| Chips Only | $30 |
+| Extra Meat | $60 |
+| Extra Service Time | $60/hour |
 
 ## Booking System
 - Date picker with availability

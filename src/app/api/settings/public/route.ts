@@ -10,7 +10,7 @@ export async function GET() {
   if (error) {
     return NextResponse.json({
       cc_surcharge_percent: 10,
-      cash_deposit_percent: 50,
+      cash_deposit_percent: 10,
       stripe_fee_percent: 2.9,
       stripe_fee_flat: 30,
     });

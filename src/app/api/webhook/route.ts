@@ -16,6 +16,9 @@ export async function POST(request: NextRequest) {
 
   // Verify webhook signature if secret is configured
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  if (process.env.APP_ENV === "sandbox" && (!webhookSecret || !sig)) {
+    return NextResponse.json({ error: "Sandbox webhook requires a configured signing secret and signature" }, { status: 400 });
+  }
   if (webhookSecret && sig) {
     try {
       event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
@@ -83,7 +86,7 @@ export async function POST(request: NextRequest) {
       console.error("Failed to update booking:", updateError);
     } else if (booking) {
       // Build cancel/reschedule URLs
-      const origin = request.headers.get("origin") || request.headers.get("referer")?.replace(/\/api.*/, "") || "https://que.rico.catering";
+      const origin = process.env.NEXT_PUBLIC_SITE_URL || request.headers.get("origin") || request.headers.get("referer")?.replace(/\/api.*/, "") || "https://que.rico.catering";
       const bookingLocale = (session.metadata?.locale || booking.locale || "en") as "en" | "es";
       const cancelUrl = `${origin}/${bookingLocale}/booking/cancel/${cancelToken}`;
       const rescheduleUrl = `${origin}/${bookingLocale}/booking/reschedule/${rescheduleToken}`;

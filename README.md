@@ -109,27 +109,26 @@ supabase/
 ### 2-Hour Service
 | Guests | Price |
 |--------|-------|
-| 25 | $395 |
-| 50 | $495 |
-| 75 | $595 |
+| 50 | $595 |
+| 75 | $695 |
 
 ### 3-Hour Service
 | Guests | Price |
 |--------|-------|
-| 100 | $695 |
-| 125 | $795 |
-| 150 | $895 |
-| 175 | $995 |
-| 200 | $1,095 |
+| 100 | $795 |
+| 125 | $895 |
+| 150 | $995 |
+| 175 | $1,095 |
+| 200 | $1,350 |
 
-- **$40** for an extra hour
+- **$60** for an extra hour
 - Arrive 1 hour early for setup (doesn't count toward service time)
 
 ### Meats (choose 4)
 Asada, Pastor, Chicken, Chorizo, Fish Fillet, Shrimp Fajitas, Veggies, Alambres
 
 ### Extras (each serves 40-50 people)
-Rice ($40), Beans ($40), Quesadillas ($30), Jalapeños & Grilled Onions ($20), Fresh Guacamole & Chips ($40), Fresh Salsa & Chips ($40), Agua Fresca ($25), Salad ($30), Cheeseburgers ($4 each), Hot Dogs ($2 each)
+Rice ($50), Beans ($50), Quesadillas ($60), Jalapeños & Grilled Onions ($25), Fresh Guacamole & Chips ($60), Fresh Salsa & Chips ($60), Agua Fresca with ice and cups ($35), Salad ($45), Hamburgers ($5 each), Plain Hot Dogs ($3 each), Hot Dogs with Bacon ($4 each), Chips Only ($30), Extra Meat ($60), Extra Service Time ($60/hour).
 
 ## 🔧 Environment Variables
 
@@ -257,7 +256,7 @@ When a booking is confirmed (paid via Stripe), an email is sent to the owner via
 ## 📞 Business Info
 
 - **Business:** México Lindo Y Que Rico
-- **Service:** Taco catering for events (25-200+ guests)
+- **Service:** Taco catering for events (50-200+ guests)
 - **Area:** Greater Los Angeles
 - **Experience:** 20+ years
 - **Phone:** (562) 235-9361 / (562) 746-3998
@@ -268,3 +267,13 @@ When a booking is confirmed (paid via Stripe), an email is sent to the owner via
 
 The original (old) website source code is at:
 `/Volumes/Sandisk_2TB/code/mexico-lindo-y-que-rico`
+
+## Verification
+
+Run `npm test` for catalog, bilingual copy, time conversion, checkout, and historical extra-price checks. Stripe, Supabase, and Resend are mocked in these tests; they do not create bookings or send email. Run `npm run lint` and `npm run build` before release.
+
+New bookings snapshot each extra's unit price in dollars as `extras[].unitPrice` in the existing JSONB column. Emails use this snapshot; older bookings without it retain the previous catalog rates. Stored booking totals are not recalculated. No database migration is required for these catalog changes.
+
+### Local test sandbox
+
+Run `npm run sandbox` to start the isolated booking site on port 3001, a local Supabase database, and a captured-email inbox. Setup, admin credentials, Stripe test mode, and reset instructions are in [sandbox/README.md](sandbox/README.md).

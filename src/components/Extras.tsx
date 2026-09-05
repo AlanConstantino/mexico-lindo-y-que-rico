@@ -1,22 +1,8 @@
 import { useTranslations } from "next-intl";
 
-const extras: {
-  key: string;
-  price: string;
-  serves: string;
-  priceKey?: string;
-}[] = [
-  { key: "rice", price: "$40", serves: "40–50" },
-  { key: "beans", price: "$40", serves: "40–50" },
-  { key: "quesadillas", price: "$30", serves: "40–50" },
-  { key: "jalapenos", price: "$20", serves: "40–50" },
-  { key: "guacamole", price: "$40", serves: "40–50" },
-  { key: "salsa", price: "$40", serves: "40–50" },
-  { key: "agua", price: "$25", serves: "40–50" },
-  { key: "salad", price: "$30", serves: "40–50" },
-  { key: "burgers", price: "$4 each", serves: "per unit", priceKey: "each4" },
-  { key: "hotdogs", price: "$2 each", serves: "per unit", priceKey: "each2" },
-];
+import { EXTRA_OPTIONS } from "@/lib/pricing";
+
+const extras = EXTRA_OPTIONS.filter((extra) => extra.id !== "extraTime" && extra.id !== "extraMeat");
 
 export default function Extras() {
   const t = useTranslations("extras");
@@ -44,25 +30,25 @@ export default function Extras() {
         <div className="space-y-0">
           {extras.map((extra) => (
             <div
-              key={extra.key}
+              key={extra.id}
               className="reveal group flex items-center justify-between py-5 border-b border-cream/5 hover:border-amber/15 transition-colors duration-300"
             >
               <div className="flex-1 min-w-0">
                 <p className="text-cream group-hover:text-amber transition-colors duration-300 text-base font-medium">
-                  {t(`items.${extra.key}`)}
+                  {t(`items.${extra.id}`)}
                 </p>
-                {extra.key === "agua" && (
+                {extra.id === "agua" && (
                   <p className="text-cream/30 text-xs mt-1">{t("items.aguaNote")}</p>
                 )}
               </div>
               <div className="flex items-center gap-4 shrink-0 ml-4">
                 <span className="text-cream/30 text-xs hidden sm:block">
-                  {extra.serves === "per unit"
+                  {extra.perUnit
                     ? t("perUnit")
-                    : t("serves", { count: extra.serves })}
+                    : t("serves", { count: "40–50" })}
                 </span>
                 <span className="text-amber font-semibold text-lg">
-                  {extra.priceKey ? t(`prices.${extra.priceKey}`) : extra.price}
+                  {extra.perUnit ? t("prices.each", { price: extra.price }) : `$${extra.price}`}
                 </span>
               </div>
             </div>

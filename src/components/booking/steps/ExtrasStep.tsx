@@ -4,6 +4,11 @@ import { useTranslations } from "next-intl";
 import type { BookingData } from "../BookingForm";
 import { EXTRA_OPTIONS, AGUA_FLAVORS, MEAT_OPTIONS, type ExtraId, type AguaFlavor, type AguaFlavorQuantities, type MeatId, type ExtraMeatQuantities } from "@/lib/pricing";
 
+const BOOKING_EXTRA_OPTIONS = [
+  ...EXTRA_OPTIONS.filter((extra) => extra.id === "extraMeat"),
+  ...EXTRA_OPTIONS.filter((extra) => extra.id !== "extraMeat"),
+];
+
 interface ExtrasStepProps {
   data: BookingData;
   updateData: (updates: Partial<BookingData>) => void;
@@ -85,7 +90,7 @@ export default function ExtrasStep({ data, updateData }: ExtrasStepProps) {
       <p className="text-cream/40 text-sm mb-8">{t("selectExtrasDesc")}</p>
 
       <div className="space-y-3">
-        {EXTRA_OPTIONS.map((extra) => {
+        {BOOKING_EXTRA_OPTIONS.map((extra) => {
           const qty = data.extras[extra.id] || 0;
           const hasQty = qty > 0;
           const isAgua = extra.id === "agua";
@@ -108,9 +113,12 @@ export default function ExtrasStep({ data, updateData }: ExtrasStepProps) {
                   {tExtras(extra.id)}
                 </div>
                 <div className="text-cream/30 text-xs mt-0.5">
-                  ${extra.price}
+                  <span className="text-amber">${extra.price}</span>
                   {extra.id === "extraTime" ? ` ${t("perHour")}` : extra.perUnit ? ` ${t("each")}` : ` · ${t("servesNote")}`}
                 </div>
+                {isAgua && (
+                  <div className="text-cream/40 text-xs mt-1">{tExtras("aguaNote")}</div>
+                )}
                 {extra.id === "extraTime" && (
                   <div className="text-cream/20 text-[10px] mt-0.5">{tExtras("extraTimeNote")}</div>
                 )}
@@ -122,6 +130,7 @@ export default function ExtrasStep({ data, updateData }: ExtrasStepProps) {
               {/* Quantity controls */}
               <div className="flex items-center gap-2 flex-shrink-0">
                 <button
+                  aria-label={t("decreaseExtra", { name: tExtras(extra.id) })}
                   onClick={() => updateQuantity(extra.id, -1)}
                   disabled={qty === 0}
                   className="w-8 h-8 rounded-full border border-cream/10 flex items-center justify-center text-cream/50 hover:border-cream/30 hover:text-cream transition-all disabled:opacity-20 disabled:cursor-not-allowed"
@@ -146,6 +155,7 @@ export default function ExtrasStep({ data, updateData }: ExtrasStepProps) {
                   {qty}
                 </span>
                 <button
+                  aria-label={t("increaseExtra", { name: tExtras(extra.id) })}
                   onClick={() => updateQuantity(extra.id, 1)}
                   className="w-8 h-8 rounded-full border border-cream/10 flex items-center justify-center text-cream/50 hover:border-amber/30 hover:text-amber transition-all"
                 >

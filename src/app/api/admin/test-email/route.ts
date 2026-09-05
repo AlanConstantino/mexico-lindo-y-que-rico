@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { GUEST_OPTIONS, EXTRA_OPTIONS, getBasePrice, type ServiceType } from "@/lib/pricing";
 import { isValidToken } from "../auth/route";
 import { supabaseAdmin } from "@/lib/supabase";
 import {
@@ -33,8 +34,7 @@ function getSampleBooking(targetEmail: string, customData?: Record<string, unkno
   const streets = ["123 Sunset Blvd", "456 Whittier Blvd", "789 Atlantic Ave", "321 Pacific Coast Hwy", "555 Olvera St", "1200 Spring St"];
   const cities = ["Los Angeles, CA 90001", "Whittier, CA 90602", "Long Beach, CA 90802", "Downey, CA 90241", "Montebello, CA 90640"];
   const meatOptions = ["Carne Asada", "Al Pastor", "Pollo", "Chorizo", "Carnitas", "Birria"];
-  const serviceTypes = ["2hr", "3hr"];
-  const guestCounts = [50, 75, 100, 120, 150, 200];
+  const serviceTypes: ServiceType[] = ["2hr", "3hr"];
   const times = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"];
 
   const pick = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
@@ -51,7 +51,7 @@ function getSampleBooking(targetEmail: string, customData?: Record<string, unkno
   const phone = `(${562 + Math.floor(Math.random() * 100)}) ${String(Math.floor(Math.random() * 900) + 100)}-${String(Math.floor(Math.random() * 9000) + 1000)}`;
   const selectedMeats = shuffle(meatOptions).slice(0, 4);
   const serviceType = pick(serviceTypes);
-  const guestCount = pick(guestCounts);
+  const guestCount = pick(GUEST_OPTIONS[serviceType]).count;
   const eventTime = pick(times);
 
   // Random extras in DB format
@@ -59,13 +59,11 @@ function getSampleBooking(targetEmail: string, customData?: Record<string, unkno
     { id: "rice", quantity: 1 },
     { id: "beans", quantity: 1 },
     { id: "agua", quantity: 3, flavors: { horchata: 1, jamaica: 1, tamarindo: 1 } },
-  ];
+  ].map((extra) => ({ ...extra, unitPrice: EXTRA_OPTIONS.find((option) => option.id === extra.id)!.price }));
 
-  // Base price calculation (rough)
-  const basePrice = serviceType === "2hr"
-    ? (guestCount <= 100 ? 495 : guestCount <= 200 ? 795 : 995)
-    : (guestCount <= 100 ? 695 : guestCount <= 200 ? 995 : 1295);
-  const extrasPrice = 40 + 40 + 75; // rice + beans + 3 aguas
+  // Use the same prices as a new booking.
+  const basePrice = getBasePrice(serviceType, guestCount);
+  const extrasPrice = dbExtras.reduce((sum, extra) => sum + extra.quantity * extra.unitPrice, 0);
   const totalPrice = (basePrice + extrasPrice) * 100; // in cents
 
   const bookingNumber = `QR-${dateStr.replace(/-/g, "")}-${Math.random().toString(16).slice(2, 8).toUpperCase()}`;
@@ -98,7 +96,7 @@ function getSampleBooking(targetEmail: string, customData?: Record<string, unkno
     if (customData.guestCount) sample.guestCount = customData.guestCount as number;
     if (customData.eventAddress) sample.eventAddress = customData.eventAddress as string;
     if (customData.totalPrice) sample.totalPrice = (customData.totalPrice as number) * 100; // convert dollars to cents
-    if (customData.serviceType) sample.serviceType = customData.serviceType as string;
+    if (customData.serviceType) sample.serviceType = customData.serviceType as ServiceType;
   }
 
   return sample;

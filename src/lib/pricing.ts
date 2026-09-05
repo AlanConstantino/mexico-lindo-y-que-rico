@@ -40,6 +40,8 @@ export type ExtraId =
   | "salad"
   | "burgers"
   | "hotdogs"
+  | "baconHotdogs"
+  | "chips"
   | "extraTime"
   | "extraMeat";
 
@@ -61,16 +63,15 @@ export interface GuestOption {
 
 export const GUEST_OPTIONS: Record<ServiceType, GuestOption[]> = {
   "2hr": [
-    { count: 25, price: 395 },
-    { count: 50, price: 495 },
-    { count: 75, price: 595 },
+    { count: 50, price: 595 },
+    { count: 75, price: 695 },
   ],
   "3hr": [
-    { count: 100, price: 695 },
-    { count: 125, price: 795 },
-    { count: 150, price: 895 },
-    { count: 175, price: 995 },
-    { count: 200, price: 1095 },
+    { count: 100, price: 795 },
+    { count: 125, price: 895 },
+    { count: 150, price: 995 },
+    { count: 175, price: 1095 },
+    { count: 200, price: 1350 },
   ],
 };
 
@@ -81,26 +82,55 @@ export interface ExtraOption {
 }
 
 export const EXTRA_OPTIONS: ExtraOption[] = [
-  { id: "rice", price: 40, perUnit: false },
-  { id: "beans", price: 40, perUnit: false },
-  { id: "quesadillas", price: 30, perUnit: false },
-  { id: "jalapenos", price: 20, perUnit: false },
-  { id: "guacamole", price: 40, perUnit: false },
-  { id: "salsa", price: 40, perUnit: false },
-  { id: "agua", price: 25, perUnit: false },
-  { id: "salad", price: 30, perUnit: false },
-  { id: "burgers", price: 4, perUnit: true },
-  { id: "hotdogs", price: 2, perUnit: true },
-  { id: "extraTime", price: 40, perUnit: true },
-  { id: "extraMeat", price: 40, perUnit: true },
+  { id: "rice", price: 50, perUnit: false },
+  { id: "beans", price: 50, perUnit: false },
+  { id: "quesadillas", price: 60, perUnit: false },
+  { id: "jalapenos", price: 25, perUnit: false },
+  { id: "guacamole", price: 60, perUnit: false },
+  { id: "salsa", price: 60, perUnit: false },
+  { id: "agua", price: 35, perUnit: false },
+  { id: "salad", price: 45, perUnit: false },
+  { id: "burgers", price: 5, perUnit: true },
+  { id: "hotdogs", price: 3, perUnit: true },
+  { id: "baconHotdogs", price: 4, perUnit: true },
+  { id: "chips", price: 30, perUnit: false },
+  { id: "extraTime", price: 60, perUnit: true },
+  { id: "extraMeat", price: 60, perUnit: true },
 ];
+
+// Bookings created before price snapshots used this catalog. Never reprice them
+// using today's rates when sending a reminder or confirmation.
+const LEGACY_EXTRA_PRICES: Partial<Record<string, number>> = {
+  rice: 40, beans: 40, quesadillas: 30, jalapenos: 20,
+  guacamole: 40, salsa: 40, agua: 25, salad: 30,
+  burgers: 4, hotdogs: 2, extraTime: 40, extraMeat: 40,
+};
+
+export interface BookedExtra {
+  id: string;
+  quantity: number;
+  /** Price per unit in dollars, captured by the server at checkout. */
+  unitPrice?: number;
+  flavors?: Record<string, number> | string[];
+  meatSelections?: Record<string, number>;
+}
+
+export function getBookedExtraPrice(extra: BookedExtra): number {
+  return extra.unitPrice ?? LEGACY_EXTRA_PRICES[extra.id]
+    ?? EXTRA_OPTIONS.find((option) => option.id === extra.id)?.price ?? 0;
+}
+
+export function isValidPackage(serviceType: unknown, guestCount: unknown): serviceType is ServiceType {
+  return (serviceType === "2hr" || serviceType === "3hr")
+    && GUEST_OPTIONS[serviceType].some((option) => option.count === guestCount);
+}
 
 export function getBasePrice(
   serviceType: ServiceType,
   guestCount: number
 ): number {
   const options = GUEST_OPTIONS[serviceType];
-  const option = options.find((o) => o.count === guestCount);
+  const option = options?.find((o) => o.count === guestCount);
   return option?.price ?? 0;
 }
 
@@ -125,7 +155,7 @@ export function calculateProcessingFee(subtotal: number, percent: number, flatCe
 }
 
 export function calculateDeposit(subtotal: number, percent: number): number {
-  return Math.round(subtotal * (percent / 100));
+  return Math.round(subtotal * (percent / 100) * 100) / 100;
 }
 
 export function calculateTotal(

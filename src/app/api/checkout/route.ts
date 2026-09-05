@@ -3,6 +3,8 @@ import Stripe from "stripe";
 import { supabaseAdmin, generateBookingNumber } from "@/lib/supabase";
 import {
   calculateTotal,
+  calculateDeposit,
+  isValidPackage,
   getBasePrice,
   calculateSurcharge,
   calculateProcessingFee,
@@ -11,6 +13,9 @@ import {
   type MeatId,
   type ExtraId,
 } from "@/lib/pricing";
+
+import { getExtraName } from "@/lib/extra-labels";
+import { isEventTime } from "@/lib/event-time";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2026-01-28.clover",
@@ -35,22 +40,6 @@ interface CheckoutBody {
   cashPaymentOption?: "deposit" | "full" | null;
   locale?: string;
 }
-
-// Extra display names for Stripe line items
-const EXTRA_NAMES: Record<ExtraId, string> = {
-  rice: "Rice",
-  beans: "Beans",
-  quesadillas: "Quesadillas (Flour Tortilla)",
-  jalapenos: "Jalapeños & Grilled Onions",
-  guacamole: "Fresh Guacamole & Chips",
-  salsa: "Fresh Salsa & Chips",
-  agua: "Agua Fresca",
-  salad: "Salad",
-  burgers: "Cheeseburgers",
-  hotdogs: "Hot Dogs",
-  extraTime: "Extra Time (per hour)",
-  extraMeat: "Extra Meat",
-};
 
 export async function POST(request: NextRequest) {
   try {
@@ -93,6 +82,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (!isValidPackage(serviceType, guestCount)) {
+      return NextResponse.json({ error: "Invalid package", code: "INVALID_PACKAGE" }, { status: 400 });
+    }
+    if (!isEventTime(eventTime)) {
+      return NextResponse.json({ error: "Invalid event time", code: "INVALID_TIME" }, { status: 400 });
+    }
+    if (!extras || typeof extras !== "object" || Array.isArray(extras) ||
+      Object.entries(extras).some(([id, quantity]) =>
+        !EXTRA_OPTIONS.some((extra) => extra.id === id) || !Number.isSafeInteger(quantity) || quantity! < 0)) {
+      return NextResponse.json({ error: "Invalid extras", code: "INVALID_EXTRAS" }, { status: 400 });
+    }
+
     // Fetch payment settings from DB (server-side truth)
     const { data: paySettings } = await supabaseAdmin
       .from("settings")
@@ -118,7 +119,7 @@ export async function POST(request: NextRequest) {
     if (paymentMethod === "cash") {
       chargeAmount = 0;
       if (cashPaymentOption === "deposit") {
-        depositAmount = Math.round(serverTotal * serverCashDepositPercent / 100 * 100) / 100;
+        depositAmount = calculateDeposit(serverTotal, serverCashDepositPercent);
         balanceDue = serverTotal - depositAmount;
       } else {
         // full payment
@@ -131,7 +132,7 @@ export async function POST(request: NextRequest) {
       chargeAmount = serverTotal + surchargeAmount + processingFee;
     }
 
-    const totalCents = chargeAmount * 100;
+    const totalCents = Math.round(chargeAmount * 100);
 
     // Build Stripe line items
     const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [
@@ -139,8 +140,10 @@ export async function POST(request: NextRequest) {
         price_data: {
           currency: "usd",
           product_data: {
-            name: `${serviceType === "2hr" ? "2-Hour" : "3-Hour"} Taco Catering`,
-            description: `${guestCount} guests · ${meats.join(", ")}`,
+            name: locale === "es"
+              ? `Taquiza de ${serviceType === "2hr" ? 2 : 3} Horas`
+              : `${serviceType === "2hr" ? "2-Hour" : "3-Hour"} Taco Catering`,
+            description: `${guestCount} ${locale === "es" ? "invitados" : "guests"} · ${meats.join(", ")}`,
           },
           unit_amount: basePrice * 100,
         },
@@ -153,16 +156,16 @@ export async function POST(request: NextRequest) {
       const qty = extras[extra.id] || 0;
       if (qty > 0) {
         const productData: Stripe.Checkout.SessionCreateParams.LineItem.PriceData.ProductData = {
-          name: EXTRA_NAMES[extra.id],
+          name: getExtraName(extra.id, locale),
         };
         // Add flavor info to Agua Fresca line item
         const flavorEntries = Object.entries(aguaFlavors).filter(([, q]) => (q || 0) > 0);
         if (extra.id === "agua" && flavorEntries.length > 0) {
-          productData.description = `Flavors: ${flavorEntries.map(([f, q]) => `${f} ×${q}`).join(", ")}`;
+          productData.description = `${locale === "es" ? "Sabores" : "Flavors"}: ${flavorEntries.map(([f, q]) => `${f} ×${q}`).join(", ")}`;
         }
         const meatEntries = Object.entries(extraMeatSelections).filter(([, q]) => (q || 0) > 0);
         if (extra.id === "extraMeat" && meatEntries.length > 0) {
-          productData.description = `Meats: ${meatEntries.map(([m, q]) => `${m} ×${q}`).join(", ")}`;
+          productData.description = `${locale === "es" ? "Carnes" : "Meats"}: ${meatEntries.map(([m, q]) => `${m} ×${q}`).join(", ")}`;
         }
         lineItems.push({
           price_data: {
@@ -212,6 +215,7 @@ export async function POST(request: NextRequest) {
       .map(([id, qty]) => ({
         id,
         quantity: qty,
+        unitPrice: EXTRA_OPTIONS.find((extra) => extra.id === id)!.price,
         ...(id === "agua" && Object.keys(aguaFlavors).length > 0 && { flavors: aguaFlavors }),
         ...(id === "extraMeat" && Object.keys(extraMeatSelections).length > 0 && { meatSelections: extraMeatSelections }),
       }));
@@ -322,6 +326,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Card payment: normal Stripe checkout
+    if (process.env.APP_ENV === "sandbox" && process.env.STRIPE_SECRET_KEY === "sk_test_not_configured") {
+      return NextResponse.json({ error: "Stripe test key required", code: "SANDBOX_STRIPE_REQUIRED" }, { status: 503 });
+    }
     const cardBookingNumber = generateBookingNumber(eventDate);
     const session = await stripe.checkout.sessions.create({
       line_items: lineItems,
