@@ -881,6 +881,7 @@ function PipelineSection({
   dateLocale,
   borderColor,
 }: PipelineSectionProps) {
+  const tExtras = useTranslations("extras.items");
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
@@ -970,7 +971,7 @@ function PipelineSection({
                       {(booking.extras || []).length > 0 ? (
                         <div className="flex flex-wrap gap-1">
                           {booking.extras.map((e) => (
-                            <span key={e.id} className="inline-block px-2 py-0.5 text-[11px] bg-cream/8 text-cream/70 rounded-full">{e.id} x{e.quantity}</span>
+                            <span key={e.id} className="inline-block px-2 py-0.5 text-[11px] bg-cream/8 text-cream/70 rounded-full">{tExtras.has(e.id) ? tExtras(e.id) : e.id} x{e.quantity}</span>
                           ))}
                         </div>
                       ) : (

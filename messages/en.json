@@ -90,7 +90,6 @@
     "bookPackage": "Book This Package",
     "moreTimeLabel": "Need More Time?",
     "moreTimeText": "Add an extra hour for just",
-    "moreTimePrice": "$40",
     "moreTimeNote": "We arrive 1 hour early for setup — this does not count toward your service time.",
     "includesLabel": "Included with Every Package",
     "included": {
@@ -118,7 +117,7 @@
       "guacamole": "Fresh Guacamole & Chips",
       "salsa": "Fresh Salsa & Chips",
       "agua": "Agua Fresca",
-      "aguaNote": "Horchata, Jamaica, Limón, Piña, Tamarindo",
+      "aguaNote": "Horchata, Jamaica, Limón, Piña, Tamarindo. Includes ice and cups.",
       "aguaFlavors": {
         "horchata": "Horchata",
         "jamaica": "Jamaica",
@@ -127,16 +126,17 @@
         "pina": "Piña"
       },
       "salad": "Salad",
-      "burgers": "Cheeseburgers",
-      "hotdogs": "Hot Dogs",
+      "burgers": "Hamburgers",
+      "hotdogs": "Plain Hot Dogs",
       "extraTime": "Extra Time",
       "extraTimeNote": "Add extra hours to your service package",
       "extraMeat": "Extra Meat",
-      "extraMeatNote": "Each extra meat is approx. 8-10 lbs"
+      "extraMeatNote": "Each extra meat is approx. 8-10 lbs",
+      "baconHotdogs": "Hot Dogs with Bacon",
+      "chips": "Chips Only"
     },
     "prices": {
-      "each4": "$4 each",
-      "each2": "$2 each"
+      "each": "${price} each"
     }
   },
   "gallery": {
@@ -167,8 +167,8 @@
     "areaLabel": "Service Area",
     "area": "Greater Los Angeles Area",
     "factsLabel": "Quick Facts",
-    "fact1": "Events from 25 to 200+ guests",
-    "fact2": "Packages starting at $395",
+    "fact1": "Events from 50 to 200+ guests",
+    "fact2": "Packages starting at $595",
     "fact3": "Full setup and cleanup included",
     "fact4": "Fresh on-site preparation"
   },
@@ -220,7 +220,7 @@
     "selectDate": "Select Event Date",
     "selectDateDesc": "Choose a date for your event. We book up to 3 events per day.",
     "selectTime": "Select a Time",
-    "selectTimeDesc": "What time should the event start?",
+    "selectTimeDesc": "Choose a start hour, then adjust the minutes and AM/PM if needed.",
     "eventTime": "Event Time",
     "timeRequired": "Please select a time for your event",
     "setupArrivalNote": "Our team will arrive at {arrivalTime} to set up — this hour is not charged.",
@@ -237,7 +237,7 @@
     "upTo": "Up to",
     "guests": "guests",
     "selectMeats": "Choose Your Meats",
-    "selectMeatsDesc": "Select 4 proteins for your event — you can pick the same one more than once! Each is prepared fresh on-site.",
+    "selectMeatsDesc": "Select exactly 4 proteins for your event — you can pick the same one more than once! Each is prepared fresh on-site. If you want extra meat, you can add it on the next screen under Add Extras.",
     "meatsCount": "{count} of 4 selected",
     "selectExtras": "Add Extras",
     "selectExtrasDesc": "Optional add-ons to complement your taco spread. Each serves 40–50 people unless noted.",
@@ -311,7 +311,18 @@
     "sendVia": "Send via",
     "cashMemoInstruction": "Include your booking reference \"{ref}\" in the payment memo.",
     "balanceDueOnEventLabel": "Balance due on event day",
-    "balanceDueLabel": "Balance due on event day"
+    "balanceDueLabel": "Balance due on event day",
+    "timeHour": "Hour",
+    "timeMinute": "Minutes",
+    "timePeriod": "AM / PM",
+    "chooseHour": "Choose",
+    "increaseExtra": "Add {name}",
+    "decreaseExtra": "Remove {name}",
+    "invalidPackage": "Please select an available package and guest count.",
+    "invalidTime": "Please select a complete start time.",
+    "invalidExtras": "Please review your extras and quantities.",
+    "add": "Add",
+    "sandboxStripeRequired": "Card testing needs a Stripe test key. You can test cash bookings now; do not send money."
   },
   "admin": {
     "loading": "Loading...",

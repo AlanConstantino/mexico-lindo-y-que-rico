@@ -1,4 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
+import { assertSandboxSafety } from "@/lib/sandbox-safety";
+
+assertSandboxSafety();
 
 // Browser client — uses publishable key (new format: sb_publishable_...)
 export const supabase = createClient(

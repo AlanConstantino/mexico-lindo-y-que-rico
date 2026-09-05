@@ -23,6 +23,7 @@ export async function generateMetadata({
   return {
     title: t("title"),
     description: t("description"),
+    ...(process.env.APP_ENV === "sandbox" && { robots: { index: false, follow: false } }),
     keywords: [
       "taco catering",
       "Los Angeles",
@@ -76,9 +77,16 @@ export default async function LocaleLayout({
           rel="stylesheet"
         />
       </head>
-      <body>
+      <body className={process.env.APP_ENV === "sandbox" ? "pb-16" : undefined}>
         <NextIntlClientProvider messages={messages}>
           {children}
+          {process.env.APP_ENV === "sandbox" && (
+            <aside className="fixed bottom-0 inset-x-0 z-[100] bg-amber-300 px-4 py-3 text-center text-sm font-semibold text-black">
+              {locale === "es"
+                ? "PRUEBAS — Reservaciones de prueba. No envíes dinero. Los correos se guardan en la bandeja local."
+                : "SANDBOX — Test bookings. Do not send money. Emails are saved in the local inbox."}
+            </aside>
+          )}
         </NextIntlClientProvider>
       </body>
     </html>

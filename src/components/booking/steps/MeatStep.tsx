@@ -108,7 +108,7 @@ export default function MeatStep({ data, updateData }: MeatStepProps) {
                       : "bg-cream/5 text-cream/20 border border-cream/5 cursor-not-allowed"
                   }`}
                 >
-                  + Add
+                  + {t("add")}
                 </button>
               </div>
             </div>

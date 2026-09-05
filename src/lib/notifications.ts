@@ -1,25 +1,7 @@
-import { Resend } from "resend";
-import { EXTRA_OPTIONS } from "@/lib/pricing";
+import { sendEmail } from "@/lib/send-email";
+import { getBookedExtraPrice, type BookedExtra } from "@/lib/pricing";
+import { getExtraName } from "@/lib/extra-labels";
 import { getTranslations, emailTranslations, type SupportedLocale } from "@/lib/email-translations";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-/** Map DB extras format to display format for emails */
-// Display names for extras in emails (not locale-dependent — used in both EN/ES owner emails)
-const EXTRA_DISPLAY_NAMES: Record<string, { en: string; es: string }> = {
-  rice: { en: "Rice", es: "Arroz" },
-  beans: { en: "Beans", es: "Frijoles" },
-  quesadillas: { en: "Quesadillas (Flour Tortilla)", es: "Quesadillas (Tortilla de Harina)" },
-  jalapenos: { en: "Jalapeños & Grilled Onions", es: "Jalapeños y Cebollas Asadas" },
-  guacamole: { en: "Fresh Guacamole & Chips", es: "Guacamole Fresco y Totopos" },
-  salsa: { en: "Fresh Salsa & Chips", es: "Salsa Fresca y Totopos" },
-  agua: { en: "Agua Fresca", es: "Agua Fresca" },
-  salad: { en: "Salad", es: "Ensalada" },
-  burgers: { en: "Cheeseburgers", es: "Hamburguesas con Queso" },
-  hotdogs: { en: "Hot Dogs", es: "Hot Dogs" },
-  extraTime: { en: "Extra Time", es: "Tiempo Extra" },
-  extraMeat: { en: "Extra Meat", es: "Carne Extra" },
-};
 
 const MEAT_DISPLAY_NAMES: Record<string, { en: string; es: string }> = {
   asada: { en: "Asada", es: "Asada" },
@@ -48,15 +30,13 @@ export interface EmailExtra {
 }
 
 export function mapExtrasForEmail(
-  dbExtras?: { id: string; quantity: number; flavors?: Record<string, number> | string[]; meatSelections?: Record<string, number> }[],
+  dbExtras?: BookedExtra[],
   locale: "en" | "es" = "en"
 ): EmailExtra[] {
   if (!dbExtras || dbExtras.length === 0) return [];
   return dbExtras.map((e) => {
-    const option = EXTRA_OPTIONS.find((o) => o.id === e.id);
-    const displayNames = EXTRA_DISPLAY_NAMES[e.id];
-    const name = displayNames ? displayNames[locale] : (e.id.charAt(0).toUpperCase() + e.id.slice(1));
-    const unitPrice = option?.price ?? 0;
+    const name = getExtraName(e.id, locale);
+    const unitPrice = getBookedExtraPrice(e);
     const total = unitPrice * e.quantity;
     
     // Parse agua flavors
@@ -69,6 +49,10 @@ export function mapExtrasForEmail(
           name: FLAVOR_DISPLAY_NAMES[flavorId]?.[locale] || flavorId,
           quantity: qty,
         }));
+    }
+
+    if (e.id === "agua" && Array.isArray(e.flavors)) {
+      flavors = e.flavors.map((id) => ({ name: FLAVOR_DISPLAY_NAMES[id]?.[locale] || id, quantity: 1 }));
     }
 
     // Parse extra meat selections
@@ -309,7 +293,7 @@ export async function sendBookingNotification(
   `;
 
   try {
-    await resend.emails.send({
+    await sendEmail({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: booking.overrideRecipient || "mx.lindo.y.que.rico.catering@gmail.com",
       subject: `${isCash ? "⚠️" : "✅"} Nueva Reservación — ${booking.customerName} — ${formattedDate} — ${isCash ? "Efectivo (Llamar)" : "Tarjeta (Pagado)"}`,
@@ -493,7 +477,7 @@ export async function sendCustomerConfirmation(
   `;
 
   try {
-    await resend.emails.send({
+    await sendEmail({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: booking.customerEmail,
       subject: t.confirmation.subject(formattedDate),
@@ -533,29 +517,16 @@ interface DayBeforeReminderData extends ReminderData {
 }
 
 function formatExtrasForReminder(
-  extras?: { id: string; quantity: number; flavors?: Record<string, number> | string[]; meatSelections?: Record<string, number> }[]
+  extras?: BookedExtra[],
+  locale: SupportedLocale = "en"
 ): { html: string; text: string } {
   if (!extras || extras.length === 0) return { html: "", text: "" };
-
-  const lines = extras.map((e) => {
-    const option = EXTRA_OPTIONS.find((o) => o.id === e.id);
-    const name = e.id.charAt(0).toUpperCase() + e.id.slice(1);
-    const price = option ? `$${(e.quantity * option.price).toLocaleString()}` : "";
-    let flavorNote = "";
-    if (e.id === "agua" && e.flavors) {
-      if (Array.isArray(e.flavors)) {
-        if (e.flavors.length > 0) flavorNote = ` (${e.flavors.join(", ")})`;
-      } else {
-        const entries = Object.entries(e.flavors).filter(([, q]) => q > 0);
-        if (entries.length > 0) flavorNote = ` (${entries.map(([f, q]) => `${f} ×${q}`).join(", ")})`;
-      }
-    }
-    if (e.id === "extraMeat" && e.meatSelections && typeof e.meatSelections === "object") {
-      const entries = Object.entries(e.meatSelections).filter(([, q]) => q > 0);
-      if (entries.length > 0) flavorNote = ` (${entries.map(([m, q]) => `${m} ×${q}`).join(", ")})`;
-    }
-    return { name: `${name}${flavorNote}`, qty: e.quantity, price };
-  });
+  const lines = mapExtrasForEmail(extras, locale).map((extra) => ({
+    name: extra.name + (extra.flavors?.length
+      ? ` (${extra.flavors.map((flavor) => `${flavor.name} ×${flavor.quantity}`).join(", ")})` : ""),
+    qty: extra.quantity,
+    price: extra.price,
+  }));
 
   const html = `
     <div style="background: white; border-radius: 12px; padding: 24px; margin-bottom: 20px; border-left: 4px solid #7A8B6F;">
@@ -578,7 +549,7 @@ export async function sendEventReminder(
   const formattedDate = emailTranslations.formatDate(data.eventDate, locale);
   const formattedPrice = `$${(data.totalPrice / 100).toFixed(2)}`;
   const svcLabel = emailTranslations.serviceLabel(data.serviceType, locale);
-  const { html: extrasHtml, text: extrasText } = formatExtrasForReminder(data.extras);
+  const { html: extrasHtml, text: extrasText } = formatExtrasForReminder(data.extras, locale);
   const reminderTimeDisplay = data.eventTime ? formatTime(data.eventTime) : null;
 
   const textMessage = [
@@ -688,7 +659,7 @@ export async function sendEventReminder(
   `;
 
   try {
-    await resend.emails.send({
+    await sendEmail({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: data.customerEmail,
       subject: t.reminder.subject(data.reminderDays),
@@ -713,7 +684,7 @@ export async function sendOwnerReminder(
     day: "numeric",
   });
   const formattedPrice = `$${(data.totalPrice / 100).toFixed(2)}`;
-  const { text: extrasText } = formatExtrasForReminder(data.extras);
+  const { text: extrasText } = formatExtrasForReminder(data.extras, "es");
   const ownerTimeDisplay = data.eventTime ? formatTime(data.eventTime) : null;
 
   const textMessage = [
@@ -771,7 +742,7 @@ export async function sendOwnerReminder(
   `;
 
   try {
-    await resend.emails.send({
+    await sendEmail({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: data.ownerEmail,
       subject: `Evento Próximo — ${data.customerName} — ${formattedDate}`,
@@ -796,7 +767,7 @@ export async function sendDayBeforeReminder(
   const formattedPrice = `$${(data.totalPrice / 100).toFixed(2)}`;
   const formattedFee = `$${(data.cancellationFee / 100).toFixed(2)}`;
   const svcLabel = emailTranslations.serviceLabel(data.serviceType, locale);
-  const { html: extrasHtml, text: extrasText } = formatExtrasForReminder(data.extras);
+  const { html: extrasHtml, text: extrasText } = formatExtrasForReminder(data.extras, locale);
   const dayBeforeTimeDisplay = data.eventTime ? formatTime(data.eventTime) : null;
 
   const textMessage = [
@@ -871,7 +842,7 @@ export async function sendDayBeforeReminder(
   `;
 
   try {
-    await resend.emails.send({
+    await sendEmail({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: data.customerEmail,
       subject: t.dayBefore.subject(),
@@ -929,7 +900,7 @@ export async function sendCancellationConfirmation(data: {
   `;
 
   try {
-    await resend.emails.send({
+    await sendEmail({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: data.customerEmail,
       subject: t.cancellation.subject(formattedDate),
@@ -1046,7 +1017,7 @@ export async function sendOwnerCancellationNotice(data: {
   `;
 
   try {
-    await resend.emails.send({
+    await sendEmail({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: data.ownerEmail,
       subject: `❌ Reservación Cancelada — ${data.customerName} — ${formattedDate}`,
@@ -1099,7 +1070,7 @@ export async function sendRescheduleConfirmation(data: {
   `;
 
   try {
-    await resend.emails.send({
+    await sendEmail({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: data.customerEmail,
       subject: t.reschedule.subject(newFormatted),
@@ -1223,7 +1194,7 @@ export async function sendOwnerRescheduleNotice(data: {
   `;
 
   try {
-    await resend.emails.send({
+    await sendEmail({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: data.ownerEmail,
       subject: `📅 Reservación Reprogramada — ${data.customerName} — ${newFormatted}`,
@@ -1477,7 +1448,7 @@ export async function sendCashPendingConfirmation(
   `;
 
   try {
-    await resend.emails.send({
+    await sendEmail({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: booking.customerEmail,
       subject: t.cashPending.subject(),
@@ -1527,7 +1498,7 @@ export async function sendOwnerInitiatedCancellation(data: {
   `;
 
   try {
-    await resend.emails.send({
+    await sendEmail({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: data.customerEmail,
       subject: t.ownerCancellation.subject(formattedDate),
@@ -1575,7 +1546,7 @@ export async function sendAutoCancelEmail(data: {
   `;
 
   try {
-    await resend.emails.send({
+    await sendEmail({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: data.customerEmail,
       subject: t.autoCancellation.subject,
@@ -1669,7 +1640,7 @@ export async function sendEventConfirmedEmail(data: {
   `;
 
   try {
-    await resend.emails.send({
+    await sendEmail({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: data.customerEmail,
       subject: t.eventConfirmed.subject(formattedDate),
@@ -1753,7 +1724,7 @@ export async function sendAutoConfirmRequest(data: {
   `;
 
   try {
-    await resend.emails.send({
+    await sendEmail({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: data.customerEmail,
       subject: t.autoConfirmRequest.subject(formattedDate, data.daysUntilEvent),
@@ -1811,7 +1782,7 @@ export async function sendOwnerNoResponseNotice(data: {
   `;
 
   try {
-    await resend.emails.send({
+    await sendEmail({
       from: "México Lindo Y Que Rico <bookings@booking.que.rico.catering>",
       to: data.ownerEmail,
       subject: `⚠️ Sin Respuesta: Evento de ${data.customerName} el ${formattedDate}`,
