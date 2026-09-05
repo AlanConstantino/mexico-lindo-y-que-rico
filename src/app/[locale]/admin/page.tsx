@@ -403,29 +403,29 @@ export default function AdminPage() {
   const statusColor = (status: string) => {
     switch (status) {
       case "confirmed":
-        return "bg-teal/20 text-teal-light border border-teal/20";
+        return "bg-teal/20 text-blue-300 border border-teal/20";
       case "pending":
         return "bg-amber/15 text-amber border border-amber/20";
       case "cancelled":
-        return "bg-terracotta/15 text-terracotta-light border border-terracotta/20";
+        return "bg-terracotta/15 text-red-400 border border-terracotta/20";
       default:
-        return "bg-cream/10 text-cream/60 border border-cream/10";
+        return "bg-cream/10 text-cream/90 border border-cream/10";
     }
   };
 
   const paymentColor = (status: string) => {
     switch (status) {
       case "paid":
-        return "bg-teal/15 text-teal-light border border-teal/20";
+        return "bg-teal/15 text-blue-300 border border-teal/20";
       default:
-        return "bg-cream/8 text-cream/50 border border-cream/10";
+        return "bg-cream/8 text-cream/80 border border-cream/10";
     }
   };
 
   if (checking) {
     return (
       <div className="min-h-screen bg-navy flex items-center justify-center">
-        <div className="text-cream/50">{t("loading")}</div>
+        <div className="text-cream/80">{t("loading")}</div>
       </div>
     );
   }
@@ -439,24 +439,24 @@ export default function AdminPage() {
             <h1 className="font-heading text-amber text-3xl mb-2">
               {t("login.title")}
             </h1>
-            <p className="text-cream/50 text-sm">{t("login.subtitle")}</p>
+            <p className="text-cream/80 text-base">{t("login.subtitle")}</p>
           </div>
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-sm text-cream/70 mb-1.5">
+              <label className="block text-base text-cream/90 mb-1.5">
                 {t("login.password")}
               </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream placeholder:text-cream/30 focus:outline-none focus:border-amber/50 transition-colors"
+                className="w-full px-4 py-3 bg-navy-light border border-cream/10 rounded-lg text-cream placeholder:text-cream/70 focus:outline-none focus:border-amber/50 transition-colors"
                 placeholder="••••••••"
                 autoFocus
               />
             </div>
             {loginError && (
-              <p className="text-terracotta text-sm">{loginError}</p>
+              <p className="text-red-400 text-base">{loginError}</p>
             )}
             <button
               type="submit"
@@ -479,21 +479,21 @@ export default function AdminPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
 
         {/* ─── Stats Cards ─── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 break-words">
           {/* Total Revenue */}
           <div className="relative overflow-hidden bg-navy-light rounded-2xl p-5 border border-cream/5">
             <div className="absolute inset-0 bg-gradient-to-br from-amber/[0.07] to-transparent pointer-events-none" />
             <div className="relative">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-cream/50 text-xs uppercase tracking-wider font-medium">
+                <span className="text-cream/80 text-sm uppercase tracking-wider font-medium">
                   {t("stats.revenue")}
                 </span>
-                <span className="text-amber/60"><IconRevenue /></span>
+                <span className="text-amber"><IconRevenue /></span>
               </div>
               <p className="text-2xl font-bold text-cream mb-1">
                 ${(totalRevenue / 100).toLocaleString("en-US", { minimumFractionDigits: 2 })}
               </p>
-              <p className="text-xs text-teal-light flex items-center gap-1">
+              <p className="text-sm text-blue-300 flex items-center gap-1">
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 9V3M6 3L3 6M6 3L9 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 {t("stats.changeRevenue")}
               </p>
@@ -505,13 +505,13 @@ export default function AdminPage() {
             <div className="absolute inset-0 bg-gradient-to-br from-terracotta/[0.07] to-transparent pointer-events-none" />
             <div className="relative">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-cream/50 text-xs uppercase tracking-wider font-medium">
+                <span className="text-cream/80 text-sm uppercase tracking-wider font-medium">
                   {t("stats.totalBookings")}
                 </span>
-                <span className="text-terracotta/60"><IconBookings /></span>
+                <span className="text-red-400"><IconBookings /></span>
               </div>
               <p className="text-2xl font-bold text-cream mb-1">{totalBookings}</p>
-              <p className="text-xs text-teal-light flex items-center gap-1">
+              <p className="text-sm text-blue-300 flex items-center gap-1">
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 9V3M6 3L3 6M6 3L9 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 {t("stats.changeBookings")}
               </p>
@@ -523,13 +523,13 @@ export default function AdminPage() {
             <div className="absolute inset-0 bg-gradient-to-br from-teal/[0.07] to-transparent pointer-events-none" />
             <div className="relative">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-cream/50 text-xs uppercase tracking-wider font-medium">
+                <span className="text-cream/80 text-sm uppercase tracking-wider font-medium">
                   {t("stats.upcoming")}
                 </span>
-                <span className="text-teal/60"><IconUpcoming /></span>
+                <span className="text-blue-300"><IconUpcoming /></span>
               </div>
               <p className="text-2xl font-bold text-amber mb-1">{upcomingEvents}</p>
-              <p className="text-xs text-teal-light flex items-center gap-1">
+              <p className="text-sm text-blue-300 flex items-center gap-1">
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 9V3M6 3L3 6M6 3L9 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 {t("stats.changeUpcoming")}
               </p>
@@ -541,15 +541,15 @@ export default function AdminPage() {
             <div className="absolute inset-0 bg-gradient-to-br from-cream/[0.04] to-transparent pointer-events-none" />
             <div className="relative">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-cream/50 text-xs uppercase tracking-wider font-medium">
+                <span className="text-cream/80 text-sm uppercase tracking-wider font-medium">
                   {t("stats.avgBooking")}
                 </span>
-                <span className="text-cream/40"><IconAvg /></span>
+                <span className="text-cream/80"><IconAvg /></span>
               </div>
               <p className="text-2xl font-bold text-cream mb-1">
                 ${(avgBookingValue / 100).toLocaleString("en-US", { minimumFractionDigits: 2 })}
               </p>
-              <p className="text-xs text-teal-light flex items-center gap-1">
+              <p className="text-sm text-blue-300 flex items-center gap-1">
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 9V3M6 3L3 6M6 3L9 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 {t("stats.changeAvg")}
               </p>
@@ -561,14 +561,14 @@ export default function AdminPage() {
         <div className="bg-navy-light rounded-2xl border border-cream/5 p-4">
           <div className="flex flex-wrap gap-4 justify-center sm:justify-start">
             {awaitingPayment > 0 && (
-              <span className="text-sm text-cream/70">💰 <strong className="text-amber">{awaitingPayment}</strong> {t("pipeline.awaitingPayment")}</span>
+              <span className="text-base text-cream/90">💰 <strong className="text-amber">{awaitingPayment}</strong> {t("pipeline.awaitingPayment")}</span>
             )}
             {unconfirmedCount > 0 && (
-              <span className="text-sm text-cream/70">📋 <strong className="text-terracotta-light">{unconfirmedCount}</strong> {t("pipeline.unconfirmed")}</span>
+              <span className="text-base text-cream/90">📋 <strong className="text-red-400">{unconfirmedCount}</strong> {t("pipeline.unconfirmed")}</span>
             )}
-            <span className="text-sm text-cream/70">✅ <strong className="text-teal-light">{pipelineBookings.readyToGo.length}</strong> {t("pipeline.readyToGo")}</span>
+            <span className="text-base text-cream/90">✅ <strong className="text-blue-300">{pipelineBookings.readyToGo.length}</strong> {t("pipeline.readyToGo")}</span>
             {eventsThisWeek > 0 && (
-              <span className="text-sm text-cream/70">📅 <strong className="text-cream">{eventsThisWeek}</strong> {t("pipeline.thisWeek")}</span>
+              <span className="text-base text-cream/90">📅 <strong className="text-cream">{eventsThisWeek}</strong> {t("pipeline.thisWeek")}</span>
             )}
           </div>
         </div>
@@ -577,7 +577,7 @@ export default function AdminPage() {
         <div className="bg-navy-light rounded-2xl border border-cream/5 p-4">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1 relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-cream/30 flex items-center justify-center w-5 h-5">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-cream/80 flex items-center justify-center w-5 h-5">
                 <IconSearch />
               </span>
               <input
@@ -585,13 +585,13 @@ export default function AdminPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder={t("dashboard.searchPlaceholder")}
-                className="w-full pl-10 pr-3 py-2.5 bg-navy border border-cream/10 rounded-lg text-sm text-cream placeholder:text-cream/30 focus:outline-none focus:border-amber/50 transition-colors"
+                className="w-full pl-10 pr-3 py-2.5 bg-navy border border-cream/10 rounded-lg text-base text-cream placeholder:text-cream/70 focus:outline-none focus:border-amber/50 transition-colors"
               />
             </div>
             <select
               value={filterPayment}
               onChange={(e) => setFilterPayment(e.target.value)}
-              className="px-3 py-2.5 bg-navy border border-cream/10 rounded-lg text-sm text-cream focus:outline-none focus:border-amber/50"
+              className="px-3 py-2.5 bg-navy border border-cream/10 rounded-lg text-base text-cream focus:outline-none focus:border-amber/50"
             >
               <option value="all">{t("filters.all")} {t("filters.paymentType")}</option>
               <option value="card">{t("filters.card")}</option>
@@ -599,7 +599,7 @@ export default function AdminPage() {
             </select>
             <button
               onClick={downloadCSV}
-              className="px-4 py-2.5 bg-cream/5 text-cream/60 text-sm rounded-lg hover:bg-cream/10 hover:text-cream transition-colors"
+              className="px-4 py-2.5 bg-cream/5 text-cream/90 text-base rounded-lg hover:bg-cream/10 hover:text-cream transition-colors"
             >
               {t("filters.csv")}
             </button>
@@ -608,7 +608,7 @@ export default function AdminPage() {
 
         {/* ─── Pipeline Sections ─── */}
         {loading ? (
-          <div className="text-center py-12 text-cream/50">{t("loading")}</div>
+          <div className="text-center py-12 text-cream/80">{t("loading")}</div>
         ) : (
           <div className="space-y-4">
             {/* Needs Action */}
@@ -718,15 +718,15 @@ export default function AdminPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setConfirmDialogBookingId(null)}>
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
           <div
-            className="relative bg-charcoal border border-cream/10 rounded-2xl p-6 max-w-md w-full shadow-2xl"
+            className="relative bg-navy border border-cream/10 rounded-2xl p-6 max-w-md w-full shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="text-cream text-lg font-bold mb-3">{t("actions.confirmDialogTitle")}</h3>
-            <p className="text-cream/60 text-sm mb-6 leading-relaxed">{t("actions.confirmDialogMessage")}</p>
+            <p className="text-cream/90 text-base mb-6 leading-relaxed">{t("actions.confirmDialogMessage")}</p>
             <div className="flex gap-3 justify-end">
               <button
                 onClick={() => setConfirmDialogBookingId(null)}
-                className="px-4 py-2 text-cream/50 text-sm font-medium rounded-lg hover:bg-cream/5 transition-colors"
+                className="px-4 py-2 text-cream/80 text-base font-medium rounded-lg hover:bg-cream/5 transition-colors"
               >
                 {t("actions.confirmDialogCancel")}
               </button>
@@ -736,7 +736,7 @@ export default function AdminPage() {
                   setConfirmDialogBookingId(null);
                 }}
                 disabled={updatingId === confirmDialogBookingId}
-                className="px-4 py-2 bg-teal/20 text-teal-light text-sm font-medium rounded-lg hover:bg-teal/30 border border-teal/30 transition-colors disabled:opacity-50"
+                className="px-4 py-2 bg-teal/20 text-blue-300 text-base font-medium rounded-lg hover:bg-teal/30 border border-teal/30 transition-colors disabled:opacity-50"
               >
                 {t("actions.confirmDialogYes")}
               </button>
@@ -750,15 +750,15 @@ export default function AdminPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setCancelDialogBookingId(null)}>
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
           <div
-            className="relative bg-charcoal border border-cream/10 rounded-2xl p-6 max-w-md w-full shadow-2xl"
+            className="relative bg-navy border border-cream/10 rounded-2xl p-6 max-w-md w-full shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="text-cream text-lg font-bold mb-3">{t("actions.cancelDialogTitle")}</h3>
-            <p className="text-cream/60 text-sm mb-6 leading-relaxed">{t("actions.cancelDialogMessage")}</p>
+            <p className="text-cream/90 text-base mb-6 leading-relaxed">{t("actions.cancelDialogMessage")}</p>
             <div className="flex gap-3 justify-end">
               <button
                 onClick={() => setCancelDialogBookingId(null)}
-                className="px-4 py-2 text-cream/50 text-sm font-medium rounded-lg hover:bg-cream/5 transition-colors"
+                className="px-4 py-2 text-cream/80 text-base font-medium rounded-lg hover:bg-cream/5 transition-colors"
               >
                 {t("actions.confirmDialogCancel")}
               </button>
@@ -768,7 +768,7 @@ export default function AdminPage() {
                   setCancelDialogBookingId(null);
                 }}
                 disabled={updatingId === cancelDialogBookingId}
-                className="px-4 py-2 bg-terracotta/20 text-terracotta-light text-sm font-medium rounded-lg hover:bg-terracotta/30 border border-terracotta/30 transition-colors disabled:opacity-50"
+                className="px-4 py-2 bg-terracotta/20 text-red-400 text-base font-medium rounded-lg hover:bg-terracotta/30 border border-terracotta/30 transition-colors disabled:opacity-50"
               >
                 {t("actions.cancelDialogYes")}
               </button>
@@ -782,15 +782,15 @@ export default function AdminPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setDeleteDialogBookingId(null)}>
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
           <div
-            className="relative bg-charcoal border border-cream/10 rounded-2xl p-6 max-w-md w-full shadow-2xl"
+            className="relative bg-navy border border-cream/10 rounded-2xl p-6 max-w-md w-full shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="text-red-400 text-lg font-bold mb-3">{t("actions.deleteDialogTitle")}</h3>
-            <p className="text-cream/60 text-sm mb-6 leading-relaxed">{t("actions.deleteDialogMessage")}</p>
+            <p className="text-cream/90 text-base mb-6 leading-relaxed">{t("actions.deleteDialogMessage")}</p>
             <div className="flex gap-3 justify-end">
               <button
                 onClick={() => setDeleteDialogBookingId(null)}
-                className="px-4 py-2 text-cream/50 text-sm font-medium rounded-lg hover:bg-cream/5 transition-colors"
+                className="px-4 py-2 text-cream/80 text-base font-medium rounded-lg hover:bg-cream/5 transition-colors"
               >
                 {t("actions.confirmDialogCancel")}
               </button>
@@ -800,7 +800,7 @@ export default function AdminPage() {
                   setDeleteDialogBookingId(null);
                 }}
                 disabled={deletingId === deleteDialogBookingId}
-                className="px-4 py-2 bg-red-500/20 text-red-400 text-sm font-medium rounded-lg hover:bg-red-500/30 border border-red-500/30 transition-colors disabled:opacity-50"
+                className="px-4 py-2 bg-red-500/20 text-red-400 text-base font-medium rounded-lg hover:bg-red-500/30 border border-red-500/30 transition-colors disabled:opacity-50"
               >
                 {t("actions.deleteDialogYes")}
               </button>
@@ -817,11 +817,11 @@ function PaymentBadge({ status, t }: { status: string; t: (key: string) => strin
   const config = {
     unpaid: { label: t("pipeline.payUnpaid"), color: "bg-red-500/15 text-red-400 border-red-500/20", icon: "🔴" },
     deposit_received: { label: t("pipeline.payDeposit"), color: "bg-amber/15 text-amber border-amber/20", icon: "🟡" },
-    paid_in_full: { label: t("pipeline.payFull"), color: "bg-teal/15 text-teal-light border-teal/20", icon: "🟢" },
-  }[status] || { label: status, color: "bg-cream/10 text-cream/50 border-cream/10", icon: "⚪" };
+    paid_in_full: { label: t("pipeline.payFull"), color: "bg-teal/15 text-blue-300 border-teal/20", icon: "🟢" },
+  }[status] || { label: status, color: "bg-cream/10 text-cream/80 border-cream/10", icon: "⚪" };
 
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium border ${config.color}`}>
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-sm font-medium border ${config.color}`}>
       {config.icon} {config.label}
     </span>
   );
@@ -831,13 +831,13 @@ function PaymentBadge({ status, t }: { status: string; t: (key: string) => strin
 function EventBadge({ status, t }: { status: string; t: (key: string) => string }) {
   const config = {
     unconfirmed: { label: t("pipeline.eventUnconfirmed"), color: "bg-amber/15 text-amber border-amber/20", icon: "📋" },
-    confirmed: { label: t("pipeline.eventConfirmed"), color: "bg-teal/15 text-teal-light border-teal/20", icon: "✅" },
-    completed: { label: t("pipeline.eventCompleted"), color: "bg-cream/10 text-cream/60 border-cream/10", icon: "🎉" },
+    confirmed: { label: t("pipeline.eventConfirmed"), color: "bg-teal/15 text-blue-300 border-teal/20", icon: "✅" },
+    completed: { label: t("pipeline.eventCompleted"), color: "bg-cream/10 text-cream/90 border-cream/10", icon: "🎉" },
     cancelled: { label: t("pipeline.eventCancelled"), color: "bg-red-500/15 text-red-400 border-red-500/20", icon: "❌" },
-  }[status] || { label: status, color: "bg-cream/10 text-cream/50 border-cream/10", icon: "⚪" };
+  }[status] || { label: status, color: "bg-cream/10 text-cream/80 border-cream/10", icon: "⚪" };
 
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium border ${config.color}`}>
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-sm font-medium border ${config.color}`}>
       {config.icon} {config.label}
     </span>
   );
@@ -890,10 +890,10 @@ function PipelineSection({
         onClick={() => setIsOpen(!isOpen)}
         className="w-full px-5 py-4 flex items-center justify-between hover:bg-cream/[0.02] transition-colors"
       >
-        <span className="text-cream text-sm font-medium">
-          {title} <span className="text-cream/40 ml-1">({count})</span>
+        <span className="text-cream text-base font-medium">
+          {title} <span className="text-cream/80 ml-1">({count})</span>
         </span>
-        <span className={`text-cream/40 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}>
+        <span className={`text-cream/80 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}>
           ▾
         </span>
       </button>
@@ -909,15 +909,15 @@ function PipelineSection({
               >
                 {/* Top row: name + badges */}
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-                  <span className="text-cream font-medium text-sm">{booking.customer_name}</span>
-                  <div className="flex gap-1.5">
+                  <span className="text-cream font-medium text-base">{booking.customer_name}</span>
+                  <div className="flex flex-wrap gap-1.5">
                     <PaymentBadge status={booking.payment_status} t={t} />
                     <EventBadge status={booking.event_status} t={t} />
                   </div>
                 </div>
 
                 {/* Info row */}
-                <div className="flex flex-wrap items-center gap-3 text-sm text-cream/50">
+                <div className="flex flex-wrap items-center gap-3 text-base text-cream/80">
                   <span>
                     {new Date(booking.event_date + "T12:00:00").toLocaleDateString(dateLocale)}
                     {booking.event_time && ` · ${formatTime12(booking.event_time)}`}
@@ -926,15 +926,15 @@ function PipelineSection({
                   <span>{booking.service_type}</span>
                   <span className="text-cream font-medium">${(booking.total_price / 100).toFixed(2)}</span>
                   {booking.payment_type === "cash" && booking.cash_payment_method && (
-                    <span className="text-cream/30 text-xs">{t("via")} {booking.cash_payment_method}</span>
+                    <span className="text-cream/80 text-sm">{t("via")} {booking.cash_payment_method}</span>
                   )}
                   {booking.balance_due > 0 && booking.payment_status !== "paid_in_full" && (
-                    <span className="text-amber text-xs">{t("balanceDue", { amount: (booking.balance_due / 100).toFixed(2) })}</span>
+                    <span className="text-amber text-sm">{t("balanceDue", { amount: (booking.balance_due / 100).toFixed(2) })}</span>
                   )}
                 </div>
 
                 {booking.booking_number && (
-                  <div className="mt-2 text-[10px] text-cream/30 font-mono">Ref: {booking.booking_number}</div>
+                  <div className="mt-2 text-sm text-cream/80 font-mono">Ref: {booking.booking_number}</div>
                 )}
               </div>
 
@@ -942,40 +942,40 @@ function PipelineSection({
               {expandedId === booking.id && (
                 <div className="mx-2 mb-2 bg-navy rounded-xl border border-cream/8 p-5 space-y-4">
                   {/* Details grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 break-words">
                     <div>
-                      <span className="text-cream/40 text-[11px] uppercase tracking-wider font-medium block mb-1">{t("table.customer")}</span>
-                      <p className="text-cream text-sm font-medium">{booking.customer_name}</p>
+                      <span className="text-cream/80 text-sm uppercase tracking-wider font-medium block mb-1">{t("table.customer")}</span>
+                      <p className="text-cream text-base font-medium">{booking.customer_name}</p>
                     </div>
                     <div>
-                      <span className="text-cream/40 text-[11px] uppercase tracking-wider font-medium block mb-1">{t("table.contact")}</span>
-                      <p className="text-cream text-sm">{booking.customer_email}</p>
-                      <p className="text-cream/60 text-sm">{booking.customer_phone}</p>
+                      <span className="text-cream/80 text-sm uppercase tracking-wider font-medium block mb-1">{t("table.contact")}</span>
+                      <p className="text-cream text-base">{booking.customer_email}</p>
+                      <p className="text-cream/90 text-base">{booking.customer_phone}</p>
                     </div>
                     {booking.event_address && (
                       <div>
-                        <span className="text-cream/40 text-[11px] uppercase tracking-wider font-medium block mb-1">{t("table.address")}</span>
-                        <p className="text-cream text-sm">{booking.event_address}</p>
+                        <span className="text-cream/80 text-sm uppercase tracking-wider font-medium block mb-1">{t("table.address")}</span>
+                        <p className="text-cream text-base">{booking.event_address}</p>
                       </div>
                     )}
                     <div>
-                      <span className="text-cream/40 text-[11px] uppercase tracking-wider font-medium block mb-1">{t("table.meats")}</span>
+                      <span className="text-cream/80 text-sm uppercase tracking-wider font-medium block mb-1">{t("table.meats")}</span>
                       <div className="flex flex-wrap gap-1">
                         {(booking.meats || []).map((meat) => (
-                          <span key={meat} className="inline-block px-2 py-0.5 text-[11px] bg-amber/10 text-amber rounded-full">{meat}</span>
+                          <span key={meat} className="inline-block px-2 py-0.5 text-sm bg-amber/10 text-amber rounded-full">{meat}</span>
                         ))}
                       </div>
                     </div>
                     <div>
-                      <span className="text-cream/40 text-[11px] uppercase tracking-wider font-medium block mb-1">{t("table.extras")}</span>
+                      <span className="text-cream/80 text-sm uppercase tracking-wider font-medium block mb-1">{t("table.extras")}</span>
                       {(booking.extras || []).length > 0 ? (
                         <div className="flex flex-wrap gap-1">
                           {booking.extras.map((e) => (
-                            <span key={e.id} className="inline-block px-2 py-0.5 text-[11px] bg-cream/8 text-cream/70 rounded-full">{tExtras.has(e.id) ? tExtras(e.id) : e.id} x{e.quantity}</span>
+                            <span key={e.id} className="inline-block px-2 py-0.5 text-sm bg-cream/8 text-cream/90 rounded-full">{tExtras.has(e.id) ? tExtras(e.id) : e.id} x{e.quantity}</span>
                           ))}
                         </div>
                       ) : (
-                        <p className="text-cream/40 text-sm">{t("dashboard.noExtras")}</p>
+                        <p className="text-cream/80 text-base">{t("dashboard.noExtras")}</p>
                       )}
                     </div>
                   </div>
@@ -984,7 +984,7 @@ function PipelineSection({
                   <div className="space-y-3 pt-3 border-t border-cream/8">
                     {/* Payment Track */}
                     <div>
-                      <span className="text-cream/40 text-[10px] uppercase tracking-wider font-medium block mb-2">💰 {t("pipeline.paymentTrack")}</span>
+                      <span className="text-cream/80 text-sm uppercase tracking-wider font-medium block mb-2">💰 {t("pipeline.paymentTrack")}</span>
                       <div className="flex flex-wrap gap-2">
                         {booking.payment_status === "unpaid" && booking.event_status !== "cancelled" && (
                           <>
@@ -992,7 +992,7 @@ function PipelineSection({
                               <button
                                 onClick={(e) => { e.stopPropagation(); onConfirmCashPayment(booking.id); }}
                                 disabled={updatingId === booking.id}
-                                className="px-3 py-1.5 bg-amber/15 text-amber text-xs font-medium rounded-lg hover:bg-amber/25 border border-amber/20 transition-colors disabled:opacity-50"
+                                className="px-3 py-1.5 bg-amber/15 text-amber text-sm font-medium rounded-lg hover:bg-amber/25 border border-amber/20 transition-colors disabled:opacity-50"
                               >
                                 {t("pipeline.confirmDeposit")}
                               </button>
@@ -1000,7 +1000,7 @@ function PipelineSection({
                             <button
                               onClick={(e) => { e.stopPropagation(); onUpdatePaymentStatus(booking.id, "paid_in_full"); }}
                               disabled={updatingId === booking.id}
-                              className="px-3 py-1.5 bg-teal/15 text-teal-light text-xs font-medium rounded-lg hover:bg-teal/25 border border-teal/20 transition-colors disabled:opacity-50"
+                              className="px-3 py-1.5 bg-teal/15 text-blue-300 text-sm font-medium rounded-lg hover:bg-teal/25 border border-teal/20 transition-colors disabled:opacity-50"
                             >
                               {t("pipeline.markPaidFull")}
                             </button>
@@ -1011,14 +1011,14 @@ function PipelineSection({
                             <button
                               onClick={(e) => { e.stopPropagation(); onUpdatePaymentStatus(booking.id, "paid_in_full"); }}
                               disabled={updatingId === booking.id}
-                              className="px-3 py-1.5 bg-teal/15 text-teal-light text-xs font-medium rounded-lg hover:bg-teal/25 border border-teal/20 transition-colors disabled:opacity-50"
+                              className="px-3 py-1.5 bg-teal/15 text-blue-300 text-sm font-medium rounded-lg hover:bg-teal/25 border border-teal/20 transition-colors disabled:opacity-50"
                             >
                               {t("pipeline.markPaidFull")}
                             </button>
                             <button
                               onClick={(e) => { e.stopPropagation(); onUpdatePaymentStatus(booking.id, "unpaid"); }}
                               disabled={updatingId === booking.id}
-                              className="px-3 py-1.5 bg-cream/5 text-cream/40 text-xs font-medium rounded-lg hover:bg-cream/10 border border-cream/10 transition-colors disabled:opacity-50"
+                              className="px-3 py-1.5 bg-cream/5 text-cream/80 text-sm font-medium rounded-lg hover:bg-cream/10 border border-cream/10 transition-colors disabled:opacity-50"
                             >
                               ← {t("pipeline.revertUnpaid")}
                             </button>
@@ -1028,7 +1028,7 @@ function PipelineSection({
                           <button
                             onClick={(e) => { e.stopPropagation(); onUpdatePaymentStatus(booking.id, "deposit_received"); }}
                             disabled={updatingId === booking.id}
-                            className="px-3 py-1.5 bg-cream/5 text-cream/40 text-xs font-medium rounded-lg hover:bg-cream/10 border border-cream/10 transition-colors disabled:opacity-50"
+                            className="px-3 py-1.5 bg-cream/5 text-cream/80 text-sm font-medium rounded-lg hover:bg-cream/10 border border-cream/10 transition-colors disabled:opacity-50"
                           >
                             ← {t("pipeline.revertDeposit")}
                           </button>
@@ -1038,13 +1038,13 @@ function PipelineSection({
 
                     {/* Event Track */}
                     <div>
-                      <span className="text-cream/40 text-[10px] uppercase tracking-wider font-medium block mb-2">📋 {t("pipeline.eventTrack")}</span>
+                      <span className="text-cream/80 text-sm uppercase tracking-wider font-medium block mb-2">📋 {t("pipeline.eventTrack")}</span>
                       <div className="flex flex-wrap gap-2">
                         {booking.event_status === "unconfirmed" && (
                           <button
                             onClick={(e) => { e.stopPropagation(); onUpdateEventStatus(booking.id, "confirmed"); }}
                             disabled={updatingId === booking.id}
-                            className="px-3 py-1.5 bg-teal/15 text-teal-light text-xs font-medium rounded-lg hover:bg-teal/25 border border-teal/20 transition-colors disabled:opacity-50"
+                            className="px-3 py-1.5 bg-teal/15 text-blue-300 text-sm font-medium rounded-lg hover:bg-teal/25 border border-teal/20 transition-colors disabled:opacity-50"
                           >
                             {t("pipeline.confirmEvent")}
                           </button>
@@ -1054,14 +1054,14 @@ function PipelineSection({
                             <button
                               onClick={(e) => { e.stopPropagation(); onUpdateEventStatus(booking.id, "completed"); }}
                               disabled={updatingId === booking.id}
-                              className="px-3 py-1.5 bg-cream/10 text-cream/70 text-xs font-medium rounded-lg hover:bg-cream/15 border border-cream/15 transition-colors disabled:opacity-50"
+                              className="px-3 py-1.5 bg-cream/10 text-cream/90 text-sm font-medium rounded-lg hover:bg-cream/15 border border-cream/15 transition-colors disabled:opacity-50"
                             >
                               🎉 {t("pipeline.markCompleted")}
                             </button>
                             <button
                               onClick={(e) => { e.stopPropagation(); onUpdateEventStatus(booking.id, "unconfirmed"); }}
                               disabled={updatingId === booking.id}
-                              className="px-3 py-1.5 bg-cream/5 text-cream/40 text-xs font-medium rounded-lg hover:bg-cream/10 border border-cream/10 transition-colors disabled:opacity-50"
+                              className="px-3 py-1.5 bg-cream/5 text-cream/80 text-sm font-medium rounded-lg hover:bg-cream/10 border border-cream/10 transition-colors disabled:opacity-50"
                             >
                               ← {t("pipeline.revertUnconfirmed")}
                             </button>
@@ -1071,7 +1071,7 @@ function PipelineSection({
                           <button
                             onClick={(e) => { e.stopPropagation(); onUpdateEventStatus(booking.id, "confirmed"); }}
                             disabled={updatingId === booking.id}
-                            className="px-3 py-1.5 bg-cream/5 text-cream/40 text-xs font-medium rounded-lg hover:bg-cream/10 border border-cream/10 transition-colors disabled:opacity-50"
+                            className="px-3 py-1.5 bg-cream/5 text-cream/80 text-sm font-medium rounded-lg hover:bg-cream/10 border border-cream/10 transition-colors disabled:opacity-50"
                           >
                             ← {t("pipeline.revertConfirmed")}
                           </button>
@@ -1080,7 +1080,7 @@ function PipelineSection({
                           <button
                             onClick={(e) => { e.stopPropagation(); onCancel(booking.id); }}
                             disabled={updatingId === booking.id}
-                            className="px-3 py-1.5 bg-red-500/10 text-red-400 text-xs font-medium rounded-lg hover:bg-red-500/20 border border-red-500/20 transition-colors disabled:opacity-50"
+                            className="px-3 py-1.5 bg-red-500/10 text-red-400 text-sm font-medium rounded-lg hover:bg-red-500/20 border border-red-500/20 transition-colors disabled:opacity-50"
                           >
                             {t("actions.cancel")}
                           </button>
@@ -1090,14 +1090,14 @@ function PipelineSection({
                             <button
                               onClick={(e) => { e.stopPropagation(); onUpdateEventStatus(booking.id, "unconfirmed"); }}
                               disabled={updatingId === booking.id}
-                              className="px-3 py-1.5 bg-amber/15 text-amber text-xs font-medium rounded-lg hover:bg-amber/25 border border-amber/20 transition-colors disabled:opacity-50"
+                              className="px-3 py-1.5 bg-amber/15 text-amber text-sm font-medium rounded-lg hover:bg-amber/25 border border-amber/20 transition-colors disabled:opacity-50"
                             >
                               ↩ {t("pipeline.restore")}
                             </button>
                             <button
                               onClick={(e) => { e.stopPropagation(); onDelete(booking.id); }}
                               disabled={deletingId === booking.id}
-                              className="px-3 py-1.5 bg-red-500/15 text-red-400 text-xs font-medium rounded-lg hover:bg-red-500/25 border border-red-500/20 transition-colors disabled:opacity-50"
+                              className="px-3 py-1.5 bg-red-500/15 text-red-400 text-sm font-medium rounded-lg hover:bg-red-500/25 border border-red-500/20 transition-colors disabled:opacity-50"
                             >
                               {t("actions.delete")}
                             </button>
@@ -1114,7 +1114,7 @@ function PipelineSection({
       )}
 
       {isOpen && count === 0 && (
-        <div className="px-5 pb-4 text-cream/30 text-sm">{t("pipeline.empty")}</div>
+        <div className="px-5 pb-4 text-cream/80 text-base">{t("pipeline.empty")}</div>
       )}
     </div>
   );

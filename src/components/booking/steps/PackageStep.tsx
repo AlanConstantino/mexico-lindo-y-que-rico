@@ -41,7 +41,7 @@ export default function PackageStep({ data, updateData }: PackageStepProps) {
       <h2 className="font-heading text-3xl text-cream mb-2">
         {t("selectPackage")}
       </h2>
-      <p className="text-cream/40 text-sm mb-8">{t("selectPackageDesc")}</p>
+      <p className="text-cream/80 text-base mb-8">{t("selectPackageDesc")}</p>
 
       {/* Service type selection */}
       <div className="grid grid-cols-2 gap-3 mb-8">
@@ -62,7 +62,7 @@ export default function PackageStep({ data, updateData }: PackageStepProps) {
               >
                 {t(svc.labelKey)}
               </div>
-              <div className="text-cream/40 text-xs">{t(svc.descKey)}</div>
+              <div className="text-cream/80 text-sm">{t(svc.descKey)}</div>
             </button>
           );
         })}
@@ -71,7 +71,7 @@ export default function PackageStep({ data, updateData }: PackageStepProps) {
       {/* Guest count selection */}
       {data.serviceType && (
         <div>
-          <p className="text-cream/50 text-sm mb-4 font-medium">
+          <p className="text-cream/80 text-base mb-4 font-medium">
             {t("upTo")}...
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -92,9 +92,9 @@ export default function PackageStep({ data, updateData }: PackageStepProps) {
                   >
                     {option.count}
                   </div>
-                  <div className="text-cream/40 text-xs">{t("guests")}</div>
+                  <div className="text-cream/80 text-sm">{t("guests")}</div>
                   <div
-                    className={`font-heading text-lg mt-2 transition-colors ${isSelected ? "text-amber" : "text-cream/60"}`}
+                    className={`font-heading text-lg mt-2 transition-colors ${isSelected ? "text-amber" : "text-cream/90"}`}
                   >
                     ${option.price}
                   </div>
@@ -107,18 +107,18 @@ export default function PackageStep({ data, updateData }: PackageStepProps) {
 
       {/* Large event notice */}
       <div className="mt-8 p-4 rounded-xl bg-amber/5 border border-amber/15 text-center">
-        <p className="text-cream/70 text-sm mb-2">{t("largeEventTitle")}</p>
+        <p className="text-cream/90 text-base mb-2">{t("largeEventTitle")}</p>
         <div className="flex items-center justify-center gap-3 flex-wrap">
           <a
             href="tel:+15622359361"
-            className="text-amber text-sm font-semibold hover:text-amber-light transition-colors"
+            className="text-amber text-base font-semibold hover:text-amber-light transition-colors"
           >
             {t("largeEventCta")} — (562) 235-9361
           </a>
-          <span className="text-cream/30">|</span>
+          <span className="text-cream/80">|</span>
           <a
             href="mailto:mx.lindo.y.que.rico.catering@gmail.com"
-            className="text-amber/70 text-sm hover:text-amber transition-colors"
+            className="text-amber text-base hover:text-amber transition-colors"
           >
             {t("largeEventEmail")}
           </a>

@@ -21,14 +21,14 @@ export default function EventTimePicker({ value, onChange }: {
     <fieldset>
       <legend className="sr-only">{t("selectTime")}</legend>
       <div className="grid grid-cols-3 gap-3">
-        <label className="text-cream/60 text-sm">
+        <label className="text-cream/90 text-base">
           {t("timeHour")}
           <select value={hour} onChange={(e) => onChange(toEventTime(e.target.value, minute, period))} className={selectClass}>
             <option value="" disabled>{t("chooseHour")}</option>
             {Array.from({ length: 12 }, (_, i) => i + 1).map((h) => <option key={h} value={h}>{h}</option>)}
           </select>
         </label>
-        <label className="text-cream/60 text-sm">
+        <label className="text-cream/90 text-base">
           {t("timeMinute")}
           <select value={minute} onChange={(e) => {
             setDraftMinute(e.target.value);
@@ -37,7 +37,7 @@ export default function EventTimePicker({ value, onChange }: {
             {Array.from({ length: 60 }, (_, i) => String(i).padStart(2, "0")).map((m) => <option key={m} value={m}>{m}</option>)}
           </select>
         </label>
-        <label className="text-cream/60 text-sm">
+        <label className="text-cream/90 text-base">
           {t("timePeriod")}
           <select value={period} onChange={(e) => {
             setDraftPeriod(e.target.value);

@@ -40,16 +40,16 @@ export default function MeatStep({ data, updateData }: MeatStepProps) {
           {t("selectMeats")}
         </h2>
         <span
-          className={`text-sm font-medium px-3 py-1 rounded-full transition-colors ${
+          className={`text-base font-medium px-3 py-1 rounded-full transition-colors ${
             totalSelected === 4
               ? "bg-amber/10 text-amber border border-amber/30"
-              : "bg-gradient-to-r from-amber/10 to-terracotta/10 text-cream/40 border border-amber/20"
+              : "bg-gradient-to-r from-amber/10 to-terracotta/10 text-cream/80 border border-amber/20"
           }`}
         >
           {t("meatsCount", { count: totalSelected })}
         </span>
       </div>
-      <p className="text-cream/40 text-sm mb-8">{t("selectMeatsDesc")}</p>
+      <p className="text-cream/80 text-base mb-8">{t("selectMeatsDesc")}</p>
 
       <div className="grid grid-cols-2 gap-3">
         {MEAT_OPTIONS.map((id) => {
@@ -69,18 +69,18 @@ export default function MeatStep({ data, updateData }: MeatStepProps) {
               <div className="flex items-start justify-between gap-2">
                 <div className="flex-1 min-w-0">
                   <div
-                    className={`font-medium text-sm transition-colors ${isSelected ? "text-amber" : "text-cream"}`}
+                    className={`font-medium text-base transition-colors ${isSelected ? "text-amber" : "text-cream"}`}
                   >
                     {tMenu(`${id}.name`)}
                   </div>
-                  <div className="text-cream/30 text-xs mt-1">
+                  <div className="text-cream/80 text-sm mt-1">
                     {tMenu(`${id}.tag`)}
                   </div>
                 </div>
 
                 {/* Count badge */}
                 {isSelected && (
-                  <span className="w-6 h-6 rounded-full bg-amber text-navy text-xs font-bold flex items-center justify-center flex-shrink-0">
+                  <span className="w-6 h-6 rounded-full bg-amber text-navy text-sm font-bold flex items-center justify-center flex-shrink-0">
                     {count}
                   </span>
                 )}
@@ -91,10 +91,10 @@ export default function MeatStep({ data, updateData }: MeatStepProps) {
                 <button
                   onClick={() => removeMeat(id)}
                   disabled={count === 0}
-                  className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold transition-all ${
+                  className={`w-8 h-8 rounded-lg flex items-center justify-center text-base font-bold transition-all ${
                     count > 0
                       ? "bg-cream/10 text-cream hover:bg-cream/20"
-                      : "bg-cream/5 text-cream/20 cursor-not-allowed"
+                      : "bg-cream/5 text-cream/40 cursor-not-allowed"
                   }`}
                 >
                   −
@@ -102,10 +102,10 @@ export default function MeatStep({ data, updateData }: MeatStepProps) {
                 <button
                   onClick={() => addMeat(id)}
                   disabled={!canAdd}
-                  className={`flex-1 h-8 rounded-lg text-xs font-medium transition-all ${
+                  className={`flex-1 h-8 rounded-lg text-sm font-medium transition-all ${
                     canAdd
                       ? "bg-amber/10 text-amber border border-amber/20 hover:bg-amber/20"
-                      : "bg-cream/5 text-cream/20 border border-cream/5 cursor-not-allowed"
+                      : "bg-cream/5 text-cream/40 border border-cream/5 cursor-not-allowed"
                   }`}
                 >
                   + {t("add")}

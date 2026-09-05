@@ -40,7 +40,7 @@ export default async function BookingPage() {
           </Link>
           <Link
             href="/"
-            className="text-sm text-cream/50 hover:text-amber transition-colors duration-300 flex items-center gap-2"
+            className="text-base text-cream/80 hover:text-amber transition-colors duration-300 flex items-center gap-2"
           >
             <svg
               className="w-4 h-4"
@@ -64,13 +64,13 @@ export default async function BookingPage() {
         <div className="max-w-3xl mx-auto overflow-hidden">
           {/* Header */}
           <div className="text-center mb-12">
-            <p className="text-amber text-xs uppercase tracking-[0.3em] mb-4 font-medium">
+            <p className="text-amber text-sm uppercase tracking-[0.3em] mb-4 font-medium">
               {t("reserveLabel")}
             </p>
             <h1 className="font-heading text-5xl sm:text-6xl text-cream mb-4">
               {t("title")}
             </h1>
-            <p className="text-cream/40 text-sm max-w-lg mx-auto leading-relaxed">
+            <p className="text-cream/80 text-base max-w-lg mx-auto leading-relaxed">
               {t("subtitle")}
             </p>
           </div>
@@ -83,12 +83,12 @@ export default async function BookingPage() {
       {/* Simple footer */}
       <footer className="border-t border-cream/5 py-8 px-6">
         <div className="max-w-3xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p className="text-cream/20 text-xs">
+          <p className="text-cream/80 text-sm">
             &copy; {new Date().getFullYear()} México Lindo Y Que Rico
           </p>
           <Link
             href="/"
-            className="text-cream/30 text-xs hover:text-amber transition-colors"
+            className="text-cream/80 text-sm hover:text-amber transition-colors"
           >
             {t("backHome")}
           </Link>

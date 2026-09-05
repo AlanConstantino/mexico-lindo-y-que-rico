@@ -30,7 +30,7 @@ const BAR_COLORS = [
 const COLORS = {
   navyLight: "#243658",
   cream: "#FAF5EF",
-  creamMuted: "rgba(250,245,239,0.4)",
+  creamMuted: "rgba(250,245,239,0.85)",
   gridLine: "rgba(250,245,239,0.06)",
 };
 
@@ -57,8 +57,8 @@ export default function PopularMeatsChart({
   if (data.length === 0) {
     return (
       <div className="bg-gradient-to-r from-amber/10 to-terracotta/10 rounded-2xl border border-amber/20 p-6">
-        <h3 className="text-cream text-sm font-medium mb-4">{title}</h3>
-        <div className="h-[250px] flex items-center justify-center text-cream/30 text-sm">
+        <h3 className="text-cream text-base font-medium mb-4">{title}</h3>
+        <div className="h-[250px] flex items-center justify-center text-cream/80 text-base">
           No meat selection data
         </div>
       </div>
@@ -67,7 +67,7 @@ export default function PopularMeatsChart({
 
   return (
     <div className="bg-gradient-to-r from-amber/10 to-terracotta/10 rounded-2xl border border-amber/20 p-6">
-      <h3 className="text-cream text-sm font-medium mb-4">{title}</h3>
+      <h3 className="text-cream text-base font-medium mb-4">{title}</h3>
       <div className="h-[250px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
@@ -77,7 +77,7 @@ export default function PopularMeatsChart({
           >
             <XAxis
               type="number"
-              tick={{ fill: COLORS.creamMuted, fontSize: 11 }}
+              tick={{ fill: COLORS.creamMuted, fontSize: 14 }}
               axisLine={false}
               tickLine={false}
               allowDecimals={false}
@@ -85,7 +85,7 @@ export default function PopularMeatsChart({
             <YAxis
               type="category"
               dataKey="name"
-              tick={{ fill: COLORS.cream, fontSize: 12 }}
+              tick={{ fill: COLORS.cream, fontSize: 14 }}
               axisLine={false}
               tickLine={false}
               width={80}
@@ -96,7 +96,7 @@ export default function PopularMeatsChart({
                 border: `1px solid rgba(250,245,239,0.1)`,
                 borderRadius: "12px",
                 color: COLORS.cream,
-                fontSize: 13,
+                fontSize: 14,
               }}
               formatter={(value) => [value, "Selected"]}
               cursor={{ fill: "rgba(250,245,239,0.03)" }}

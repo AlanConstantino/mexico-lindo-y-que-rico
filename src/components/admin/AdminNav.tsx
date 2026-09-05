@@ -34,10 +34,10 @@ export default function AdminNav({ onLogout }: { onLogout: () => void }) {
                 <a
                   key={link.href}
                   href={link.href}
-                  className={`px-3 py-1.5 rounded-lg text-sm transition-colors duration-200 ${
+                  className={`px-3 py-1.5 rounded-lg text-base transition-colors duration-200 ${
                     isActive
                       ? "bg-amber/15 text-amber font-medium"
-                      : "text-cream/60 hover:text-cream hover:bg-cream/5"
+                      : "text-cream/90 hover:text-cream hover:bg-cream/5"
                   }`}
                 >
                   {link.label}
@@ -48,13 +48,13 @@ export default function AdminNav({ onLogout }: { onLogout: () => void }) {
           <div className="flex items-center gap-3 ml-auto">
             <a
               href={`/${locale}`}
-              className="text-sm text-cream/50 hover:text-cream transition-colors duration-200"
+              className="text-base text-cream/80 hover:text-cream transition-colors duration-200"
             >
               {t("backToSite")}
             </a>
             <button
               onClick={onLogout}
-              className="text-sm text-terracotta/70 hover:text-terracotta transition-colors duration-200"
+              className="text-base text-red-400 hover:text-red-400 transition-colors duration-200"
             >
               {t("logout")}
             </button>
@@ -101,10 +101,10 @@ export default function AdminNav({ onLogout }: { onLogout: () => void }) {
                 key={link.href}
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
-                className={`block px-4 py-2.5 rounded-lg text-sm transition-colors duration-200 ${
+                className={`block px-4 py-2.5 rounded-lg text-base transition-colors duration-200 ${
                   isActive
                     ? "bg-amber/15 text-amber font-medium"
-                    : "text-cream/60 hover:text-cream hover:bg-cream/5"
+                    : "text-cream/90 hover:text-cream hover:bg-cream/5"
                 }`}
               >
                 {link.label}
@@ -115,7 +115,7 @@ export default function AdminNav({ onLogout }: { onLogout: () => void }) {
             <a
               href={`/${locale}`}
               onClick={() => setMobileOpen(false)}
-              className="block px-4 py-2.5 rounded-lg text-sm text-cream/50 hover:text-cream hover:bg-cream/5 transition-colors duration-200"
+              className="block px-4 py-2.5 rounded-lg text-base text-cream/80 hover:text-cream hover:bg-cream/5 transition-colors duration-200"
             >
               ← {t("backToSite")}
             </a>
@@ -124,7 +124,7 @@ export default function AdminNav({ onLogout }: { onLogout: () => void }) {
                 setMobileOpen(false);
                 onLogout();
               }}
-              className="block w-full text-left px-4 py-2.5 rounded-lg text-sm text-terracotta/70 hover:text-terracotta hover:bg-terracotta/5 transition-colors duration-200"
+              className="block w-full text-left px-4 py-2.5 rounded-lg text-base text-red-400 hover:text-red-400 hover:bg-terracotta/5 transition-colors duration-200"
             >
               {t("logout")}
             </button>
